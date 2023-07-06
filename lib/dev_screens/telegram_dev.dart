@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 
+import 'package:hypester/telegram_only/telegram_news.dart';
+
+
 class TelegramPage extends StatefulWidget {
   const TelegramPage({super.key});
 
@@ -15,10 +18,15 @@ class _TelegramPageState extends State<TelegramPage> {
         backgroundColor: Theme.of(context).colorScheme.inversePrimary,
         title: const Text('Telegram'),
       ),
-      body: const Center(
-          child:
-          Text('Telegram')
-      ),
+      body: ElevatedButton(
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => const TelegramNews()),
+              );
+            },
+            child: const Text('Telegram'),
+          ),
     );
   }
 }
