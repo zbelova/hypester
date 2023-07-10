@@ -1,0 +1,10 @@
+API telegram: http://newsapi.org/v2/top-headlines?country=us&apiKey=52489cf346804f2eb180b8e34528aa26;
+
+Мои зависимости в pubspec.yaml:
+
+dependencies:
+  flutter:
+    sdk: flutter
+  http: ^1.1.0
+  cached_network_image: ^3.2.3
+  cupertino_icons: ^1.0.2
