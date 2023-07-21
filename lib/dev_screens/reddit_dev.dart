@@ -81,9 +81,14 @@ class _RedditPageState extends State<RedditPage> {
                 return Text('Ничего не найдено');
 
               else {
-                return ListTile(
-                  title: Text(_subreddits[index].title),
-                  subtitle: Text(_subreddits[index].displayName),
+                return GestureDetector(
+                  onTap: () {
+                    Navigator.push(context,MaterialPageRoute(builder: (context) => SubredditPage(subreddit: _subreddits[index],)));
+                  },
+                  child: ListTile(
+                    title: Text(_subreddits[index].title),
+                    subtitle: Text(_subreddits[index].displayName),
+                  ),
                 );
               }
             },
@@ -95,3 +100,72 @@ class _RedditPageState extends State<RedditPage> {
     );
   }
 }
+
+class SubredditPage extends StatefulWidget {
+  final Subreddit subreddit;
+  SubredditPage({super.key, required this.subreddit});
+
+  @override
+  State<SubredditPage> createState() => _SubredditPageState();
+}
+
+class _SubredditPageState extends State<SubredditPage> {
+  List<Submission> _posts = [];
+
+  void _getPosts() async {
+    _posts.clear();
+    //deviceID уникальный ключ на устройстве. Создается при первом запуске приложения. Сохраняется в shared_preferences
+    //Submission posts = await widget.subreddit.hot(limit: 10).first as Submission;
+    widget.subreddit.hot(limit: 10).listen((event) {
+      var data = event as Submission;
+      setState(() {
+        _posts.add(data);
+        print(data.title);
+      });
+    });
+  }
+
+  @override
+  initState() {
+    _getPosts();
+    super.initState();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        backgroundColor: Theme.of(context).colorScheme.inversePrimary,
+        title: const Text('Reddit'),
+      ),
+      body: Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: Column(
+          children: [
+            SizedBox(height: 20,),
+
+            Expanded(
+              child: ListView.builder(
+                itemCount: _posts.length,
+                itemBuilder: (context, index) {
+                  if (_posts.isEmpty)
+                    return Text('Ничего не найдено');
+
+                  else {
+                    return ListTile(
+                      leading: Icon(Icons.text_snippet),
+                      title:
+                      Text(_posts[index].title),
+
+                    );
+                  }
+                },
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
