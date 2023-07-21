@@ -1,8 +1,6 @@
 import 'package:draw/draw.dart';
 import 'package:flutter/material.dart';
 import 'package:hypester/data/user_preferences.dart';
-import 'package:shared_preferences/shared_preferences.dart';
-import 'package:uuid/uuid.dart';
 
 class RedditPage extends StatefulWidget {
   const RedditPage({super.key});
@@ -12,8 +10,8 @@ class RedditPage extends StatefulWidget {
 }
 
 class _RedditPageState extends State<RedditPage> {
-  List<Subreddit> _subreddits = [];
-  TextEditingController _searchController = TextEditingController();
+  final List<Subreddit> _subreddits = [];
+  final TextEditingController _searchController = TextEditingController();
 
   void _getSubreddits(String query) async {
     if (query.isEmpty) return;
@@ -58,12 +56,12 @@ class _RedditPageState extends State<RedditPage> {
         padding: const EdgeInsets.all(8.0),
         child: Column(
           children: [
-            SizedBox(
+            const SizedBox(
               height: 20,
             ),
             TextField(
               controller: _searchController,
-              decoration: InputDecoration(
+              decoration: const InputDecoration(
                 border: OutlineInputBorder(),
                 labelText: 'Тема',
               ),
@@ -72,14 +70,14 @@ class _RedditPageState extends State<RedditPage> {
                 onPressed: () {
                   _getSubreddits(_searchController.text);
                 },
-                child: Text('Найти саббредиты')),
+                child: const Text('Найти саббредиты')),
             Expanded(
               child: ListView.builder(
                 itemCount: _subreddits.length,
                 itemBuilder: (context, index) {
-                  if (_subreddits.isEmpty)
-                    return Text('Ничего не найдено');
-                  else {
+                  if (_subreddits.isEmpty) {
+                    return const Text('Ничего не найдено');
+                  } else {
                     return GestureDetector(
                       onTap: () {
                         Navigator.push(
@@ -108,14 +106,14 @@ class _RedditPageState extends State<RedditPage> {
 class SubredditPage extends StatefulWidget {
   final Subreddit subreddit;
 
-  SubredditPage({super.key, required this.subreddit});
+  const SubredditPage({super.key, required this.subreddit});
 
   @override
   State<SubredditPage> createState() => _SubredditPageState();
 }
 
 class _SubredditPageState extends State<SubredditPage> {
-  List<Submission> _posts = [];
+  final List<Submission> _posts = [];
 
   void _getPosts() async {
     _posts.clear();
@@ -145,7 +143,7 @@ class _SubredditPageState extends State<SubredditPage> {
         padding: const EdgeInsets.all(8.0),
         child: Column(
           children: [
-            SizedBox(
+            const SizedBox(
               height: 20,
             ),
             Text(
@@ -153,7 +151,7 @@ class _SubredditPageState extends State<SubredditPage> {
               style: Theme.of(context).textTheme.headlineSmall,
             ),
             Text(widget.subreddit.displayName),
-            SizedBox(
+            const SizedBox(
               height: 20,
             ),
             if (_posts.isNotEmpty) ...[
@@ -161,9 +159,9 @@ class _SubredditPageState extends State<SubredditPage> {
                 child: ListView.builder(
                   itemCount: _posts.length,
                   itemBuilder: (context, index) {
-                    if (_posts.isEmpty)
-                      return Text('Ничего не найдено');
-                    else {
+                    if (_posts.isEmpty) {
+                      return const Text('Ничего не найдено');
+                    } else {
                       return GestureDetector(
                         onTap: () {
                           Navigator.push(
@@ -174,7 +172,7 @@ class _SubredditPageState extends State<SubredditPage> {
                                       )));
                         },
                         child: ListTile(
-                          leading: Icon(Icons.text_snippet),
+                          leading: const Icon(Icons.text_snippet),
                           title: Text(_posts[index].title),
                         ),
                       );
@@ -183,7 +181,7 @@ class _SubredditPageState extends State<SubredditPage> {
                 ),
               ),
             ] else ...[
-              Center(child: CircularProgressIndicator())
+              const Center(child: CircularProgressIndicator())
             ],
           ],
         ),
@@ -227,7 +225,7 @@ class _PostPageState extends State<PostPage> {
               style: Theme.of(context).textTheme.headlineSmall,
             ),
             Text('u/${widget.post.author}'),
-            SizedBox(
+            const SizedBox(
               height: 20,
             ),
             Expanded(
@@ -239,10 +237,11 @@ class _PostPageState extends State<PostPage> {
             ),
 
             if (urlIsImage(widget.post.url.toString())) ...[
-              SizedBox(
+              const SizedBox(
                 height: 10,
               ),
               Image.network(widget.post.url.toString()),
+              const Spacer()
             ],
             // Text(widget.post.comments.toString()),
           ],
@@ -253,6 +252,6 @@ class _PostPageState extends State<PostPage> {
 }
 
 bool urlIsImage(String url) {
-  print(url);
+  //print(url);
   return url.contains('.jpg') || url.contains('.png') || url.contains('.jpeg') || url.contains('.gif');
 }
