@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'data/user_preferences.dart';
 import 'dev_screens/layout_dev.dart';
 import 'dev_screens/model_arch_dev.dart';
 import 'dev_screens/reddit_dev.dart';
@@ -7,6 +8,7 @@ import 'dev_screens/twitter_dev.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
+  UserPreferences().init();
   runApp(const Hypester());
 }
 
