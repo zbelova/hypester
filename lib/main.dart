@@ -1,14 +1,23 @@
 import 'package:flutter/material.dart';
+import 'package:hive/hive.dart';
+import 'package:path_provider/path_provider.dart';
 import 'data/user_preferences.dart';
 import 'dev_screens/layout_dev.dart';
 import 'dev_screens/model_arch_dev.dart';
 import 'dev_screens/reddit_dev.dart';
 import 'dev_screens/telegram_dev.dart';
 import 'dev_screens/twitter_dev.dart';
+import 'hive/post_local_dto.dart';
 
-void main() {
+Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   UserPreferences().init();
+ // код для инициализации Hive
+  final directory = await getApplicationDocumentsDirectory();
+  Hive
+    ..init(directory.path)
+    ..registerAdapter(RedditPostLocalDtoAdapter());
+
   runApp(const Hypester());
 }
 

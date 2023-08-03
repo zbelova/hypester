@@ -1,6 +1,10 @@
+import 'package:collection/collection.dart';
 import 'package:draw/draw.dart';
 import 'package:flutter/material.dart';
 import 'package:hypester/data/user_preferences.dart';
+
+import '../hive/post_local_dto.dart';
+import '../hive/posts_local_data_source.dart';
 
 class RedditPage extends StatefulWidget {
   const RedditPage({super.key});
@@ -19,11 +23,7 @@ class _RedditPageState extends State<RedditPage> {
     //deviceID уникальный ключ на устройстве. Создается при первом запуске приложения. Сохраняется в shared_preferences
     var deviceID = UserPreferences().getDeviceId();
     const userAgent = 'hypester by carrot';
-    final reddit = await Reddit.createUntrustedReadOnlyInstance(
-        userAgent: userAgent,
-        clientId: "LZAPVGNW0N1P_PLTg9argA",
-        //deviceId: "hypester by carrot " + Random.secure().nextInt(999999).toString(),
-        deviceId: deviceID);
+    final reddit = await Reddit.createUntrustedReadOnlyInstance(userAgent: userAgent, clientId: "LZAPVGNW0N1P_PLTg9argA", deviceId: deviceID);
     reddit.subreddits.search(query, limit: 10).listen((event) {
       var data = event as Subreddit;
       setState(() {
@@ -34,8 +34,6 @@ class _RedditPageState extends State<RedditPage> {
 
   @override
   void initState() {
-    // _getSubreddits('magic the gathering');
-    // reddit.subreddits.search('magic the gathering').first.then((value) => print(value.toString()));
     super.initState();
   }
 
@@ -113,21 +111,57 @@ class SubredditPage extends StatefulWidget {
 }
 
 class _SubredditPageState extends State<SubredditPage> {
-  final List<Submission> _posts = [];
+  final PostsLocalDataSource _localDataSource = PostsLocalDataSource();
+  List<RedditPostLocalDto> _posts = [];
 
+  //функция получения постов из саббредита с помощью пакета draw с сохранением в hive
+  //модели Submission (поста) нет, просто запихиваю в hive как есть
   void _getPosts() async {
-    _posts.clear();
-    widget.subreddit.hot(limit: 10).listen((event) {
+    //подписываюсь на стрим постов из саббредита, которые получаются по одному
+    //вместо стрима тут должен быть блок, который изменяет состояние при появлении новых постов после обновления экрана пользователем (pull to refresh)
+    widget.subreddit.newest(limit: 4).listen((event) {
       var data = event as Submission;
-      setState(() {
-        _posts.add(data);
-      //  print(data.title);
-      });
+
+      //сравниваю пост из стрима с постами из hive
+      //если поста нет в hive, то добавляю его в hive
+      //функция firstWhereOrNull взята из пакета collection
+      RedditPostLocalDto? oldPost = _posts.firstWhereOrNull((oldPost) => oldPost.id == data.id);
+      if (oldPost == null) {
+        RedditPostLocalDto newPost = RedditPostLocalDto(
+          id: data.id!,
+          title: data.title,
+          body: data.selftext,
+          image: urlIsImage(data.url.toString()) ? data.url.toString() : '',
+          likes: data.upvotes,
+          author: data.author,
+          subreddit: data.subreddit.displayName,
+          date: data.createdUtc,
+          url: data.url.toString(),
+        );
+        _localDataSource.add(newPost);
+        //добавляю новый пост в начало списка постов
+        _posts.insert(0, newPost);
+        setState(() {
+        });
+      }
+
+
+    });
+
+  }
+
+  void _initPostsList() async {
+    //открываю hive и получаю все посты из него
+    _posts = await _localDataSource.getAll();
+    //переворачиваю список, чтобы сверху были новые посты
+    _posts = _posts.reversed.toList();
+    setState(() {
     });
   }
 
   @override
   initState() {
+    _initPostsList();
     _getPosts();
     super.initState();
   }
@@ -191,7 +225,7 @@ class _SubredditPageState extends State<SubredditPage> {
 }
 
 class PostPage extends StatefulWidget {
-  final Submission post;
+  final RedditPostLocalDto post;
 
   const PostPage({super.key, required this.post});
 
@@ -200,16 +234,8 @@ class PostPage extends StatefulWidget {
 }
 
 class _PostPageState extends State<PostPage> {
-  // void _getComments() async {
-  //   widget.post.comments.take(10).listen((event) {
-  //     var data = event as Comment;
-  //     print(data.body);
-  //   });
-  // }
-
   @override
   Widget build(BuildContext context) {
-   // print(widget.post.comments.toString());
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Theme.of(context).colorScheme.inversePrimary,
@@ -231,16 +257,16 @@ class _PostPageState extends State<PostPage> {
             Expanded(
               child: ListView(
                 children: [
-                  Text(widget.post.selftext!),
+                  Text(widget.post.body!),
                 ],
               ),
             ),
 
-            if (urlIsImage(widget.post.url.toString())) ...[
+            if (urlIsImage(widget.post.image.toString())) ...[
               const SizedBox(
                 height: 10,
               ),
-              Image.network(widget.post.url.toString()),
+              Image.network(widget.post.image.toString()),
               const Spacer()
             ],
             // Text(widget.post.comments.toString()),
@@ -252,6 +278,5 @@ class _PostPageState extends State<PostPage> {
 }
 
 bool urlIsImage(String url) {
-  //print(url);
   return url.contains('.jpg') || url.contains('.png') || url.contains('.jpeg') || url.contains('.gif');
 }
