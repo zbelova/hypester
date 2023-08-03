@@ -1,6 +1,12 @@
+import 'package:collection/collection.dart';
 import 'package:draw/draw.dart';
 import 'package:flutter/material.dart';
 import 'package:hypester/data/user_preferences.dart';
+
+import '../hive/post_local_dto.dart';
+import '../hive/posts_local_data_source.dart';
+import '../hive/subreddit_local_dto.dart';
+import '../hive/subreddits_local_data_source.dart';
 
 class RedditPage extends StatefulWidget {
   const RedditPage({super.key});
@@ -10,124 +16,69 @@ class RedditPage extends StatefulWidget {
 }
 
 class _RedditPageState extends State<RedditPage> {
-  final List<Subreddit> _subreddits = [];
-  final TextEditingController _searchController = TextEditingController();
+  final PostsLocalDataSource _localDataSource = PostsLocalDataSource();
+  final SubredditsLocalDataSource _subredditsLocalDataSource = SubredditsLocalDataSource();
+  List<RedditPostLocalDto> _posts = [];
 
-  void _getSubreddits(String query) async {
-    if (query.isEmpty) return;
-    _subreddits.clear();
+  bool _noSavedPosts = false;
+
+  void _getPosts() async {
     //deviceID уникальный ключ на устройстве. Создается при первом запуске приложения. Сохраняется в shared_preferences
     var deviceID = UserPreferences().getDeviceId();
     const userAgent = 'hypester by carrot';
-    final reddit = await Reddit.createUntrustedReadOnlyInstance(
-        userAgent: userAgent,
-        clientId: "LZAPVGNW0N1P_PLTg9argA",
-        //deviceId: "hypester by carrot " + Random.secure().nextInt(999999).toString(),
-        deviceId: deviceID);
-    reddit.subreddits.search(query, limit: 10).listen((event) {
-      var data = event as Subreddit;
-      setState(() {
-        _subreddits.add(data);
-      });
-    });
-  }
+    //здесь иногда возникает ошибка, связанная с тем, что reddit не дает доступ к api. Причина неизвестна
+    //надо ловить эксепшн
+    final reddit = await Reddit.createUntrustedReadOnlyInstance(userAgent: userAgent, clientId: "LZAPVGNW0N1P_PLTg9argA", deviceId: deviceID);
 
-  @override
-  void initState() {
-    // _getSubreddits('magic the gathering');
-    // reddit.subreddits.search('magic the gathering').first.then((value) => print(value.toString()));
-    super.initState();
-  }
-
-  @override
-  void dispose() {
-    _searchController.dispose();
-    super.dispose();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        backgroundColor: Theme.of(context).colorScheme.inversePrimary,
-        title: const Text('Reddit'),
-      ),
-      body: Padding(
-        padding: const EdgeInsets.all(8.0),
-        child: Column(
-          children: [
-            const SizedBox(
-              height: 20,
-            ),
-            TextField(
-              controller: _searchController,
-              decoration: const InputDecoration(
-                border: OutlineInputBorder(),
-                labelText: 'Тема',
-              ),
-            ),
-            ElevatedButton(
-                onPressed: () {
-                  _getSubreddits(_searchController.text);
-                },
-                child: const Text('Найти саббредиты')),
-            Expanded(
-              child: ListView.builder(
-                itemCount: _subreddits.length,
-                itemBuilder: (context, index) {
-                  if (_subreddits.isEmpty) {
-                    return const Text('Ничего не найдено');
-                  } else {
-                    return GestureDetector(
-                      onTap: () {
-                        Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => SubredditPage(
-                                      subreddit: _subreddits[index],
-                                    )));
-                      },
-                      child: ListTile(
-                        title: Text(_subreddits[index].title),
-                        subtitle: Text(_subreddits[index].displayName),
-                      ),
-                    );
-                  }
-                },
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-}
-
-class SubredditPage extends StatefulWidget {
-  final Subreddit subreddit;
-
-  const SubredditPage({super.key, required this.subreddit});
-
-  @override
-  State<SubredditPage> createState() => _SubredditPageState();
-}
-
-class _SubredditPageState extends State<SubredditPage> {
-  final List<Submission> _posts = [];
-
-  void _getPosts() async {
-    _posts.clear();
-    widget.subreddit.hot(limit: 10).listen((event) {
+    //получаю список сохраненных саббредитов из hive
+    List<SubredditLocalDto> subreddits = await _subredditsLocalDataSource.getAll();
+    String query = subreddits.map((e) => e.displayName).join('+');
+    //подписываюсь на стрим постов из саббредитов, посты получаются по одному
+    //вместо стрима тут должен быть блок, который изменяет состояние при появлении новых постов после обновления экрана пользователем (pull to refresh)
+    if(query.isNotEmpty) {
+      reddit.subreddit(query).newest(limit: 20).listen((event) {
       var data = event as Submission;
-      setState(() {
-        _posts.add(data);
-      //  print(data.title);
-      });
+      //сравниваю пост из стрима с постами из hive
+      //если поста нет в hive, то добавляю его в hive
+      //функция firstWhereOrNull взята из пакета collection
+      RedditPostLocalDto? oldPost = _posts.firstWhereOrNull((oldPost) => oldPost.id == data.id);
+      if (oldPost == null) {
+        RedditPostLocalDto newPost = RedditPostLocalDto(
+          id: data.id!,
+          title: data.title,
+          body: data.selftext,
+          image: urlIsImage(data.url.toString()) ? data.url.toString() : '',
+          likes: data.upvotes,
+          author: data.author,
+          subreddit: data.subreddit.displayName,
+          date: data.createdUtc,
+          url: data.url.toString(),
+        );
+        _localDataSource.add(newPost);
+        //добавляю новый пост в начало списка постов
+        _posts.insert(0, newPost);
+        setState(() {});
+      }
+      setState(() {});
     });
+
+    } else {
+      _noSavedPosts = true;
+      setState(() {});
+    }
+  }
+
+  void _initPostsList() async {
+    //открываю hive и получаю все посты из него
+    _posts = await _localDataSource.getAll();
+    //переворачиваю список, чтобы сверху были новые посты
+    _posts = _posts.reversed.toList();
+    setState(() {});
   }
 
   @override
   initState() {
+    _initPostsList();
     _getPosts();
     super.initState();
   }
@@ -137,23 +88,23 @@ class _SubredditPageState extends State<SubredditPage> {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Theme.of(context).colorScheme.inversePrimary,
-        title: const Text('Reddit'),
+        title: const Text('Лента Reddit'),
       ),
       body: Padding(
         padding: const EdgeInsets.all(8.0),
         child: Column(
           children: [
-            const SizedBox(
-              height: 20,
+            // кнопка перехода на страницу поиска сабреддитов
+            ElevatedButton(
+              onPressed: () async {
+                await Navigator.push(context, MaterialPageRoute(builder: (context) => const SelectSubredditPage()));
+                setState(() {
+                  _getPosts();
+                });
+              },
+              child: const Text('Выбрать сабреддиты'),
             ),
-            Text(
-              widget.subreddit.title,
-              style: Theme.of(context).textTheme.headlineSmall,
-            ),
-            Text(widget.subreddit.displayName),
-            const SizedBox(
-              height: 20,
-            ),
+            const SizedBox(height: 10),
             if (_posts.isNotEmpty) ...[
               Expanded(
                 child: ListView.builder(
@@ -174,12 +125,15 @@ class _SubredditPageState extends State<SubredditPage> {
                         child: ListTile(
                           leading: const Icon(Icons.text_snippet),
                           title: Text(_posts[index].title),
+                          subtitle: Text(_posts[index].subreddit),
                         ),
                       );
                     }
                   },
                 ),
               ),
+              ] else if (_noSavedPosts) ...[
+              const Center(child: Text('Нет сохраненных сабреддитов')),
             ] else ...[
               const Center(child: CircularProgressIndicator())
             ],
@@ -190,8 +144,243 @@ class _SubredditPageState extends State<SubredditPage> {
   }
 }
 
+class SelectSubredditPage extends StatefulWidget {
+  const SelectSubredditPage({super.key});
+
+  @override
+  State<SelectSubredditPage> createState() => _SelectSubredditPageState();
+}
+
+class _SelectSubredditPageState extends State<SelectSubredditPage> {
+  final List<SubredditLocalDto> _subreddits = [];
+  final List<SubredditLocalDto> _savedSubreddits = [];
+  final TextEditingController _searchController = TextEditingController();
+  final SubredditsLocalDataSource _localDataSource = SubredditsLocalDataSource();
+  bool loading = false;
+
+  void _getSubreddits(String query) async {
+    setState(() {
+      loading = true;
+    });
+    if (query.isEmpty) return;
+    _subreddits.clear();
+    //deviceID уникальный ключ на устройстве. Создается при первом запуске приложения. Сохраняется в shared_preferences
+    var deviceID = UserPreferences().getDeviceId();
+    const userAgent = 'hypester by carrot';
+    final reddit = await Reddit.createUntrustedReadOnlyInstance(userAgent: userAgent, clientId: "LZAPVGNW0N1P_PLTg9argA", deviceId: deviceID);
+
+    //reddit.subreddits.search(query, limit: 3).listen((event) {
+    reddit.subreddits.search(query).listen((event) {
+      var data = event as Subreddit;
+      SubredditLocalDto? oldSubreddit = _savedSubreddits.firstWhereOrNull((oldSubreddit) => oldSubreddit.displayName == data.displayName);
+      if (oldSubreddit == null) {
+        SubredditLocalDto newSubreddit = SubredditLocalDto(
+          displayName: data.displayName,
+          icon: data.iconImage.toString(),
+          title: data.title,
+        );
+        setState(() {
+          loading = false;
+          _subreddits.add(newSubreddit);
+        });
+      }
+    });
+  }
+
+  void _addSubreddit(SubredditLocalDto subreddit) {
+    //проверяю, есть ли сабреддит в hive
+    SubredditLocalDto? oldSubreddit = _savedSubreddits.firstWhereOrNull((oldSubreddit) => oldSubreddit.displayName == subreddit.displayName);
+    if (oldSubreddit == null) {
+      SubredditLocalDto newSubreddit = SubredditLocalDto(
+        displayName: subreddit.displayName,
+        icon: subreddit.icon,
+        title: subreddit.title,
+      );
+      //сохраняю выбранный сабреддит в hive, если его нет там
+      _localDataSource.add(newSubreddit);
+      _savedSubreddits.add(newSubreddit);
+
+      setState(() {});
+    }
+  }
+
+  void deleteSubreddit(SubredditLocalDto subreddit) {
+    _localDataSource.delete(subreddit);
+    _savedSubreddits.remove(subreddit);
+    setState(() {});
+  }
+
+  void initSubredditsList() async {
+    _savedSubreddits.addAll(await _localDataSource.getAll());
+    setState(() {});
+  }
+
+  @override
+  void initState() {
+    initSubredditsList();
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    _searchController.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        backgroundColor: Theme.of(context).colorScheme.inversePrimary,
+        title: const Text('Добавление сабреддитов'),
+      ),
+      body: Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: Column(
+          children: [
+            Expanded(
+              flex: 3,
+              child: Column(
+                children: [
+                  const SizedBox(
+                    height: 20,
+                  ),
+                  TextField(
+                    controller: _searchController,
+                    decoration: const InputDecoration(
+                      border: OutlineInputBorder(),
+                      labelText: 'Тема',
+                    ),
+                  ),
+                  ElevatedButton(
+                      onPressed: () {
+                        if (_searchController.text.isNotEmpty) {
+                          _getSubreddits(_searchController.text);
+                        }
+                      },
+                      child: const Text('Найти саббредиты')),
+                  const SizedBox(
+                    height: 8,
+                  ),
+                  if (_savedSubreddits.isNotEmpty) ...[
+                    Expanded(
+                      child: ListView.builder(
+                        shrinkWrap: true,
+                        itemCount: _savedSubreddits.length,
+                        itemBuilder: (context, index) {
+                          if (_savedSubreddits.isEmpty) {
+                            return const Text('Ничего не найдено');
+                          } else {
+                            return Column(
+                              children: [
+                                Container(
+                                  decoration: BoxDecoration(
+                                    border: Border.all(
+                                      color: Colors.blue[100]!,
+                                    ),
+                                    borderRadius: BorderRadius.circular(10),
+                                    color: Colors.blue[100],
+                                  ),
+                                  child: ListTile(
+                                    title: Row(
+                                      children: [
+                                        Expanded(
+                                          flex: 10,
+                                          child: Text(
+                                            _savedSubreddits[index].title,
+                                          ),
+                                        ),
+                                        Expanded(
+                                          flex: 1,
+                                          child: IconButton(
+                                              onPressed: () {
+                                                deleteSubreddit(_savedSubreddits[index]);
+                                                setState(() {});
+                                              },
+                                              icon: const Icon(Icons.delete)),
+                                        )
+                                      ],
+                                    ),
+                                    subtitle: Text(_savedSubreddits[index].displayName),
+                                  ),
+                                ),
+                                const SizedBox(
+                                  height: 8,
+                                )
+                              ],
+                            );
+                          }
+                        },
+                      ),
+                    ),
+                  ],
+                ],
+              ),
+            ),
+            const SizedBox(
+              height: 8,
+            ),
+            //add delimeter
+
+            Expanded(
+              flex: 5,
+              child: Column(
+                children: [
+                  if (!loading) ...[
+                    const Divider(
+                      height: 20,
+                      thickness: 2,
+                      indent: 20,
+                      endIndent: 20,
+                    ),
+                    Expanded(
+                      child: ListView.builder(
+                        itemCount: _subreddits.length,
+                        itemBuilder: (context, index) {
+                          if (_subreddits.isEmpty) {
+                            return const Text('Ничего не найдено');
+                          } else {
+                            return ListTile(
+                              title: Row(
+                                children: [
+                                  Expanded(
+                                    flex: 10,
+                                    child: Text(
+                                      _subreddits[index].title,
+                                    ),
+                                  ),
+                                  Expanded(
+                                    flex: 1,
+                                    child: IconButton(
+                                        onPressed: () {
+                                          _addSubreddit(_subreddits[index]);
+                                        },
+                                        icon: const Icon(Icons.add_box_rounded)),
+                                  )
+                                ],
+                              ),
+                              subtitle: Text(_subreddits[index].displayName),
+                            );
+                          }
+                        },
+                      ),
+                    ),
+                    // Spacer(),
+                  ] else ...[
+                    const Center(child: CircularProgressIndicator())
+                  ],
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
 class PostPage extends StatefulWidget {
-  final Submission post;
+  final RedditPostLocalDto post;
 
   const PostPage({super.key, required this.post});
 
@@ -200,16 +389,8 @@ class PostPage extends StatefulWidget {
 }
 
 class _PostPageState extends State<PostPage> {
-  // void _getComments() async {
-  //   widget.post.comments.take(10).listen((event) {
-  //     var data = event as Comment;
-  //     print(data.body);
-  //   });
-  // }
-
   @override
   Widget build(BuildContext context) {
-   // print(widget.post.comments.toString());
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Theme.of(context).colorScheme.inversePrimary,
@@ -231,16 +412,16 @@ class _PostPageState extends State<PostPage> {
             Expanded(
               child: ListView(
                 children: [
-                  Text(widget.post.selftext!),
+                  Text(widget.post.body!),
                 ],
               ),
             ),
 
-            if (urlIsImage(widget.post.url.toString())) ...[
+            if (urlIsImage(widget.post.image.toString())) ...[
               const SizedBox(
                 height: 10,
               ),
-              Image.network(widget.post.url.toString()),
+              Image.network(widget.post.image.toString()),
               const Spacer()
             ],
             // Text(widget.post.comments.toString()),
@@ -252,6 +433,5 @@ class _PostPageState extends State<PostPage> {
 }
 
 bool urlIsImage(String url) {
-  //print(url);
   return url.contains('.jpg') || url.contains('.png') || url.contains('.jpeg') || url.contains('.gif');
 }
