@@ -96,8 +96,11 @@ class _RedditPageState extends State<RedditPage> {
           children: [
             // кнопка перехода на страницу поиска сабреддитов
             ElevatedButton(
-              onPressed: () {
-                Navigator.push(context, MaterialPageRoute(builder: (context) => const SelectSubredditPage()));
+              onPressed: () async {
+                await Navigator.push(context, MaterialPageRoute(builder: (context) => const SelectSubredditPage()));
+                setState(() {
+                  _getPosts();
+                });
               },
               child: const Text('Выбрать сабреддиты'),
             ),
