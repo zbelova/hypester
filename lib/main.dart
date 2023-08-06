@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:hive/hive.dart';
 import 'package:path_provider/path_provider.dart';
 import 'data/user_preferences.dart';
-import 'dev_screens/layout_dev.dart';
-import 'dev_screens/model_arch_dev.dart';
+import 'dev_screens/details_screen.dart';
+import 'dev_screens/instagram_dev.dart';
 import 'dev_screens/reddit_dev.dart';
 import 'dev_screens/telegram_dev.dart';
 import 'dev_screens/twitter_dev.dart';
@@ -40,67 +40,110 @@ class Hypester extends StatelessWidget {
   }
 }
 
-class HomePage extends StatelessWidget {
+class HomePage extends StatefulWidget {
+  @override
+  _HomePageState createState() => _HomePageState();
+}
+
+class _HomePageState extends State<HomePage>
+    with SingleTickerProviderStateMixin {
+  final List<Tab> _tabList = [
+    const Tab(
+      child: Text("Newsline",
+          style: TextStyle(
+              fontSize: 17,
+              fontWeight: FontWeight.w400,
+              fontStyle: FontStyle.normal)),
+    ),
+    const Tab(
+      child: Text("Reddit",
+          style: TextStyle(
+              fontSize: 17,
+              fontWeight: FontWeight.w400,
+              fontStyle: FontStyle.normal)),
+    ),
+    const Tab(
+      child: Text("Twitter",
+          style: TextStyle(
+              fontSize: 17,
+              fontWeight: FontWeight.w400,
+              fontStyle: FontStyle.normal)),
+    ),
+    const Tab(
+      child: Text("Telegram",
+          style: TextStyle(
+              fontSize: 17,
+              fontWeight: FontWeight.w400,
+              fontStyle: FontStyle.normal)),
+    ),
+    const Tab(
+      child: Text("Instagram",
+          style: TextStyle(
+              fontSize: 17,
+              fontWeight: FontWeight.w400,
+              fontStyle: FontStyle.normal)),
+    ),
+  ];
+  late TabController _tabController;
+
+  @override
+  void initState() {
+    super.initState();
+    _tabController = TabController(vsync: this, length: _tabList.length);
+  }
+
+  @override
+  void dispose() {
+    _tabController.dispose();
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
-    return Center(
-        child: Scaffold(
+    return Scaffold(
       appBar: AppBar(
-        backgroundColor: Theme.of(context).colorScheme.inversePrimary,
-        title: const Text('Hypester Home Page'),
-      ),
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            ElevatedButton(
-              onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => const LayoutPage()),
-                );
-              },
-              child: const Text('Верстка'),
-            ),
-            ElevatedButton(
-              onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => const TwitterPage()),
-                );
-              },
-              child: const Text('Twitter'),
-            ),
-            ElevatedButton(
-              onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => const RedditPage()),
-                );
-              },
-              child: const Text('Reddit'),
-            ),
-            ElevatedButton(
-              onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => const TelegramPage()),
-                );
-              },
-              child: const Text('Telegram'),
-            ),
-            ElevatedButton(
-              onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => const ModelArchPage()),
-                );
-              },
-              child: const Text('Model Arch'),
-            ),
-          ],
+        toolbarHeight: 110,
+        leading: IconButton(
+            onPressed: () {},
+            icon: const Icon(Icons.menu, color: Colors.black)),
+        backgroundColor: const Color(0xFFFAFAFA),
+        title: const Text('Hypester',
+            style: TextStyle(
+                fontSize: 30,
+                fontWeight: FontWeight.w600,
+                fontFamily: 'Caveat-Variable')),
+        bottom: PreferredSize(
+          preferredSize: const Size.fromHeight(30),
+          child: TabBar(
+            indicatorColor: Colors.black,
+            isScrollable: true,
+            controller: _tabController,
+            tabs: _tabList,
+          ),
         ),
       ),
-    ));
+      body: TabBarView(
+        controller: _tabController,
+        children: const [
+          DetailsScreen(),
+          Padding(
+            padding: EdgeInsets.all(16),
+            child: RedditPage(),
+          ),
+          Padding(
+            padding: EdgeInsets.all(16),
+            child: TwitterPage(),
+          ),
+          Padding(
+            padding: EdgeInsets.all(16),
+            child: TelegramPage(),
+          ),
+          Padding(
+            padding: EdgeInsets.all(16),
+            child: InstagramPage(),
+          ),
+        ],
+      ),
+    );
   }
 }
