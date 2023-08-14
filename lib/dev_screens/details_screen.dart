@@ -1,49 +1,62 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
-class DetailsScreen extends StatelessWidget {
-  const DetailsScreen({
-    Key? key,
-  }) : super(key: key);
+class DetailsScreen extends StatefulWidget {
+  const DetailsScreen({Key? key}) : super(key: key);
+
+  @override
+  State<DetailsScreen> createState() => _DetailsScreenState();
+}
+
+class _DetailsScreenState extends State<DetailsScreen> {
+  late int _selectedIndex = 0;
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: EdgeInsets.all(16),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          const SizedBox(height: 5),
-          const Text('Мои подписки',
-              style: TextStyle(
-                  fontSize: 17,
-                  fontWeight: FontWeight.w400,
-                  fontStyle: FontStyle.italic)),
-          const SizedBox(height: 20),
-          TextFormField(
-            decoration: InputDecoration(
-              hintText: 'Поиск',
-              fillColor: Colors.grey.shade200,
-              filled: true,
-              prefixIcon: const Icon(
-                Icons.search,
-                color: Colors.grey,
-              ),
-              suffixIcon: const RotatedBox(
-                quarterTurns: 1,
-                child: Icon(
-                  Icons.tune,
-                  color: Colors.grey,
-                ),
-              ),
-              border: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(20.0),
-                borderSide: BorderSide.none,
-              ),
+    return Scaffold(
+      body: const Center(),
+      bottomNavigationBar: BottomNavigationBar(
+          items: const <BottomNavigationBarItem>[
+            BottomNavigationBarItem(icon: Icon(Icons.search), label: 'Поиск'),
+            BottomNavigationBarItem(
+              icon: Icon(Icons.star),
+              label: 'Избранное',
             ),
-          )
-        ],
-      ),
+          ],
+          currentIndex: _selectedIndex,
+          selectedItemColor: Colors.amber[800],
+          onTap: (index) {
+            switch (index) {
+              case 0:
+                if (_selectedIndex == 0) {
+                  showModalBottomSheet(
+                      context: context,
+                      builder: (BuildContext context) {
+                        return TextFormField(
+                          decoration: InputDecoration(
+                            hintText: 'Поиск',
+                            fillColor: Colors.grey.shade200,
+                            filled: true,
+                            prefixIcon: const Icon(
+                              Icons.search,
+                              color: Colors.grey,
+                            ),
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(20.0),
+                              borderSide: BorderSide.none,
+                            ),
+                          ),
+                        );
+                      });
+                }
+              case 1:
+                showFeatured(context);
+            }
+            setState(() {
+              _selectedIndex = index;
+            });
+          }),
     );
   }
+
+  void showFeatured(BuildContext context) {}
 }
