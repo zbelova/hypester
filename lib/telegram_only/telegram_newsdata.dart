@@ -9,8 +9,12 @@ class News {
 
   Future<void> getNews() async{
 
-    var response =  await get('http://newsapi.org/v2/top-headlines?country=us&apiKey=52489cf346804f2eb180b8e34528aa26' as Uri);
+
+    var response =  await get (Uri.parse('http://newsapi.org/v2/top-headlines?country=us&apiKey=d25659b7288d44b0b3f8763c0042fe52'));
+
+   
     var jsonData = jsonDecode(response.body);
+
 
     if(jsonData['status'] == 'ok') {
 
