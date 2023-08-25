@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:hypester/dev_screens/feed_screen.dart';
 import 'package:hypester/dev_screens/reddit_dev.dart';
 import 'package:hypester/dev_screens/telegram_dev.dart';
 import 'package:hypester/dev_screens/twitter_dev.dart';
+import '../data/feed_model.dart';
 import 'instagram_dev.dart';
 import 'newsfeed.dart';
 
@@ -89,10 +91,10 @@ class _HomePageState extends State<HomePage>
       ),
       body: TabBarView(
         controller: _tabController,
-        children: const [
+        children: [
           Padding(
             padding: EdgeInsets.all(16),
-            child: Newsfeed(),
+            child: FeedScreen(feed: Feed(id: 1, title : "All posts")),
           ),
           Padding(
             padding: EdgeInsets.all(16),
