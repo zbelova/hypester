@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:hypester/dev_screens/reddit_dev.dart';
 import 'package:hypester/dev_screens/telegram_dev.dart';
 import 'package:hypester/dev_screens/twitter_dev.dart';
-import 'details_screen.dart';
 import 'instagram_dev.dart';
+import 'newsfeed.dart';
 
 class HomePage extends StatefulWidget {
   @override
@@ -14,7 +14,7 @@ class _HomePageState extends State<HomePage>
     with SingleTickerProviderStateMixin {
   final List<Tab> _tabList = [
     const Tab(
-      child: Text("Newsline",
+      child: Text("Newsfeed",
           style: TextStyle(
               fontSize: 17,
               fontWeight: FontWeight.w400,
@@ -90,7 +90,10 @@ class _HomePageState extends State<HomePage>
       body: TabBarView(
         controller: _tabController,
         children: const [
-          DetailsScreen(),
+          Padding(
+            padding: EdgeInsets.all(16),
+            child: Newsfeed(),
+          ),
           Padding(
             padding: EdgeInsets.all(16),
             child: RedditPage(),

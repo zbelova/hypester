@@ -1,19 +1,18 @@
 import 'package:flutter/material.dart';
 
-class DetailsScreen extends StatefulWidget {
-  const DetailsScreen({Key? key}) : super(key: key);
+class NavigationBar1 extends StatefulWidget {
+  const NavigationBar1({Key? key}) : super(key: key);
 
   @override
-  State<DetailsScreen> createState() => _DetailsScreenState();
+  State<NavigationBar1> createState() => _NavigationBar1State();
 }
 
-class _DetailsScreenState extends State<DetailsScreen> {
+class _NavigationBar1State extends State<NavigationBar1> {
   late int _selectedIndex = 0;
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: const Center(),
       bottomNavigationBar: BottomNavigationBar(
           items: const <BottomNavigationBarItem>[
             BottomNavigationBarItem(icon: Icon(Icons.search), label: 'Поиск'),
