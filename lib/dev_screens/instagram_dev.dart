@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 
-class TelegramPage extends StatefulWidget {
-  const TelegramPage({super.key});
+class InstagramPage extends StatefulWidget {
+  const InstagramPage({super.key});
 
   @override
-  State<TelegramPage> createState() => _TelegramPageState();
+  State<InstagramPage> createState() => _InstagramPageState();
 }
 
-class _TelegramPageState extends State<TelegramPage> {
+class _InstagramPageState extends State<InstagramPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -23,10 +23,10 @@ class _TelegramPageState extends State<TelegramPage> {
                       await Navigator.push(
                           context,
                           MaterialPageRoute(
-                              builder: (context) => const SelectChannelPage()));
+                              builder: (context) => const SelectTwitPage()));
                       setState(() {});
                     },
-                    child: const Text('Выбрать канал',
+                    child: const Text('Выбрать хештег',
                         style: TextStyle(
                             color: Colors.black54,
                             fontSize: 16,
@@ -40,19 +40,19 @@ class _TelegramPageState extends State<TelegramPage> {
   }
 }
 
-class SelectChannelPage extends StatefulWidget {
-  const SelectChannelPage({super.key});
+class SelectTwitPage extends StatefulWidget {
+  const SelectTwitPage({super.key});
 
   @override
-  State<SelectChannelPage> createState() => _SelectChannelPageState();
+  State<SelectTwitPage> createState() => _SelectTwitPageState();
 }
 
-class _SelectChannelPageState extends State<SelectChannelPage> {
+class _SelectTwitPageState extends State<SelectTwitPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Добавление канала',
+        title: const Text('Добавление хештегов',
             style: TextStyle(
                 fontSize: 17,
                 fontWeight: FontWeight.w400,
@@ -89,7 +89,7 @@ class _SelectChannelPageState extends State<SelectChannelPage> {
                       style: ElevatedButton.styleFrom(
                           backgroundColor: Colors.grey.shade50),
                       onPressed: () {},
-                      child: const Text('Найти канал',
+                      child: const Text('Найти хештег',
                           style: TextStyle(
                               color: Colors.black54,
                               fontSize: 17,
