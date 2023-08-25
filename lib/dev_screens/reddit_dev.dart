@@ -198,6 +198,7 @@ class _SelectSubredditPageState extends State<SelectSubredditPage> {
 
   void _getSubreddits(String query) async {
     setState(() {
+      print('1');
       loading = true;
     });
     if (query.isEmpty) return;
@@ -207,7 +208,7 @@ class _SelectSubredditPageState extends State<SelectSubredditPage> {
     const userAgent = 'hypester by carrot';
     final reddit = await Reddit.createUntrustedReadOnlyInstance(
         userAgent: userAgent,
-        clientId: "LZAPVGNW0N1P_PLTg9argA",
+        clientId: redditApiKey,
         deviceId: deviceID);
 
     //reddit.subreddits.search(query, limit: 3).listen((event) {
@@ -292,6 +293,7 @@ class _SelectSubredditPageState extends State<SelectSubredditPage> {
                     height: 20,
                   ),
                   TextFormField(
+                    controller: _searchController,
                     decoration: InputDecoration(
                       hintText: 'Тема',
                       fillColor: Colors.grey.shade200,
