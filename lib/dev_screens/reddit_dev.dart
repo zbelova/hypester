@@ -1,6 +1,7 @@
 import 'package:collection/collection.dart';
 import 'package:draw/draw.dart';
 import 'package:flutter/material.dart';
+import 'package:hypester/api_keys.dart';
 import 'package:hypester/data/user_preferences.dart';
 import '../hive/post_local_dto.dart';
 import '../hive/posts_local_data_source.dart';
@@ -28,11 +29,27 @@ class _RedditPageState extends State<RedditPage> {
     const userAgent = 'hypester by carrot';
     //здесь иногда возникает ошибка, связанная с тем, что reddit не дает доступ к api. Причина неизвестна
     //надо ловить эксепшн
-    final reddit = await Reddit.createUntrustedReadOnlyInstance(
-        userAgent: userAgent,
-        clientId: "LZAPVGNW0N1P_PLTg9argA",
-        deviceId: deviceID);
+    final reddit = await Reddit.createUntrustedReadOnlyInstance(userAgent: userAgent, clientId: redditApiKey, deviceId: deviceID);
 
+    /*
+    Этот код понадобится, если придется подключаться по другому ключу reddit api. В настройках на реддите надо указать redirect http://localhost:8080
+    final reddit = Reddit.createInstalledFlowInstance(userAgent: userAgent,
+                                                        clientId: redditApiKey,);
+
+      // Build the URL used for authentication. See `WebAuthenticator`
+      // documentation for parameters.
+      final auth_url = reddit.auth.url(['*'], 'hypester by carrot');
+
+      // ...
+      // Complete authentication at `auth_url` in the browser and retrieve
+      // the `code` query parameter from the redirect URL.
+      // ...
+
+      // Assuming the `code` query parameter is stored in a variable
+      // `auth_code`, we pass it to the `authorize` method in the
+      // `WebAuthenticator`.
+      await reddit.auth.authorize(auth_code);
+     */
     //получаю список сохраненных саббредитов из hive
     List<SubredditLocalDto> subreddits =
         await _subredditsLocalDataSource.getAll();
@@ -45,8 +62,8 @@ class _RedditPageState extends State<RedditPage> {
         //сравниваю пост из стрима с постами из hive
         //если поста нет в hive, то добавляю его в hive
         //функция firstWhereOrNull взята из пакета collection
-        RedditPostLocalDto? oldPost =
-            _posts.firstWhereOrNull((oldPost) => oldPost.id == data.id);
+
+        RedditPostLocalDto? oldPost = _posts.firstWhereOrNull((oldPost) => oldPost.id == data.id);
         if (oldPost == null) {
           RedditPostLocalDto newPost = RedditPostLocalDto(
             id: data.id!,
