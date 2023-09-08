@@ -113,6 +113,7 @@ class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin
           Padding(
             padding: EdgeInsets.all(16),
             child: FeedScreen(feed: Feed(id: 2, title: "All posts")),
+            //child: RedditPage(),
           ),
           Padding(
             padding: EdgeInsets.all(16),

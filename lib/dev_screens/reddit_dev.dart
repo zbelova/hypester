@@ -17,8 +17,7 @@ class RedditPage extends StatefulWidget {
 
 class _RedditPageState extends State<RedditPage> {
   final PostsLocalDataSource _localDataSource = PostsLocalDataSource();
-  final SubredditsLocalDataSource _subredditsLocalDataSource =
-      SubredditsLocalDataSource();
+  final SubredditsLocalDataSource _subredditsLocalDataSource = SubredditsLocalDataSource();
   List<RedditPostLocalDto> _posts = [];
 
   bool _noSavedPosts = false;
@@ -51,13 +50,16 @@ class _RedditPageState extends State<RedditPage> {
       await reddit.auth.authorize(auth_code);
      */
     //получаю список сохраненных саббредитов из hive
-    List<SubredditLocalDto> subreddits =
-        await _subredditsLocalDataSource.getAll();
+    List<SubredditLocalDto> subreddits = await _subredditsLocalDataSource.getAll();
     String query = subreddits.map((e) => e.displayName).join('+');
+    query = 'test';
     //подписываюсь на стрим постов из саббредитов, посты получаются по одному
     //вместо стрима тут должен быть блок, который изменяет состояние при появлении новых постов после обновления экрана пользователем (pull to refresh)
     if (query.isNotEmpty) {
-      reddit.subreddit(query).newest(limit: 20).listen((event) {
+      //reddit.subreddit(query).newest(limit: 20).listen((event) {
+
+      //этот метод ищет посты по всем сабреддитам по ключевому слову
+      reddit.subreddit('all').search('bitcoin').listen((event) {
         var data = event as Submission;
         //сравниваю пост из стрима с постами из hive
         //если поста нет в hive, то добавляю его в hive
@@ -113,23 +115,14 @@ class _RedditPageState extends State<RedditPage> {
           children: [
             // кнопка перехода на страницу поиска сабреддитов
             ElevatedButton(
-              style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.grey.shade50),
+              style: ElevatedButton.styleFrom(backgroundColor: Colors.grey.shade50),
               onPressed: () async {
-                await Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) => const SelectSubredditPage()));
+                await Navigator.push(context, MaterialPageRoute(builder: (context) => const SelectSubredditPage()));
                 setState(() {
                   _getPosts();
                 });
               },
-              child: const Text('Выбрать сабреддиты',
-                  style: TextStyle(
-                      color: Colors.black54,
-                      fontSize: 16,
-                      fontWeight: FontWeight.w400,
-                      fontStyle: FontStyle.normal)),
+              child: const Text('Выбрать сабреддиты', style: TextStyle(color: Colors.black54, fontSize: 16, fontWeight: FontWeight.w400, fontStyle: FontStyle.normal)),
             ),
             const SizedBox(height: 10),
             if (_posts.isNotEmpty) ...[
@@ -138,11 +131,7 @@ class _RedditPageState extends State<RedditPage> {
                   itemCount: _posts.length,
                   itemBuilder: (context, index) {
                     if (_posts.isEmpty) {
-                      return const Text('Ничего не найдено',
-                          style: TextStyle(
-                              fontSize: 13,
-                              fontWeight: FontWeight.w200,
-                              fontStyle: FontStyle.normal));
+                      return const Text('Ничего не найдено', style: TextStyle(fontSize: 13, fontWeight: FontWeight.w200, fontStyle: FontStyle.normal));
                     } else {
                       return GestureDetector(
                         onTap: () {
@@ -164,13 +153,7 @@ class _RedditPageState extends State<RedditPage> {
                 ),
               ),
             ] else if (_noSavedPosts) ...[
-              const Center(
-                  child: Text('Нет сохраненных сабреддитов',
-                      style: TextStyle(
-                          color: Colors.black87,
-                          fontSize: 13,
-                          fontWeight: FontWeight.w500,
-                          fontStyle: FontStyle.normal))),
+              const Center(child: Text('Нет сохраненных сабреддитов', style: TextStyle(color: Colors.black87, fontSize: 13, fontWeight: FontWeight.w500, fontStyle: FontStyle.normal))),
             ] else ...[
               const Center(child: CircularProgressIndicator())
             ],
@@ -192,8 +175,7 @@ class _SelectSubredditPageState extends State<SelectSubredditPage> {
   final List<SubredditLocalDto> _subreddits = [];
   final List<SubredditLocalDto> _savedSubreddits = [];
   final TextEditingController _searchController = TextEditingController();
-  final SubredditsLocalDataSource _localDataSource =
-      SubredditsLocalDataSource();
+  final SubredditsLocalDataSource _localDataSource = SubredditsLocalDataSource();
   bool loading = false;
 
   void _getSubreddits(String query) async {
@@ -206,16 +188,12 @@ class _SelectSubredditPageState extends State<SelectSubredditPage> {
     //deviceID уникальный ключ на устройстве. Создается при первом запуске приложения. Сохраняется в shared_preferences
     var deviceID = UserPreferences().getDeviceId();
     const userAgent = 'hypester by carrot';
-    final reddit = await Reddit.createUntrustedReadOnlyInstance(
-        userAgent: userAgent,
-        clientId: redditApiKey,
-        deviceId: deviceID);
+    final reddit = await Reddit.createUntrustedReadOnlyInstance(userAgent: userAgent, clientId: redditApiKey, deviceId: deviceID);
 
     //reddit.subreddits.search(query, limit: 3).listen((event) {
     reddit.subreddits.search(query).listen((event) {
       var data = event as Subreddit;
-      SubredditLocalDto? oldSubreddit = _savedSubreddits.firstWhereOrNull(
-          (oldSubreddit) => oldSubreddit.displayName == data.displayName);
+      SubredditLocalDto? oldSubreddit = _savedSubreddits.firstWhereOrNull((oldSubreddit) => oldSubreddit.displayName == data.displayName);
       if (oldSubreddit == null) {
         SubredditLocalDto newSubreddit = SubredditLocalDto(
           displayName: data.displayName,
@@ -232,8 +210,7 @@ class _SelectSubredditPageState extends State<SelectSubredditPage> {
 
   void _addSubreddit(SubredditLocalDto subreddit) {
     //проверяю, есть ли сабреддит в hive
-    SubredditLocalDto? oldSubreddit = _savedSubreddits.firstWhereOrNull(
-        (oldSubreddit) => oldSubreddit.displayName == subreddit.displayName);
+    SubredditLocalDto? oldSubreddit = _savedSubreddits.firstWhereOrNull((oldSubreddit) => oldSubreddit.displayName == subreddit.displayName);
     if (oldSubreddit == null) {
       SubredditLocalDto newSubreddit = SubredditLocalDto(
         displayName: subreddit.displayName,
@@ -275,11 +252,7 @@ class _SelectSubredditPageState extends State<SelectSubredditPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Добавление сабреддитов',
-            style: TextStyle(
-                fontSize: 17,
-                fontWeight: FontWeight.w400,
-                fontStyle: FontStyle.normal)),
+        title: const Text('Добавление сабреддитов', style: TextStyle(fontSize: 17, fontWeight: FontWeight.w400, fontStyle: FontStyle.normal)),
       ),
       body: Padding(
         padding: const EdgeInsets.all(8.0),
@@ -310,19 +283,13 @@ class _SelectSubredditPageState extends State<SelectSubredditPage> {
                   ),
                   const SizedBox(height: 12),
                   ElevatedButton(
-                      style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.grey.shade50),
+                      style: ElevatedButton.styleFrom(backgroundColor: Colors.grey.shade50),
                       onPressed: () {
                         if (_searchController.text.isNotEmpty) {
                           _getSubreddits(_searchController.text);
                         }
                       },
-                      child: const Text('Найти саббредиты',
-                          style: TextStyle(
-                              color: Colors.black54,
-                              fontSize: 17,
-                              fontWeight: FontWeight.w400,
-                              fontStyle: FontStyle.italic))),
+                      child: const Text('Найти саббредиты', style: TextStyle(color: Colors.black54, fontSize: 17, fontWeight: FontWeight.w400, fontStyle: FontStyle.italic))),
                   const SizedBox(
                     height: 8,
                   ),
@@ -358,16 +325,14 @@ class _SelectSubredditPageState extends State<SelectSubredditPage> {
                                           flex: 1,
                                           child: IconButton(
                                               onPressed: () {
-                                                deleteSubreddit(
-                                                    _savedSubreddits[index]);
+                                                deleteSubreddit(_savedSubreddits[index]);
                                                 setState(() {});
                                               },
                                               icon: const Icon(Icons.delete)),
                                         )
                                       ],
                                     ),
-                                    subtitle: Text(
-                                        _savedSubreddits[index].displayName),
+                                    subtitle: Text(_savedSubreddits[index].displayName),
                                   ),
                                 ),
                                 const SizedBox(
@@ -421,8 +386,7 @@ class _SelectSubredditPageState extends State<SelectSubredditPage> {
                                         onPressed: () {
                                           _addSubreddit(_subreddits[index]);
                                         },
-                                        icon:
-                                            const Icon(Icons.add_box_rounded)),
+                                        icon: const Icon(Icons.add_box_rounded)),
                                   )
                                 ],
                               ),
@@ -500,8 +464,5 @@ class _PostPageState extends State<PostPage> {
 }
 
 bool urlIsImage(String url) {
-  return url.contains('.jpg') ||
-      url.contains('.png') ||
-      url.contains('.jpeg') ||
-      url.contains('.gif');
+  return url.contains('.jpg') || url.contains('.png') || url.contains('.jpeg') || url.contains('.gif');
 }
