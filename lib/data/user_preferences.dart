@@ -29,7 +29,6 @@ class UserPreferences {
   String? getDeviceId() {
     setDeviceId();
     var key= _preferences?.getString('api_key');
-    print(key);
     return key;
   }
 
@@ -37,9 +36,31 @@ class UserPreferences {
     // Генерация уникального ключа
     var uuid = Uuid();
     return 'hypester_${uuid.v4()}';
+  }
 
-    // В этом примере мы просто используем текущую дату и время в качестве ключа
-    // DateTime now = DateTime.now();
-    // return now.toString();
+  List<String> getKeywords() {
+    //return _preferences?.getStringList('keywords') ?? [];
+    //TODO убрать тестовые данные
+    return ['Game of Thrones', 'Apple'];
+  }
+
+  Future<void> setKeywords(List<String> keywords) async {
+    await _preferences?.setStringList('keywords', keywords);
+  }
+
+  int getRedditLikesFilter() {
+    return _preferences?.getInt('reddit_likes_filter') ?? 0;
+  }
+
+  Future<void> setRedditLikesFilter(int filter) async {
+    await _preferences?.setInt('reddit_likes_filter', filter);
+  }
+
+  int getRedditViewsFilter() {
+    return _preferences?.getInt('reddit_views_filter') ?? 0;
+  }
+
+  Future<void> setRedditViewsFilter(int filter) async {
+    await _preferences?.setInt('reddit_views_filter', filter);
   }
 }

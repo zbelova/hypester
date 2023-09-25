@@ -3,10 +3,10 @@ import 'package:draw/draw.dart';
 import 'package:flutter/material.dart';
 import 'package:hypester/api_keys.dart';
 import 'package:hypester/data/user_preferences.dart';
-import '../hive/post_local_dto.dart';
-import '../hive/posts_local_data_source.dart';
-import '../hive/subreddit_local_dto.dart';
-import '../hive/subreddits_local_data_source.dart';
+import '../data/hive/post_local_dto.dart';
+import '../data/hive/posts_local_data_source.dart';
+import '../data/hive/subreddit_local_dto.dart';
+import '../data/hive/subreddits_local_data_source.dart';
 
 class RedditPage extends StatefulWidget {
   const RedditPage({super.key});
@@ -59,6 +59,7 @@ class _RedditPageState extends State<RedditPage> {
       //reddit.subreddit(query).newest(limit: 20).listen((event) {
 
       //этот метод ищет посты по всем сабреддитам по ключевому слову
+      //api https://www.reddit.com/dev/api#GET_search
       reddit.subreddit('all').search('bitcoin').listen((event) {
         var data = event as Submission;
         //сравниваю пост из стрима с постами из hive
