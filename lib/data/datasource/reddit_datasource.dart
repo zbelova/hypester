@@ -75,29 +75,38 @@ class RedditDataSource extends DataSource {
 
   @override
   Future<List<Post>> getByKeyword(String keyword) async {
+    List<Post> posts = [];
+
 //достаем фильтры
     final int _likesFilter = UserPreferences().getRedditLikesFilter();
     final int _viewsFilter = UserPreferences().getRedditViewsFilter();
 //.. и дальше остальные фильтры, которые относятся к этому источнику
+    var deviceID = UserPreferences().getDeviceId();
+    const userAgent = 'hypester by carrot';
+    //здесь иногда возникает ошибка, связанная с тем, что reddit не дает доступ к api. Причина неизвестна
+    //надо ловить эксепшн
+    final reddit = await Reddit.createUntrustedReadOnlyInstance(userAgent: userAgent, clientId: redditApiKey, deviceId: deviceID);
 
-//вызов апи методов этого источника, которые достают посты по ключевому слову с примененим фильтров
+    reddit.subreddit('all').search(keyword).listen((event) {
+      var data = event as Submission;
 
-//возвращаем список постов для конкретной ленты по ее ключевому слову в таком формате
-    return [
-      Post(
-        title: 'title',
-        body: 'body',
-        id: 'id',
-        imageUrl: 'imageUrl',
-        date: DateTime.now(),
-        sourceName: 'sourceName',
-        views: 0,
-        linkToOriginal: 'linkToOriginal',
-        likes: 0,
-        channel: 'channel',
-        relinkUrl: 'relinkUrl',
-        videoUrl: 'videoUrl',
-      )
-    ];
+      posts.add(
+        Post(
+          title: data.title,
+          body: data.selftext,
+          id: data.id!,
+          imageUrl: urlIsImage(data.url.toString()) ? data.url.toString() : '',
+          date: data.createdUtc,
+          sourceName: data.subreddit.displayName,
+          views: data.upvotes,
+          linkToOriginal: data.url.toString(),
+          likes: data.upvotes,
+          channel: data.author,
+          relinkUrl: data.url.toString(),
+          videoUrl: data.url.toString(),
+        ),
+      );
+    });
+    return posts;
   }
 }
