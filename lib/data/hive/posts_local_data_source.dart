@@ -1,5 +1,5 @@
 import 'package:hive/hive.dart';
-import 'package:hypester/hive/post_local_dto.dart';
+import 'package:hypester/data/hive/post_local_dto.dart';
 
 class PostsLocalDataSource {
   static const String _boxName = 'box_with_posts';

@@ -1,5 +1,5 @@
 import 'package:hive/hive.dart';
-import 'package:hypester/hive/subreddit_local_dto.dart';
+import 'package:hypester/data/hive/subreddit_local_dto.dart';
 
 class SubredditsLocalDataSource {
   static const String _boxName = 'box_with_subreddits';
