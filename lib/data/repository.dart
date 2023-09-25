@@ -41,7 +41,7 @@ class PostsRepository {
 
   Future<List<Feed>> getAllFeeds() async {
     List<Feed> feeds = [];
-    Feed homeFeed = Feed(posts: [], keyword: 'all');
+    Feed homeFeed = Feed(posts: [], keyword: 'All');
     final List<String> keywords = UserPreferences().getKeywords();
     for (var keyword in keywords) {
       List<Post> _redditPosts = await _redditDataSource.getByKeyword(keyword);
@@ -52,12 +52,11 @@ class PostsRepository {
       List<Post> _allPosts = [];
       _allPosts.addAll(_redditPosts);
       _allPosts.sort((a, b) => b.date.compareTo(a.date));
-      feeds.add (Feed(keyword: keyword, posts: _allPosts));
+      feeds.add(Feed(keyword: keyword, posts: _allPosts));
       homeFeed.posts.addAll(_allPosts);
     }
     homeFeed.posts.sort((a, b) => b.date.compareTo(a.date));
     feeds.insert(0, homeFeed);
-    print(feeds);
     return feeds;
   }
 }

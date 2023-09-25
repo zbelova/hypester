@@ -15,7 +15,6 @@ class FeedScreen extends StatefulWidget {
 }
 
 class _FeedScreenState extends State<FeedScreen> {
-
   @override
   initState() {
     super.initState();
@@ -37,27 +36,7 @@ class _FeedScreenState extends State<FeedScreen> {
                   style: Theme.of(context).textTheme.bodySmall,
                 ),
                 const SizedBox(height: 8),
-                if (widget.feed.posts[index].imageUrl != null)
-                  ShaderMask(
-                    shaderCallback: (rect) {
-                      return const LinearGradient(
-                        begin: Alignment.topCenter,
-                        end: Alignment.bottomCenter,
-                        colors: [Colors.black, Colors.transparent],
-                      ).createShader(Rect.fromLTRB(0, 0, rect.width, rect.height));
-                    },
-                    blendMode: BlendMode.dstIn,
-                    child: Container(
-                      height: 200,
-                      decoration: BoxDecoration(
-                        image: DecorationImage(
-                          image: NetworkImage(widget.feed.posts[index].imageUrl!),
-                          fit: BoxFit.cover,
-                          alignment: Alignment.topCenter,
-                        ),
-                      ),
-                    ),
-                  ),
+                if (widget.feed.posts[index].imageUrl != null) Image.network(widget.feed.posts[index].imageUrl!),
                 if (widget.feed.posts[index].body != null)
                   Text(
                     widget.feed.posts[index].body!,
@@ -77,6 +56,7 @@ class _FeedScreenState extends State<FeedScreen> {
                       ),
                       child: Text(
                         widget.feed.posts[index].sourceName,
+                        style: TextStyle(fontSize: 12),
                       ),
                     ),
                     Container(
@@ -88,20 +68,28 @@ class _FeedScreenState extends State<FeedScreen> {
                       ),
                       child: Text(
                         widget.feed.posts[index].channel!,
+                        style: TextStyle(fontSize: 12),
                       ),
                     ),
                     Spacer(),
-                    const Icon(Icons.remove_red_eye_outlined, size: 15),
-                    const SizedBox(width: 3),
-                    Text(widget.feed.posts[index].views.toString()),
-                    SizedBox(width: 5),
+                    if (widget.feed.posts[index].views! > 0) ...[
+                      const Icon(Icons.remove_red_eye_outlined, size: 12),
+                      const SizedBox(width: 3),
+                      Text(
+                        widget.feed.posts[index].views.toString(),
+                        style: TextStyle(fontSize: 12),
+                      ),
+                      SizedBox(width: 5),
+                    ],
                     const Icon(
-                      Icons.favorite,
-                      size: 15,
-                      color: Colors.red,
+                      Icons.favorite_outline,
+                      size: 12,
                     ),
                     const SizedBox(width: 3),
-                    Text(widget.feed.posts[index].likes.toString()),
+                    Text(
+                      widget.feed.posts[index].likes.toString(),
+                      style: TextStyle(fontSize: 12),
+                    ),
                   ],
                 ),
                 const SizedBox(height: 8),

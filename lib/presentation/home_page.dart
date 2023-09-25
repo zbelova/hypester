@@ -49,21 +49,19 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
   @override
   Widget build(BuildContext context) {
     final _bloc = HomePageBloc(PostsRepository(GetIt.I.get()));
-    return SafeArea(
-      child: BlocProvider(
-        create: (_) => _bloc,
-        child: BlocBuilder<HomePageBloc, HomePageState>(builder: (context, state) {
-          return switch (state) {
-            LoadingHomePageState() => const Center(
-                child: CircularProgressIndicator(),
-              ),
-            LoadedHomePageState() => _buildHomePage(context, state),
-            ErrorHomePageState() => const Center(
-                child: Text('Ошибка загрузки данных'),
-              ),
-          };
-        }),
-      ),
+    return BlocProvider(
+      create: (_) => _bloc,
+      child: BlocBuilder<HomePageBloc, HomePageState>(builder: (context, state) {
+        return switch (state) {
+          LoadingHomePageState() => const Center(
+              child: CircularProgressIndicator(),
+            ),
+          LoadedHomePageState() => _buildHomePage(context, state),
+          ErrorHomePageState() => const Center(
+              child: Text('Ошибка загрузки данных'),
+            ),
+        };
+      }),
     );
   }
 
