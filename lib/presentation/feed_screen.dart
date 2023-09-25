@@ -36,7 +36,7 @@ class _FeedScreenState extends State<FeedScreen> {
                   style: Theme.of(context).textTheme.bodySmall,
                 ),
                 const SizedBox(height: 8),
-                if (widget.feed.posts[index].imageUrl != null) Image.network(widget.feed.posts[index].imageUrl!),
+                if (widget.feed.posts[index].imageUrl != '') Image.network(widget.feed.posts[index].imageUrl!),
                 if (widget.feed.posts[index].body != null)
                   Text(
                     widget.feed.posts[index].body!,

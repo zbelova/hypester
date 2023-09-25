@@ -116,10 +116,49 @@ class RedditDataSource extends DataSource {
 //     print(tempPost) ;
 //     return posts;
 //   }
+//
+//   Future<List<Post>> getByKeyword(String keyword) async {
+//     List<Post> posts = [];
+//     const int _limitFilter = 20;
+//     int i = 0;
+//
+//     var deviceID = UserPreferences().getDeviceId();
+//     const userAgent = 'hypester by carrot';
+//
+//     final reddit = await Reddit.createUntrustedReadOnlyInstance(userAgent: userAgent, clientId: redditApiKey, deviceId: deviceID);
+//
+//     StreamController<List<Post>> controller = StreamController(); // Создаем StreamController
+//
+//     reddit.subreddit('all').search(keyword, timeFilter: TimeFilter.day).listen((event) {
+//       var data = event as Submission;
+//       if (i++<_limitFilter) {
+//         posts.add(
+//           Post(
+//             title: data.title,
+//             body: data.selftext,
+//             id: data.id!,
+//             imageUrl: urlIsImage(data.url.toString()) ? data.url.toString() : '',
+//             date: data.createdUtc,
+//             sourceName: 'Reddit',
+//             views: 0,
+//             //views: (data.viewCount !=null)?data.viewCount: 0,
+//             linkToOriginal: data.url.toString(),
+//             likes: data.upvotes,
+//             channel: data.subreddit.displayName,
+//             relinkUrl: data.url.toString(),
+//             videoUrl: data.isVideo ? data.url.toString() : '',
+//           ),
+//         );
+//         controller.add(posts); // Добавляем обновленный список в поток
+//       }
+//     });
+//
+//     return controller.stream.first;
+//   }
 
   Future<List<Post>> getByKeyword(String keyword) async {
     List<Post> posts = [];
-    const int _limitFilter = 20;
+    const int _limitFilter = 3;
     int i = 0;
 
     var deviceID = UserPreferences().getDeviceId();
@@ -127,18 +166,17 @@ class RedditDataSource extends DataSource {
 
     final reddit = await Reddit.createUntrustedReadOnlyInstance(userAgent: userAgent, clientId: redditApiKey, deviceId: deviceID);
 
-    StreamController<List<Post>> controller = StreamController(); // Создаем StreamController
+    Completer<List<Post>> completer = Completer<List<Post>>(); // Создаем Completer
 
     reddit.subreddit('all').search(keyword, timeFilter: TimeFilter.day).listen((event) {
       var data = event as Submission;
-      if (i++<_limitFilter) {
+      if (i++ < _limitFilter) {
         posts.add(
           Post(
             title: data.title,
             body: data.selftext,
             id: data.id!,
-           // imageUrl: urlIsImage(data.url.toString()) ? data.url.toString() : '',
-            imageUrl: data.url.toString(),
+            imageUrl: urlIsImage(data.url.toString()) ? data.url.toString() : '',
             date: data.createdUtc,
             sourceName: 'Reddit',
             views: 0,
@@ -150,9 +188,16 @@ class RedditDataSource extends DataSource {
             videoUrl: data.isVideo ? data.url.toString() : '',
           ),
         );
-        controller.add(posts); // Добавляем обновленный список в поток
+      } else {
+        if (!completer.isCompleted) completer.complete(posts); // Завершаем выполнение Completer и передаем готовый список
       }
-    });
-    return controller.stream.first;
+    }, onDone: () {
+      if (!completer.isCompleted) completer.complete(posts); // Завершаем выполнение Completer и передаем готовый список
+    }, onError: (e) {
+      if (!completer.isCompleted) completer.complete(posts); // Завершаем выполнение Completer и передаем готовый список
+    },
+    );
+
+    return completer.future; // Возвращаем Future, который будет завершен, когда Completer будет выполнен
   }
 }
