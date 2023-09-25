@@ -1,1 +1,1 @@
-const int limitFilter = 2;
+const int limitFilter = 20;
