@@ -1,55 +1,72 @@
 //реализация датасорса для реддита
 //для каждого источника отдельный класс наследник от DataSource
 import 'dart:async';
-
 import 'package:draw/draw.dart';
-
 import '../../api_keys.dart';
 import '../../dev_screens/reddit_dev.dart';
-import '../../models/post_model.dart';
+import '../../globals.dart';
+import '../models/post_model.dart';
 import '../user_preferences.dart';
 import 'abstract_datasource.dart';
 
 class RedditDataSource extends DataSource {
-  // @override
-//   Future<List<Post>> getAll() async {
-//     List<Post> posts = [];
-// //достаем список ключевых слов, то есть всех лент пользователя
-//     final List<String> _keywords = UserPreferences().getKeywords();
-// //достаем фильтры
-//     final int _likesFilter = UserPreferences().getRedditLikesFilter();
-//     final int _viewsFilter = UserPreferences().getRedditViewsFilter();
-// //.. и дальше остальные фильтры, которые относятся к этому источнику
-//
-//     var deviceID = UserPreferences().getDeviceId();
-//     const userAgent = 'hypester by carrot';
-//     //здесь иногда возникает ошибка, связанная с тем, что reddit не дает доступ к api. Причина неизвестна
-//     //надо ловить эксепшн
-//     final reddit = await Reddit.createUntrustedReadOnlyInstance(userAgent: userAgent, clientId: redditApiKey, deviceId: deviceID);
-//
-//     reddit.subreddit('all').search('bitcoin').listen((event) {
-//       var data = event as Submission;
-//       //сравниваю пост из стрима с постами из hive
-//       //если поста нет в hive, то добавляю его в hive
-//       //функция firstWhereOrNull взята из пакета collection
-//
-//       posts.add(
-//         Post(
-//           title: data.title,
-//           body: data.selftext,
-//           id: data.id!,
-//           imageUrl: urlIsImage(data.url.toString()) ? data.url.toString() : '',
-//           date: data.createdUtc,
-//           sourceName: data.subreddit.displayName,
-//           views: data.upvotes,
-//           linkToOriginal: data.url.toString(),
-//           likes: data.upvotes,
-//           channel: data.author,
-//           relinkUrl: data.url.toString(),
-//           videoUrl: data.url.toString(),
-//         ),
-//       );
-//     });
+  //возвращает список постов по всем ключевым словам
+  @override
+  Future<List<Post>> getByKeyword(String keyword) async {
+    List<Post> posts = [];
+
+    //инициализация реддита
+    var deviceID = UserPreferences().getDeviceId();
+    const userAgent = 'hypester by carrot';
+
+    final reddit = await Reddit.createUntrustedReadOnlyInstance(userAgent: userAgent, clientId: redditApiKey, deviceId: deviceID);
+
+    //Completer нужен, чтобы забрать из стрима все посты. Особенности апи реддита
+    Completer<List<Post>> completer = Completer<List<Post>>(); // Создаем Completer
+
+    reddit.subreddit('all').search(keyword, sort: Sort.top, timeFilter: TimeFilter.day, params: {'limit': limitFilter.toString()}).listen(
+      (event) {
+        var data = event as Submission;
+
+        List<String> galleryUrls = [];
+        var isGallery = data.data!['is_gallery'] ?? false;
+        if (isGallery) {
+          data.data!['gallery_data']['items'].forEach((element) {
+            galleryUrls.add('https://i.redd.it/${element['media_id']}.jpg');
+          });
+        }
+        posts.add(
+          Post(
+            title: data.title,
+            body: data.selftext,
+            id: data.id!,
+            imageUrl: urlIsImage(data.url.toString()) ? data.url.toString() : '',
+            date: data.createdUtc,
+            sourceName: 'Reddit',
+            views: 0,
+            //views: (data.viewCount !=null)?data.viewCount: 0,
+            linkToOriginal: data.url.toString(),
+            likes: data.upvotes,
+            channel: data.subreddit.displayName,
+            relinkUrl: data.url.toString(),
+            videoUrl: data.isVideo ? data.url.toString() : '',
+            isGallery: isGallery,
+            galleryUrls: isGallery ? galleryUrls : null,
+          ),
+        );
+      },
+      onDone: () {
+        if (!completer.isCompleted) completer.complete(posts); // Завершаем выполнение Completer и передаем готовый список
+      },
+      onError: (e) {
+        if (!completer.isCompleted) completer.complete(posts); // Завершаем выполнение Completer и передаем готовый список
+      },
+    );
+
+    return completer.future; // Возвращаем Future, который будет завершен, когда Completer будет выполнен
+  }
+}
+
 //
 //     /*
 //     Этот код понадобится, если придется подключаться по другому ключу reddit api. В настройках на реддите надо указать redirect http://localhost:8080
@@ -71,133 +88,3 @@ class RedditDataSource extends DataSource {
 //       await reddit.auth.authorize(auth_code);
 //      */
 //
-// //возвращаем список постов для главной по всем ключевым словам в таком формате
-//     return posts;
-//   }
-
-//   @override
-//   Future<List<Post>> getByKeyword(String keyword) async {
-//     List<Post> posts = [];
-//     Post? tempPost;
-//
-// //достаем фильтры
-//     final int _likesFilter = UserPreferences().getRedditLikesFilter();
-//     final int _viewsFilter = UserPreferences().getRedditViewsFilter();
-//     const int _limitFilter = 20;
-//     int i = 0;
-// //.. и дальше остальные фильтры, которые относятся к этому источнику
-//     var deviceID = UserPreferences().getDeviceId();
-//     const userAgent = 'hypester by carrot';
-//     //здесь иногда возникает ошибка, связанная с тем, что reddit не дает доступ к api. Причина неизвестна
-//     //надо ловить эксепшн
-//     final reddit = await Reddit.createUntrustedReadOnlyInstance(userAgent: userAgent, clientId: redditApiKey, deviceId: deviceID);
-//
-//     reddit.subreddit('all').search(keyword, timeFilter: TimeFilter.day).listen((event) {
-//       var data = event as Submission;
-//       if (i++<_limitFilter) {
-//         posts.add(
-//         Post(
-//           title: data.title,
-//           body: data.selftext,
-//           id: data.id!,
-//           imageUrl: urlIsImage(data.url.toString()) ? data.url.toString() : '',
-//           date: data.createdUtc,
-//           sourceName: data.subreddit.displayName,
-//           views: data.upvotes,
-//           linkToOriginal: data.url.toString(),
-//           likes: data.upvotes,
-//           channel: data.author,
-//           relinkUrl: data.url.toString(),
-//           videoUrl: data.url.toString(),
-//         ),
-//       );
-//       }
-//     });
-//     print(tempPost) ;
-//     return posts;
-//   }
-//
-//   Future<List<Post>> getByKeyword(String keyword) async {
-//     List<Post> posts = [];
-//     const int _limitFilter = 20;
-//     int i = 0;
-//
-//     var deviceID = UserPreferences().getDeviceId();
-//     const userAgent = 'hypester by carrot';
-//
-//     final reddit = await Reddit.createUntrustedReadOnlyInstance(userAgent: userAgent, clientId: redditApiKey, deviceId: deviceID);
-//
-//     StreamController<List<Post>> controller = StreamController(); // Создаем StreamController
-//
-//     reddit.subreddit('all').search(keyword, timeFilter: TimeFilter.day).listen((event) {
-//       var data = event as Submission;
-//       if (i++<_limitFilter) {
-//         posts.add(
-//           Post(
-//             title: data.title,
-//             body: data.selftext,
-//             id: data.id!,
-//             imageUrl: urlIsImage(data.url.toString()) ? data.url.toString() : '',
-//             date: data.createdUtc,
-//             sourceName: 'Reddit',
-//             views: 0,
-//             //views: (data.viewCount !=null)?data.viewCount: 0,
-//             linkToOriginal: data.url.toString(),
-//             likes: data.upvotes,
-//             channel: data.subreddit.displayName,
-//             relinkUrl: data.url.toString(),
-//             videoUrl: data.isVideo ? data.url.toString() : '',
-//           ),
-//         );
-//         controller.add(posts); // Добавляем обновленный список в поток
-//       }
-//     });
-//
-//     return controller.stream.first;
-//   }
-
-  Future<List<Post>> getByKeyword(String keyword) async {
-    List<Post> posts = [];
-    const int _limitFilter = 3;
-    int i = 0;
-
-    var deviceID = UserPreferences().getDeviceId();
-    const userAgent = 'hypester by carrot';
-
-    final reddit = await Reddit.createUntrustedReadOnlyInstance(userAgent: userAgent, clientId: redditApiKey, deviceId: deviceID);
-
-    Completer<List<Post>> completer = Completer<List<Post>>(); // Создаем Completer
-
-    reddit.subreddit('all').search(keyword, timeFilter: TimeFilter.day).listen((event) {
-      var data = event as Submission;
-      if (i++ < _limitFilter) {
-        posts.add(
-          Post(
-            title: data.title,
-            body: data.selftext,
-            id: data.id!,
-            imageUrl: urlIsImage(data.url.toString()) ? data.url.toString() : '',
-            date: data.createdUtc,
-            sourceName: 'Reddit',
-            views: 0,
-            //views: (data.viewCount !=null)?data.viewCount: 0,
-            linkToOriginal: data.url.toString(),
-            likes: data.upvotes,
-            channel: data.subreddit.displayName,
-            relinkUrl: data.url.toString(),
-            videoUrl: data.isVideo ? data.url.toString() : '',
-          ),
-        );
-      } else {
-        if (!completer.isCompleted) completer.complete(posts); // Завершаем выполнение Completer и передаем готовый список
-      }
-    }, onDone: () {
-      if (!completer.isCompleted) completer.complete(posts); // Завершаем выполнение Completer и передаем готовый список
-    }, onError: (e) {
-      if (!completer.isCompleted) completer.complete(posts); // Завершаем выполнение Completer и передаем готовый список
-    },
-    );
-
-    return completer.future; // Возвращаем Future, который будет завершен, когда Completer будет выполнен
-  }
-}

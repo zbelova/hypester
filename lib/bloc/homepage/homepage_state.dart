@@ -1,4 +1,5 @@
-import '../../models/feed_model.dart';
+import '../../data/models/feed_model.dart';
+
 
 sealed class HomePageState {
   const HomePageState();

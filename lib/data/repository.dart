@@ -1,10 +1,8 @@
 import 'package:hypester/data/user_preferences.dart';
 
-import '../models/feed_model.dart';
-import '../models/feed_model.dart';
-import '../models/feed_model.dart';
-import '../models/post_model.dart';
 import 'datasource/reddit_datasource.dart';
+import 'models/feed_model.dart';
+import 'models/post_model.dart';
 
 class PostsRepository {
   final RedditDataSource _redditDataSource;

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:hypester/dev_screens/widgets/custom_tag.dart';
+import 'package:hypester/dev_screens/widgets/image_container.dart';
 import 'article_model.dart';
-import '../widgets/custom_tag.dart';
-import '../widgets/image_container.dart';
 import 'navigation_bar.dart';
 
 class Newsfeed extends StatelessWidget {

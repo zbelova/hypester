@@ -1,5 +1,6 @@
 //отдельная лента, то есть отдельная вкладка
-import 'package:hypester/models/post_model.dart';
+
+import 'package:hypester/data/models/post_model.dart';
 
 class Feed {
   final String keyword; //в случае если это главная страница, то keyword = 'all'

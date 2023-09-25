@@ -3,12 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:get_it/get_it.dart';
 import 'package:hypester/bloc/homepage/homepage_bloc.dart';
 import 'package:hypester/data/repository.dart';
-import 'package:hypester/data/user_preferences.dart';
-import 'package:hypester/dev_screens/reddit_dev.dart';
-import 'package:hypester/dev_screens/telegram_dev.dart';
-import 'package:hypester/dev_screens/twitter_dev.dart';
 import '../bloc/homepage/homepage_state.dart';
-import '../models/feed_model.dart';
 import 'feed_screen.dart';
 
 class HomePage extends StatefulWidget {
@@ -17,27 +12,11 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
-  //final List<String> keywords = UserPreferences().getKeywords();
-  //List<Tab> _tabList = [];
-  //List<Feed> _feeds = [];
   late TabController _tabController;
 
   @override
   void initState() {
     super.initState();
-    // for (var keyword in keywords) {
-    //   _tabList.add(Tab(
-    //     child: Text(
-    //       keyword,
-    //       style: const TextStyle(
-    //         fontSize: 17,
-    //         fontWeight: FontWeight.w400,
-    //         fontStyle: FontStyle.normal,
-    //       ),
-    //     ),
-    //   ));
-    // }
-    //_tabController = ≈;
   }
 
   @override
@@ -48,20 +27,31 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
 
   @override
   Widget build(BuildContext context) {
-    final _bloc = HomePageBloc(PostsRepository(GetIt.I.get()));
+    final bloc = HomePageBloc(PostsRepository(GetIt.I.get()));
     return BlocProvider(
-      create: (_) => _bloc,
+      create: (_) => bloc,
       child: BlocBuilder<HomePageBloc, HomePageState>(builder: (context, state) {
         return switch (state) {
-          LoadingHomePageState() => const Center(
-              child: CircularProgressIndicator(),
-            ),
+          LoadingHomePageState() => _buildLoadingPage(const Center(child: CircularProgressIndicator(
+            color: Colors.grey,
+          ))),
           LoadedHomePageState() => _buildHomePage(context, state),
-          ErrorHomePageState() => const Center(
-              child: Text('Ошибка загрузки данных'),
-            ),
+          ErrorHomePageState() => _buildLoadingPage(const Center(child: Text('Something went wrong'))),
         };
       }),
+    );
+  }
+
+  Widget _buildLoadingPage(Widget body) {
+    return Scaffold(
+      extendBody: true,
+      appBar: AppBar(
+        toolbarHeight: 60,
+        leading: IconButton(onPressed: () {}, icon: const Icon(Icons.menu, color: Colors.black)),
+        backgroundColor: const Color(0xFFFFCD8D),
+        title: const Text('Hypester', style: TextStyle(fontSize: 30, fontWeight: FontWeight.w600, fontFamily: 'Caveat-Variable')),
+      ),
+      body: body,
     );
   }
 
@@ -77,6 +67,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
         bottom: PreferredSize(
           preferredSize: const Size.fromHeight(30),
           child: TabBar(
+            tabAlignment: TabAlignment.start,
             labelColor: Colors.black,
             indicatorColor: Colors.black,
             isScrollable: true,
@@ -100,20 +91,11 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
       body: TabBarView(
         controller: _tabController,
         children: [
-          for(var feed in state.feeds)
+          for (var feed in state.feeds)
             Padding(
               padding: const EdgeInsets.all(16),
               child: FeedScreen(feed: feed),
             ),
-          // Padding(
-          //   padding: const EdgeInsets.all(16),
-          //   child: FeedScreen(feed: Feed(id: 1, title: "All posts")),
-          // ),
-          // Padding(
-          //   padding: EdgeInsets.all(16),
-          //   child: FeedScreen(feed: Feed(id: 2, title: "All posts")),
-          //   //child: RedditPage(),
-          // ),
         ],
       ),
     );

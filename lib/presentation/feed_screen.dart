@@ -1,9 +1,10 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:hypester/presentation/widgets/gallery_preview_widget.dart';
+import 'package:hypester/presentation/widgets/source_name_widgets.dart';
 import 'package:intl/intl.dart';
 
-import '../models/feed_model.dart';
-import '../models/post_model.dart';
+import '../data/models/feed_model.dart';
 
 class FeedScreen extends StatefulWidget {
   final Feed feed;
@@ -30,37 +31,27 @@ class _FeedScreenState extends State<FeedScreen> {
             return Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(widget.feed.posts[index].title!, style: Theme.of(context).textTheme.titleMedium),
+                Text(widget.feed.posts[index].title!, style: TextStyle(fontSize: 18)),
                 Text(
-                  DateFormat('HH:m dd.MM.yyyy').format(widget.feed.posts[index].date),
-                  style: Theme.of(context).textTheme.bodySmall,
+                  DateFormat('HH:mm dd.MM.yyyy').format(widget.feed.posts[index].date),
+                  style: TextStyle(fontSize: 11, color: Colors.grey[500]),
                 ),
                 const SizedBox(height: 8),
-                if (widget.feed.posts[index].imageUrl != '') Image.network(widget.feed.posts[index].imageUrl!),
+                if (widget.feed.posts[index].imageUrl != '' && widget.feed.posts[index].imageUrl != null) Image.network(widget.feed.posts[index].imageUrl!),
+                if (widget.feed.posts[index].isGallery) GalleryPreview(imageUrls: widget.feed.posts[index].galleryUrls!),
                 if (widget.feed.posts[index].body != null)
                   Text(
                     widget.feed.posts[index].body!,
-                    overflow: TextOverflow.fade,
+                    overflow: TextOverflow.ellipsis,
                     maxLines: 4,
                     //softWrap: false,
                   ),
                 const SizedBox(height: 8),
                 Row(
                   children: [
+                    SourceNameWidget(title: widget.feed.posts[index].sourceName),
                     Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 10),
-                      margin: const EdgeInsets.only(right: 5),
-                      decoration: BoxDecoration(
-                        color: Colors.red[100],
-                        borderRadius: BorderRadius.circular(15),
-                      ),
-                      child: Text(
-                        widget.feed.posts[index].sourceName,
-                        style: TextStyle(fontSize: 12),
-                      ),
-                    ),
-                    Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 10),
+                      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 2),
                       margin: const EdgeInsets.only(right: 5),
                       decoration: BoxDecoration(
                         color: Colors.grey[300],
@@ -93,7 +84,9 @@ class _FeedScreenState extends State<FeedScreen> {
                   ],
                 ),
                 const SizedBox(height: 8),
-                const Divider(),
+                Divider(
+                  color: Colors.grey[300],
+                ),
               ],
             );
           },
@@ -102,3 +95,4 @@ class _FeedScreenState extends State<FeedScreen> {
     );
   }
 }
+

@@ -1,6 +1,6 @@
 
 //абстрактный класс всех датасорсов
-import '../../models/post_model.dart';
+import '../models/post_model.dart';
 
 abstract class DataSource {
   //возвращает список постов для главной по всем ключевым словам

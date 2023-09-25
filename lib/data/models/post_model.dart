@@ -11,19 +11,23 @@ class Post {
   final String? channel;
   final String? videoUrl;
   final String? relinkUrl; //если пост состоит из одной ссылки на другой сайт, как у реддита
+  final bool isGallery;
+  final List<String>? galleryUrls; //если пост состоит из галереи картинок, как у телеграма или реддита
 
   Post({
-    required this.videoUrl,
-    required this.title,
-    required this.body,
+    this.videoUrl,
+    this.title,
+    this.body,
     required this.id,
-    required this.imageUrl,
+    this.imageUrl,
     required this.date,
     required this.sourceName,
-    required this.views,
+    this.views,
     required this.linkToOriginal,
-    required this.likes,
-    required this.channel,
-    required this.relinkUrl,
+    this.likes,
+    this.channel,
+    this.relinkUrl,
+    this.galleryUrls,
+    this.isGallery = false,
   });
 }
