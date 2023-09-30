@@ -35,7 +35,7 @@ class _FeedScreenState extends State<FeedScreen> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(widget.feed.posts[index].title!, style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w500)),
+              if (widget.feed.posts[index].title != '' &&widget.feed.posts[index].title!= null) Text(widget.feed.posts[index].title!, style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w500)),
                   Text(
                     DateFormat('HH:mm dd.MM.yyyy').format(widget.feed.posts[index].date),
                     style: TextStyle(fontSize: 11, color: Colors.grey[500]),
@@ -77,12 +77,15 @@ class _FeedScreenState extends State<FeedScreen> {
                       Container(
                         padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 2),
                         margin: const EdgeInsets.only(right: 5),
+                        constraints: const BoxConstraints(maxWidth: 230),
                         decoration: BoxDecoration(
                           color: Colors.grey[300],
                           borderRadius: BorderRadius.circular(15),
                         ),
                         child: Text(
                           widget.feed.posts[index].channel!,
+                          overflow: TextOverflow.ellipsis,
+
                           style: TextStyle(fontSize: 12),
                         ),
                       ),
@@ -110,6 +113,7 @@ class _FeedScreenState extends State<FeedScreen> {
                   const SizedBox(height: 8),
                   Divider(
                     color: Colors.grey[300],
+                    height: 20,
                   ),
                 ],
               ),
