@@ -80,6 +80,7 @@ class PostScreen extends StatelessWidget {
                       Container(
                         padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 2),
                         margin: const EdgeInsets.only(right: 5),
+                        constraints: const BoxConstraints(maxWidth: 230),
                         decoration: BoxDecoration(
                           color: Colors.grey[300],
                           borderRadius: BorderRadius.circular(15),
@@ -87,6 +88,7 @@ class PostScreen extends StatelessWidget {
                         child: Text(
                           post.channel!,
                           style: const TextStyle(fontSize: 12),
+                          overflow: TextOverflow.ellipsis,
                         ),
                       ),
                     const Spacer(),

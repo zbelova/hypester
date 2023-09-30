@@ -150,7 +150,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
           _token == null
               ? ElevatedButton(onPressed: loginVK, child: Text('Login to VK'))
               : Container(
-                  child: Text('You are logged in to VK'),
+                  // child: Text('You are logged in to VK'),
                 ),
           SizedBox(height: 20)
         ],
