@@ -5,6 +5,9 @@
         android:label="hypester"
         android:name="${applicationName}"
         android:icon="@mipmap/launcher_icon">
+        <activity android:name="com.vk.sdk.VKServiceActivity"
+            android:label="ServiceActivity"
+             />
         <activity
             android:name=".MainActivity"
             android:exported="true"

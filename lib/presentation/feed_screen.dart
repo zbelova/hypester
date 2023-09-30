@@ -41,7 +41,27 @@ class _FeedScreenState extends State<FeedScreen> {
                     style: TextStyle(fontSize: 11, color: Colors.grey[500]),
                   ),
                   const SizedBox(height: 8),
-                  if (widget.feed.posts[index].imageUrl != '' && widget.feed.posts[index].imageUrl != null) Image.network(widget.feed.posts[index].imageUrl!),
+                  if (widget.feed.posts[index].imageUrl != '' && widget.feed.posts[index].imageUrl != null)
+                    ClipRRect(
+                      borderRadius: BorderRadius.circular(10),
+                      child: Image.network(
+                        widget.feed.posts[index].imageUrl!,
+                        fit: BoxFit.cover,
+                        width: MediaQuery.of(context).size.width,
+                        errorBuilder: (context, error, stackTrace) {
+                          return Container(
+                            height: 200,
+                            color: Colors.grey[300],
+                            child: Center(
+                              child: Icon(
+                                Icons.error_outline,
+                                color: Colors.grey[500],
+                              ),
+                            ),
+                          );
+                        }
+                      ),
+                    ),
                   if (widget.feed.posts[index].isGallery) GalleryPreview(imageUrls: widget.feed.posts[index].galleryUrls!),
                   if (widget.feed.posts[index].body != null)
                     Text(
@@ -100,4 +120,3 @@ class _FeedScreenState extends State<FeedScreen> {
     );
   }
 }
-

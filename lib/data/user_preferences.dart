@@ -63,4 +63,12 @@ class UserPreferences {
   Future<void> setRedditViewsFilter(int filter) async {
     await _preferences?.setInt('reddit_views_filter', filter);
   }
+
+  Future<void> setVKToken(String token) async {
+    await _preferences?.setString('vk_token', token);
+  }
+
+  String getVKToken() {
+    return _preferences?.getString('vk_token') ?? '';
+  }
 }

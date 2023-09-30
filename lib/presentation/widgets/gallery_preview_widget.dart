@@ -17,6 +17,19 @@ class GalleryPreview extends StatelessWidget {
                width: MediaQuery.of(context).size.width * 0.23,
                height: MediaQuery.of(context).size.width * 0.23,
                fit: BoxFit.cover,
+                 errorBuilder: (context, error, stackTrace) {
+                   return Container(
+                     width: MediaQuery.of(context).size.width * 0.23,
+                     height: MediaQuery.of(context).size.width * 0.23,
+                     color: Colors.grey[300],
+                     child: Center(
+                       child: Icon(
+                         Icons.error_outline,
+                         color: Colors.grey[500],
+                       ),
+                     ),
+                   );
+                 }
              ),
            ))
        : (i == 3) ?Container(
