@@ -25,6 +25,8 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
   VKUserProfile? _profile;
   String? _email;
   bool _sdkInitialized = false;
+  final _bloc = HomePageBloc(PostsRepository(GetIt.I.get(), GetIt.I.get()));
+
 
   @override
   void initState() {
@@ -70,9 +72,8 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
 
   @override
   Widget build(BuildContext context) {
-    final bloc = HomePageBloc(PostsRepository(GetIt.I.get(), GetIt.I.get()));
     return BlocProvider(
-      create: (_) => bloc,
+      create: (_) => _bloc,
       child: BlocBuilder<HomePageBloc, HomePageState>(builder: (context, state) {
         return switch (state) {
           LoadingHomePageState() => _buildLoadingPage(const Center(

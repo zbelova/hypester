@@ -128,6 +128,18 @@ class PostScreen extends StatelessWidget {
               child: Image.network(
                 imageUrl,
                 fit: BoxFit.cover,
+                errorBuilder: (context, error, stackTrace) {
+                  return Container(
+                    height: 200,
+                    color: Colors.grey[300],
+                    child: Center(
+                      child: Icon(
+                        Icons.error_outline,
+                        color: Colors.grey[500],
+                      ),
+                    ),
+                  );
+                },
               ),
             ),
           ),

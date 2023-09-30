@@ -25,14 +25,11 @@ class VKDataSource extends DataSource {
         // print(result);
         var groups = result!['response']['items'];
         for (var group in groups) {
-          print(group['name']);
           var groupPostsResponse = await _dio.get<Map<String, dynamic>>('https://api.vk.com/method/wall.get?access_token=$token&owner_id=-${group['id']}&count=1&v=5.131');
           if(groupPostsResponse.data != null) {
             var groupPosts = groupPostsResponse.data!['response']['items'];
             if (groupPosts.length > 0) {
               for (var post in groupPosts) {
-                print(post['id' ]);
-
                 //if(post['date'] > DateTime.now().millisecondsSinceEpoch/1000 - 86400) {
                 posts.add(Post(
                   title: '',
@@ -41,9 +38,9 @@ class VKDataSource extends DataSource {
                   imageUrl: '',
                   date: DateTime.fromMillisecondsSinceEpoch(post['date'] * 1000),
                   sourceName: 'VK',
-                  views: post['views']['count'],
+                  views: post['views']!=null?post['views']['count']:0,
                   linkToOriginal: '',
-                  likes: post['likes']['count'],
+                  likes: post['likes']['count']??0,
                   channel: group['name'],
                   relinkUrl: '',
                   videoUrl: '',

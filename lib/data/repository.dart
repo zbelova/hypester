@@ -9,8 +9,6 @@ class PostsRepository {
   final RedditDataSource _redditDataSource;
   final VKDataSource _vkDataSource;
 
-  //final TelegramDataSource _telegramDataSource;
-  //PostsRepository(this._redditDataSource, this._telegramDataSource);
   PostsRepository(this._redditDataSource, this._vkDataSource);
 
   Future<List<Feed>> getAllFeeds() async {
