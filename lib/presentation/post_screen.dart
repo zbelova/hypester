@@ -45,7 +45,22 @@ class PostScreen extends StatelessWidget {
             children: [
               Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
                 //const SizedBox(height: 8),
-                if (post.imageUrl != '' && post.imageUrl != null) Image.network(post.imageUrl!),
+                if (post.imageUrl != '' && post.imageUrl != null)
+                  Image.network(
+                    post.imageUrl!,
+                    errorBuilder: (context, error, stackTrace) {
+                      return Container(
+                        height: 200,
+                        color: Colors.grey[300],
+                        child: Center(
+                          child: Icon(
+                            Icons.error_outline,
+                            color: Colors.grey[500],
+                          ),
+                        ),
+                      );
+                    },
+                  ),
                 if (post.body != null)
                   Text(
                     post.body!,
@@ -104,7 +119,6 @@ class PostScreen extends StatelessWidget {
   Widget _buildGallery(List<String> imageUrls) {
     return Column(
       children: [
-
         const SizedBox(height: 15),
         for (var imageUrl in imageUrls)
           Container(
@@ -114,6 +128,18 @@ class PostScreen extends StatelessWidget {
               child: Image.network(
                 imageUrl,
                 fit: BoxFit.cover,
+                errorBuilder: (context, error, stackTrace) {
+                  return Container(
+                    height: 200,
+                    color: Colors.grey[300],
+                    child: Center(
+                      child: Icon(
+                        Icons.error_outline,
+                        color: Colors.grey[500],
+                      ),
+                    ),
+                  );
+                },
               ),
             ),
           ),

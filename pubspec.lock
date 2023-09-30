@@ -213,10 +213,10 @@ packages:
     dependency: "direct main"
     description:
       name: dio
-      sha256: ce75a1b40947fea0a0e16ce73337122a86762e38b982e1ccb909daa3b9bc4197
+      sha256: "417e2a6f9d83ab396ec38ff4ea5da6c254da71e4db765ad737a42af6930140b7"
       url: "https://pub.dev"
     source: hosted
-    version: "5.3.2"
+    version: "5.3.3"
   draw:
     dependency: "direct main"
     description:
@@ -294,6 +294,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "2.0.2"
+  flutter_login_vk:
+    dependency: "direct main"
+    description:
+      name: flutter_login_vk
+      sha256: "03c1e05d8b80d0892f5aeb1c74157c3c4051e198bbf33a6e4a84e544b32b8c0b"
+      url: "https://pub.dev"
+    source: hosted
+    version: "2.2.2+1"
   flutter_test:
     dependency: "direct dev"
     description: flutter

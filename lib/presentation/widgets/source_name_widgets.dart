@@ -7,9 +7,11 @@ class SourceNameWidget extends StatelessWidget {
   });
 
   final Map<String, Color> _colors = {
-    'Reddit': const Color(0xFFFFCBB0),
-    'Youtube': const Color(0xFFFFA4A4),
-    'Telegram': const Color(0xFF84DAFF),
+    'Reddit': const Color(0xFFFF5E10),
+    'Youtube': const Color(0xFFFF2424),
+    'Telegram': const Color(0xFF33C6FF),
+    'VK': const Color(0xFF3091FF),
+    'Instagram': const Color(0xFFE1306C),
   };
 
   final String title;
@@ -25,7 +27,7 @@ class SourceNameWidget extends StatelessWidget {
       ),
       child: Text(
         title,
-        style: const TextStyle(fontSize: 12,),
+        style: const TextStyle(fontSize: 12, color: Colors.white, fontWeight: FontWeight.bold),
       ),
     );
   }
