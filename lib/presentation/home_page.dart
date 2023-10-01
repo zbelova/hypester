@@ -1,4 +1,3 @@
-
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_login_vk/flutter_login_vk.dart';
@@ -26,7 +25,6 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
   String? _email;
   bool _sdkInitialized = false;
   final _bloc = HomePageBloc(PostsRepository(GetIt.I.get(), GetIt.I.get()));
-
 
   @override
   void initState() {
@@ -56,7 +54,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
     final profileRes = token != null ? await widget.plugin.getUserProfile() : null;
     final email = token != null ? await widget.plugin.getUserEmail() : null;
     token != null ? UserPreferences().setVKToken(token.token) : UserPreferences().setVKToken('');
-
+    token != null? UserPreferences().setVKActive(true):UserPreferences().setVKActive(false);
     setState(() {
       _token = token;
       _profile = profileRes?.asValue?.value;
@@ -151,7 +149,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
               ? ElevatedButton(onPressed: loginVK, child: Text('Login to VK'))
               : Container(
                   // child: Text('You are logged in to VK'),
-                ),
+                  ),
           SizedBox(height: 20)
         ],
       ),
@@ -235,6 +233,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
       );
     } else {
       final loginResult = res.asValue!.value;
+
       if (!loginResult.isCanceled) await _updateLoginInfo();
       Navigator.of(context).pop();
     }

@@ -2,6 +2,7 @@
 //для каждого источника отдельный класс наследник от DataSource
 import 'dart:async';
 import 'package:draw/draw.dart';
+import 'package:flutter/material.dart';
 import '../../api_keys.dart';
 import '../../dev_screens/reddit_dev.dart';
 import '../../globals.dart';
@@ -9,7 +10,7 @@ import '../models/post_model.dart';
 import '../user_preferences.dart';
 import 'abstract_datasource.dart';
 
-class RedditDataSource extends DataSource {
+class RedditDataSource extends DataSource with ChangeNotifier {
   //возвращает список постов по всем ключевым словам
   @override
   Future<List<Post>> getByKeyword(String keyword) async {
@@ -62,7 +63,7 @@ class RedditDataSource extends DataSource {
         if (!completer.isCompleted) completer.complete(posts); // Завершаем выполнение Completer и передаем готовый список
       },
     );
-
+    notifyListeners();
     return completer.future; // Возвращаем Future, который будет завершен, когда Completer будет выполнен
   }
 }
