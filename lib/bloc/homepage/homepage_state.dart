@@ -6,7 +6,20 @@ sealed class HomePageState {
 }
 
 class LoadingHomePageState extends HomePageState {
-  const LoadingHomePageState();
+  final List<String> feedNames;
+
+  const LoadingHomePageState({this.feedNames = const []});
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is LoadingHomePageState &&
+          runtimeType == other.runtimeType &&
+          feedNames == other.feedNames;
+
+  @override
+  int get hashCode => feedNames.hashCode;
+
 }
 
 class LoadedHomePageState extends HomePageState {
@@ -25,4 +38,19 @@ class LoadedHomePageState extends HomePageState {
   int get hashCode => feeds.hashCode;
 }
 
-class ErrorHomePageState extends HomePageState {}
+class ErrorHomePageState extends HomePageState {
+  final List<String> feedNames;
+
+  const ErrorHomePageState({this.feedNames = const []});
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is ErrorHomePageState &&
+          runtimeType == other.runtimeType &&
+          feedNames == other.feedNames;
+
+  @override
+  int get hashCode => feedNames.hashCode;
+
+}

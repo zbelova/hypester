@@ -5,6 +5,7 @@ import 'package:get_it/get_it.dart';
 import 'package:hypester/bloc/homepage/homepage_bloc.dart';
 import 'package:hypester/data/repository.dart';
 import 'package:hypester/data/user_preferences.dart';
+import 'package:hypester/presentation/widgets/progress_bar.dart';
 import '../bloc/homepage/homepage_state.dart';
 import 'feed_screen.dart';
 
@@ -24,7 +25,6 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
   VKUserProfile? _profile;
   String? _email;
   bool _sdkInitialized = false;
-  final _bloc = HomePageBloc(PostsRepository(GetIt.I.get(), GetIt.I.get()));
 
   @override
   void initState() {
@@ -54,7 +54,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
     final profileRes = token != null ? await widget.plugin.getUserProfile() : null;
     final email = token != null ? await widget.plugin.getUserEmail() : null;
     token != null ? UserPreferences().setVKToken(token.token) : UserPreferences().setVKToken('');
-    token != null? UserPreferences().setVKActive(true):UserPreferences().setVKActive(false);
+    token != null ? UserPreferences().setVKActive(true) : UserPreferences().setVKActive(false);
     setState(() {
       _token = token;
       _profile = profileRes?.asValue?.value;
@@ -71,21 +71,21 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (_) => _bloc,
+      create: (_) => HomePageBloc(PostsRepository(GetIt.I.get(), GetIt.I.get())),
       child: BlocBuilder<HomePageBloc, HomePageState>(builder: (context, state) {
         return switch (state) {
-          LoadingHomePageState() => _buildLoadingPage(const Center(
-                child: CircularProgressIndicator(
-              color: Colors.grey,
-            ))),
+          LoadingHomePageState() => _buildLoadingPage(
+              state,
+             ProgressBar()),
           LoadedHomePageState() => _buildHomePage(context, state),
-          ErrorHomePageState() => _buildLoadingPage(const Center(child: Text('Something went wrong'))),
+          ErrorHomePageState() => _buildLoadingPage(state, const Center(child: Text('Something went wrong'))),
         };
       }),
     );
   }
 
-  Widget _buildLoadingPage(Widget body) {
+  Widget _buildLoadingPage(state, Widget body) {
+    _tabController = TabController(vsync: this, length: state.feedNames.length);
     return Scaffold(
       extendBody: true,
       appBar: AppBar(
@@ -93,6 +93,29 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
         leading: IconButton(onPressed: () {}, icon: const Icon(Icons.menu, color: Colors.black)),
         backgroundColor: const Color(0xFFFFCD8D),
         title: const Text('Hypester', style: TextStyle(fontSize: 30, fontWeight: FontWeight.w600, fontFamily: 'Caveat-Variable')),
+        bottom: PreferredSize(
+          preferredSize: const Size.fromHeight(30),
+          child: TabBar(
+            tabAlignment: TabAlignment.start,
+            labelColor: Colors.black,
+            indicatorColor: Colors.black,
+            isScrollable: true,
+            controller: _tabController,
+            tabs: [
+              for (var feed in state.feedNames)
+                Tab(
+                  child: Text(
+                    feed,
+                    style: const TextStyle(
+                      fontSize: 17,
+                      fontWeight: FontWeight.w400,
+                      fontStyle: FontStyle.normal,
+                    ),
+                  ),
+                ),
+            ],
+          ),
+        ),
       ),
       body: body,
     );

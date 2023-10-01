@@ -1,13 +1,9 @@
 import 'package:dio/dio.dart';
-import 'package:flutter/cupertino.dart';
-import 'package:hypester/api_keys.dart';
 import 'package:hypester/data/user_preferences.dart';
-
 import '../models/post_model.dart';
 import 'abstract_datasource.dart';
-import 'package:flutter_login_vk/flutter_login_vk.dart';
 
-class VKDataSource extends DataSource with ChangeNotifier {
+class VKDataSource extends DataSource{
   final Dio _dio;
 
   VKDataSource(this._dio);
@@ -56,7 +52,6 @@ class VKDataSource extends DataSource with ChangeNotifier {
         // var answer = result!.keys.map((key) => AnswerDto(
         //   text: result[key],
         // )).toList()[0];
-        notifyListeners();
         return posts;
       } catch (e) {
        // print(e);

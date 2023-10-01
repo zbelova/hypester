@@ -10,7 +10,7 @@ import '../models/post_model.dart';
 import '../user_preferences.dart';
 import 'abstract_datasource.dart';
 
-class RedditDataSource extends DataSource with ChangeNotifier {
+class RedditDataSource extends DataSource {
   //возвращает список постов по всем ключевым словам
   @override
   Future<List<Post>> getByKeyword(String keyword) async {
@@ -63,7 +63,6 @@ class RedditDataSource extends DataSource with ChangeNotifier {
         if (!completer.isCompleted) completer.complete(posts); // Завершаем выполнение Completer и передаем готовый список
       },
     );
-    notifyListeners();
     return completer.future; // Возвращаем Future, который будет завершен, когда Completer будет выполнен
   }
 }
