@@ -10,10 +10,12 @@ class PostsRepository extends ChangeNotifier{
   final RedditDataSource _redditDataSource;
   final VKDataSource _vkDataSource;
   double progress = 0.0;
+  bool isLoaded = false;
 
   PostsRepository(this._redditDataSource, this._vkDataSource);
 
   Future<List<Feed>> getAllFeeds() async {
+    //print('getAllFeeds');
     progress = 0;
     List<Feed> feeds = [];
     Feed homeFeed = Feed(posts: [], keyword: 'All');
@@ -27,6 +29,7 @@ class PostsRepository extends ChangeNotifier{
       List<Post> _vkPosts = await _vkDataSource.getByKeyword(keyword);
       progress += 1/progressSteps;
       notifyListeners();
+     // print('reddit: ${_redditPosts.length} vk: ${_vkPosts.length}');
       //telegram
       //youtube
       //instagram
@@ -40,6 +43,9 @@ class PostsRepository extends ChangeNotifier{
     }
     homeFeed.posts.sort((a, b) => b.date.compareTo(a.date));
     feeds.insert(0, homeFeed);
+    isLoaded = true;
+    notifyListeners();
     return feeds;
   }
+
 }

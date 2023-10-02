@@ -7,18 +7,20 @@ sealed class HomePageState {
 
 class LoadingHomePageState extends HomePageState {
   final List<String> feedNames;
+  final progress;
 
-  const LoadingHomePageState({this.feedNames = const []});
+  const LoadingHomePageState({required this.feedNames, this.progress = 0.0});
 
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
       other is LoadingHomePageState &&
           runtimeType == other.runtimeType &&
-          feedNames == other.feedNames;
+          feedNames == other.feedNames &&
+          progress == other.progress;
 
   @override
-  int get hashCode => feedNames.hashCode;
+  int get hashCode => feedNames.hashCode ^ progress.hashCode;
 
 }
 

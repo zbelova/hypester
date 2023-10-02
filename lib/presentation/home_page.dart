@@ -5,6 +5,8 @@ import 'package:get_it/get_it.dart';
 import 'package:hypester/bloc/homepage/homepage_bloc.dart';
 import 'package:hypester/data/repository.dart';
 import 'package:hypester/data/user_preferences.dart';
+import 'package:hypester/presentation/add_feed_screen.dart';
+import 'package:hypester/presentation/widgets/loading_progress_bar.dart';
 import 'package:hypester/presentation/widgets/progress_bar.dart';
 import '../bloc/homepage/homepage_state.dart';
 import 'feed_screen.dart';
@@ -71,10 +73,10 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (_) => HomePageBloc(PostsRepository(GetIt.I.get(), GetIt.I.get())),
+      create: (_) => HomePageBloc(GetIt.I.get()),
       child: BlocBuilder<HomePageBloc, HomePageState>(builder: (context, state) {
         return switch (state) {
-          LoadingHomePageState() => _buildLoadingPage(state, ProgressBar()),
+          LoadingHomePageState() => _buildLoadingPage(state, const ProgressBar()),
           LoadedHomePageState() => _buildHomePage(context, state),
           ErrorHomePageState() => _buildLoadingPage(state, const Center(child: Text('Something went wrong'))),
         };
@@ -89,6 +91,9 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
       appBar: AppBar(
         toolbarHeight: 60,
         leading: IconButton(onPressed: () {}, icon: const Icon(Icons.menu, color: Colors.black)),
+        actions: [
+          IconButton(onPressed: () {}, icon: const Icon(Icons.search, color: Colors.black)),
+        ],
         backgroundColor: const Color(0xFFFFCD8D),
         title: const Text('Hypester', style: TextStyle(fontSize: 30, fontWeight: FontWeight.w600, fontFamily: 'Caveat-Variable')),
         bottom: PreferredSize(
@@ -126,6 +131,18 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
       appBar: AppBar(
         toolbarHeight: 60,
         leading: IconButton(onPressed: () {}, icon: const Icon(Icons.menu, color: Colors.black)),
+        actions: [
+          IconButton(
+            onPressed: () {
+              Navigator.of(context).push(MaterialPageRoute(builder: (context) =>AddFeedScreen()));
+            },
+            icon: const Icon(
+              Icons.add_circle_outline,
+              color: Colors.black,
+              size: 25,
+            ),
+          ),
+        ],
         backgroundColor: const Color(0xFFFFCD8D),
         title: const Text('Hypester', style: TextStyle(fontSize: 30, fontWeight: FontWeight.w600, fontFamily: 'Caveat-Variable')),
         bottom: PreferredSize(
@@ -189,6 +206,11 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                     ],
                   ),
                 ),
+          ElevatedButton(
+              onPressed: () {
+                PostsRepository(GetIt.I.get(), GetIt.I.get()).getAllFeeds();
+              },
+              child: Text('Refresh')),
           SizedBox(height: 20)
         ],
       ),

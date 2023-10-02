@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:get_it/get_it.dart';
 
 import '../../bloc/progress_bar/progress_bar_bloc.dart';
 import '../../bloc/progress_bar/progress_bar_state.dart';
+import '../../data/repository.dart';
 
 class ProgressBar extends StatelessWidget {
 
@@ -13,7 +15,7 @@ class ProgressBar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (_) => ProgressBarBloc(),
+      create: (_) => ProgressBarBloc(GetIt.I.get()),
       child: BlocBuilder<ProgressBarBloc, ProgressBarState>(builder: (context, state) {
         return switch (state) {
           LoadingProgressBarState() => _buildProgressBar(state),
