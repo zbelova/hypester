@@ -5,11 +5,9 @@ import '../../bloc/progress_bar/progress_bar_bloc.dart';
 import '../../bloc/progress_bar/progress_bar_state.dart';
 
 class ProgressBar extends StatelessWidget {
-  final double progress;
 
   const ProgressBar({
     Key? key,
-    this.progress = 0.0,
   }) : super(key: key);
 
   @override
@@ -18,7 +16,7 @@ class ProgressBar extends StatelessWidget {
       create: (_) => ProgressBarBloc(),
       child: BlocBuilder<ProgressBarBloc, ProgressBarState>(builder: (context, state) {
         return switch (state) {
-          LoadingProgressBarState() => _buildProgressBar(),
+          LoadingProgressBarState() => _buildProgressBar(state),
           ErrorProgressBarState() => const Center(
               child: Text('Error loading progress'),
             ),
@@ -27,18 +25,21 @@ class ProgressBar extends StatelessWidget {
     );
   }
 
-  Widget _buildProgressBar() {
+  Widget _buildProgressBar(state) {
     return Center(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          LinearProgressIndicator(
-            value: progress,
-            backgroundColor: Colors.grey[200],
-            valueColor: AlwaysStoppedAnimation<Color>(Colors.grey[400]!),
-          ),
-          Text('Loading posts...'),
-        ],
+      child: Padding(
+        padding: const EdgeInsets.all(20.0),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            LinearProgressIndicator(
+              value: state.progress,
+              backgroundColor: Colors.grey[200],
+              valueColor: AlwaysStoppedAnimation<Color>(Colors.grey[400]!),
+            ),
+            Text('Loading posts...'),
+          ],
+        ),
       ),
     );
   }

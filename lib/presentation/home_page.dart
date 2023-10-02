@@ -74,9 +74,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
       create: (_) => HomePageBloc(PostsRepository(GetIt.I.get(), GetIt.I.get())),
       child: BlocBuilder<HomePageBloc, HomePageState>(builder: (context, state) {
         return switch (state) {
-          LoadingHomePageState() => _buildLoadingPage(
-              state,
-             ProgressBar()),
+          LoadingHomePageState() => _buildLoadingPage(state, ProgressBar()),
           LoadedHomePageState() => _buildHomePage(context, state),
           ErrorHomePageState() => _buildLoadingPage(state, const Center(child: Text('Something went wrong'))),
         };
@@ -169,10 +167,28 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
             ),
           ),
           _token == null
-              ? ElevatedButton(onPressed: loginVK, child: Text('Login to VK'))
-              : Container(
-                  // child: Text('You are logged in to VK'),
+              ? Container(
+                  color: Colors.grey[100],
+                  width: double.infinity,
+                  child: ElevatedButton(
+                    onPressed: loginVK,
+                    child: Text('Login to VK'),
                   ),
+                )
+              : Container(
+                  color: Colors.grey[200],
+                  width: double.infinity,
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    children: [
+                      Text('You are logged in to VK'),
+                      ElevatedButton(
+                        onPressed: loginVK,
+                        child: Text('Logout'),
+                      ),
+                    ],
+                  ),
+                ),
           SizedBox(height: 20)
         ],
       ),
@@ -189,6 +205,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
           return AlertDialog(
             title: Text('Login to VK'),
             content: Column(
+              mainAxisSize: MainAxisSize.min,
               children: <Widget>[
                 if (_sdkVersion != null) Text('SDK v$_sdkVersion'),
                 if (token != null && profile != null)
@@ -197,6 +214,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                     child: _buildUserInfo(context, profile, token, _email),
                   ),
                 Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: [
                     ElevatedButton(
                       onPressed: () {

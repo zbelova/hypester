@@ -10,8 +10,8 @@ class ProgressBarBloc extends Bloc<ProgressBarEvent, ProgressBarState> {
   ProgressBarBloc() : super(const LoadingProgressBarState()) {
     on<LoadProgressBarEvent>(_onLoadEvent);
     _postsRepository.addListener(_update);
-
-    //add(LoadProgressBarEvent());
+    print('ProgressBarBloc');
+    add(LoadProgressBarEvent());
   }
 
   @override
@@ -22,7 +22,7 @@ class ProgressBarBloc extends Bloc<ProgressBarEvent, ProgressBarState> {
 
   void _update() {
     print(_postsRepository.progress);
-    //add(LoadProgressBarEvent());
+    add(LoadProgressBarEvent(progress: _postsRepository.progress));
   }
 
   Future<void> _onLoadEvent(LoadProgressBarEvent event, Emitter<ProgressBarState> emit) async {
