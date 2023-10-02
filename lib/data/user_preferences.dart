@@ -71,4 +71,44 @@ class UserPreferences {
   String getVKToken() {
     return _preferences?.getString('vk_token') ?? '';
   }
+
+  Future<void> setRedditActive(bool isActive) async {
+    await _preferences?.setBool('reddit_active', isActive);
+  }
+
+  bool getRedditActive() {
+    return _preferences?.getBool('reddit_active') ?? true;
+  }
+
+  Future<void> setVKActive(bool isActive) async {
+    await _preferences?.setBool('vk_active', isActive);
+  }
+
+  bool getVKActive() {
+    return _preferences?.getBool('vk_active') ?? false;
+  }
+
+  Future<void> setInstagramActive(bool isActive) async {
+    await _preferences?.setBool('instagram_active', isActive);
+  }
+
+  bool getInstagramActive() {
+    return _preferences?.getBool('instagram_active') ?? false;
+  }
+
+  Future<void> setYoutubeActive(bool isActive) async {
+    await _preferences?.setBool('youtube_active', isActive);
+  }
+
+  bool getYoutubeActive() {
+    return _preferences?.getBool('youtube_active') ?? false;
+  }
+
+  Future<void> setTelegramActive(bool isActive) async {
+    await _preferences?.setBool('telegram_active', isActive);
+  }
+
+  bool getTelegramActive() {
+    return _preferences?.getBool('telegram_active') ?? false;
+  }
 }
