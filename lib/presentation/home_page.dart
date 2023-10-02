@@ -6,6 +6,7 @@ import 'package:hypester/bloc/homepage/homepage_bloc.dart';
 import 'package:hypester/data/repository.dart';
 import 'package:hypester/data/user_preferences.dart';
 import 'package:hypester/presentation/add_feed_screen.dart';
+import 'package:hypester/presentation/webview.dart';
 import 'package:hypester/presentation/widgets/progress_bar.dart';
 import '../bloc/homepage/homepage_event.dart';
 import '../bloc/homepage/homepage_state.dart';
@@ -94,7 +95,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
         actions: [
           IconButton(onPressed: () {}, icon: const Icon(Icons.add_circle_outline, color: Colors.black)),
         ],
-        backgroundColor: const Color(0xFFFFCD8D),
+        //backgroundColor: const Color(0xFFFFCD8D),
         title: const Text('Hypester', style: TextStyle(fontSize: 30, fontWeight: FontWeight.w600, fontFamily: 'Caveat-Variable')),
         bottom: PreferredSize(
           preferredSize: const Size.fromHeight(30),
@@ -130,6 +131,8 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
       extendBody: true,
       appBar: AppBar(
         toolbarHeight: 60,
+        centerTitle: true,
+
         leading: IconButton(onPressed: () {}, icon: const Icon(Icons.menu, color: Colors.black)),
         actions: [
           IconButton(
@@ -143,12 +146,12 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
             ),
           ),
         ],
-        backgroundColor: const Color(0xFFFFCD8D),
+        //backgroundColor: const Color(0xFFFFCD8D),
         title: const Text('Hypester', style: TextStyle(fontSize: 30, fontWeight: FontWeight.w600, fontFamily: 'Caveat-Variable')),
         bottom: PreferredSize(
-          preferredSize: const Size.fromHeight(30),
+          preferredSize: const Size.fromHeight(25),
           child: TabBar(
-            tabAlignment: TabAlignment.start,
+            tabAlignment: TabAlignment.center,
             labelColor: Colors.black,
             indicatorColor: Colors.black,
             isScrollable: true,
@@ -211,7 +214,13 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                 context.read<HomePageBloc>().add(LoadHomePageEvent());
               },
               child: Text('Refresh')),
-          SizedBox(height: 20)
+          SizedBox(height: 20),
+          // ElevatedButton(
+          //     onPressed: () {
+          //       Navigator.of(context).push(MaterialPageRoute(builder: (context) => const WebViewScreen()));
+          //     },
+          //     child: Text('Webview')),
+          // SizedBox(height: 20),
         ],
       ),
     );

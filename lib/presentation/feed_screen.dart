@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:hypester/presentation/post_screen.dart';
+import 'package:hypester/presentation/webview.dart';
 import 'package:hypester/presentation/widgets/gallery_preview_widget.dart';
 import 'package:hypester/presentation/widgets/source_name_widgets.dart';
 import 'package:intl/intl.dart';
@@ -30,7 +31,11 @@ class _FeedScreenState extends State<FeedScreen> {
           itemBuilder: (context, index) {
             return GestureDetector(
               onTap: () {
-                Navigator.push(context, MaterialPageRoute(builder: (context) => PostScreen(post: widget.feed.posts[index], keyword: widget.feed.keyword)));
+                if (widget.feed.posts[index].relinkUrl != null && widget.feed.posts[index].relinkUrl != '') {
+                  Navigator.push(context, MaterialPageRoute(builder: (context) => PostScreen(post: widget.feed.posts[index], keyword: widget.feed.keyword)));
+                } else {
+                  Navigator.push(context, MaterialPageRoute(builder: (context) =>WebViewScreen(post: widget.feed.posts[index])));
+                }
               },
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -94,11 +99,11 @@ class _FeedScreenState extends State<FeedScreen> {
                       ),
                       Spacer(),
                       if (widget.feed.posts[index].views! > 0) ...[
-                        const Icon(Icons.remove_red_eye_outlined, size: 12),
+                        const Icon(Icons.remove_red_eye_outlined, size: 13),
                         const SizedBox(width: 3),
                         Text(
                           widget.feed.posts[index].views.toString(),
-                          style: TextStyle(fontSize: 12),
+                          style: TextStyle(fontSize: 13),
                         ),
                         SizedBox(width: 5),
                       ],

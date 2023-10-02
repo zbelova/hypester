@@ -41,7 +41,7 @@ class UserPreferences {
   List<String> getKeywords() {
     //return _preferences?.getStringList('keywords') ?? [];
     //TODO убрать тестовые данные
-    return ['Trailer'];
+    return ['Trailer', 'Video'];
   }
 
   Future<void> setKeywords(List<String> keywords) async {
