@@ -30,19 +30,11 @@ class RedditDataSource extends DataSource {
         var data = event as Submission;
 
         List<String> galleryUrls = [];
-        //var isGallery = data.data!['is_gallery'] ?? false;
         var isGallery = data.data!['media_metadata'] != null;
         if (isGallery) {
-          // data.data!['gallery_data']['items'].forEach((element) {
-          //   galleryUrls.add('https://i.redd.it/${element['media_id']}.png');
-          // });
           for (var metadata in data.data!['media_metadata'].values) {
             galleryUrls.add(convertRedditUrl(metadata['s']['u'].toString()));
           }
-          // data.data!['media_metadata'].forEach((element) {
-          //
-          //   galleryUrls.add(element['s']['u'].toString());
-          // });
         }
 
         posts.add(
@@ -50,7 +42,6 @@ class RedditDataSource extends DataSource {
             title: data.title,
             body: data.selftext,
             id: data.id!,
-            //imageUrl: urlIsImage(data.url.toString()) ? data.url.toString() : '',
             imageUrl: data.preview.isNotEmpty ? data.preview[0].source.url.toString() : '',
             date: data.createdUtc,
             sourceName: 'Reddit',
@@ -58,7 +49,8 @@ class RedditDataSource extends DataSource {
             linkToOriginal: data.url.toString(),
             likes: data.upvotes,
             channel: data.subreddit.displayName,
-            relinkUrl: data.url.toString(),
+            //relinkUrl: data.url.toString(),
+            relinkUrl: data.url.toString().contains('www.reddit.com/') ||  data.url.toString().contains('redd.it/')?'':data.url.toString(),
             videoUrl: data.isVideo ? data.url.toString() : '',
             isGallery: isGallery,
             galleryUrls: isGallery ? galleryUrls : null,

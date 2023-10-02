@@ -20,7 +20,9 @@ class _WebViewScreenState extends State<WebViewScreen> {
   @override
   void initState() {
     super.initState();
-    if (widget.post.relinkUrl!.startsWith('https://www.youtube.com/')) _isYoutube = true;
+    //if (widget.post.relinkUrl!.startsWith('https://www.youtube.com/')) _isYoutube = true;
+    if (widget.post.relinkUrl!.startsWith('https://www.youtube.com/') || widget.post.relinkUrl!.startsWith('https://youtu.be/')) _isYoutube = true;
+
     _controller = WebViewController()
       ..setJavaScriptMode(JavaScriptMode.unrestricted)
       ..setBackgroundColor(const Color(0x00000000))
@@ -66,7 +68,7 @@ class _WebViewScreenState extends State<WebViewScreen> {
     if (!_isYoutube) {
       return WebViewWidget(controller: _controller);
     } else {
-      return YoutubeVideo(videoUrl: 'https://www.youtube.com/watch?v=XU0o5Ev__yc&amp;ab_channel=RCRevolutionGame',);
+      return YoutubeVideo(videoUrl: widget.post.relinkUrl!);
     }
   }
 }

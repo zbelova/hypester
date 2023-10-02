@@ -29,12 +29,14 @@ class _FeedScreenState extends State<FeedScreen> {
         child: ListView.builder(
           itemCount: widget.feed.posts.length,
           itemBuilder: (context, index) {
+
             return GestureDetector(
               onTap: () {
                 if (widget.feed.posts[index].relinkUrl != null && widget.feed.posts[index].relinkUrl != '') {
-                  Navigator.push(context, MaterialPageRoute(builder: (context) => PostScreen(post: widget.feed.posts[index], keyword: widget.feed.keyword)));
-                } else {
                   Navigator.push(context, MaterialPageRoute(builder: (context) =>WebViewScreen(post: widget.feed.posts[index])));
+
+                } else {
+                  Navigator.push(context, MaterialPageRoute(builder: (context) => PostScreen(post: widget.feed.posts[index], keyword: widget.feed.keyword)));
                 }
               },
               child: Column(
