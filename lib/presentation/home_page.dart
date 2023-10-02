@@ -6,8 +6,8 @@ import 'package:hypester/bloc/homepage/homepage_bloc.dart';
 import 'package:hypester/data/repository.dart';
 import 'package:hypester/data/user_preferences.dart';
 import 'package:hypester/presentation/add_feed_screen.dart';
-import 'package:hypester/presentation/widgets/loading_progress_bar.dart';
 import 'package:hypester/presentation/widgets/progress_bar.dart';
+import '../bloc/homepage/homepage_event.dart';
 import '../bloc/homepage/homepage_state.dart';
 import 'feed_screen.dart';
 
@@ -92,7 +92,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
         toolbarHeight: 60,
         leading: IconButton(onPressed: () {}, icon: const Icon(Icons.menu, color: Colors.black)),
         actions: [
-          IconButton(onPressed: () {}, icon: const Icon(Icons.search, color: Colors.black)),
+          IconButton(onPressed: () {}, icon: const Icon(Icons.add_circle_outline, color: Colors.black)),
         ],
         backgroundColor: const Color(0xFFFFCD8D),
         title: const Text('Hypester', style: TextStyle(fontSize: 30, fontWeight: FontWeight.w600, fontFamily: 'Caveat-Variable')),
@@ -124,7 +124,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
     );
   }
 
-  Widget _buildHomePage(context, state) {
+  Widget _buildHomePage(BuildContext context, state) {
     _tabController = TabController(vsync: this, length: state.feeds.length);
     return Scaffold(
       extendBody: true,
@@ -134,7 +134,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
         actions: [
           IconButton(
             onPressed: () {
-              Navigator.of(context).push(MaterialPageRoute(builder: (context) =>AddFeedScreen()));
+              Navigator.of(context).push(MaterialPageRoute(builder: (context) => const AddFeedScreen()));
             },
             icon: const Icon(
               Icons.add_circle_outline,
@@ -208,7 +208,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                 ),
           ElevatedButton(
               onPressed: () {
-                PostsRepository(GetIt.I.get(), GetIt.I.get()).getAllFeeds();
+                context.read<HomePageBloc>().add(LoadHomePageEvent());
               },
               child: Text('Refresh')),
           SizedBox(height: 20)

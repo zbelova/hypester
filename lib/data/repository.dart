@@ -10,6 +10,7 @@ class PostsRepository extends ChangeNotifier{
   final RedditDataSource _redditDataSource;
   final VKDataSource _vkDataSource;
   double progress = 0.0;
+  double oldProgress = 0.0;
   bool isLoaded = false;
 
   PostsRepository(this._redditDataSource, this._vkDataSource);
@@ -17,6 +18,7 @@ class PostsRepository extends ChangeNotifier{
   Future<List<Feed>> getAllFeeds() async {
     //print('getAllFeeds');
     progress = 0;
+    oldProgress = 0.0;
     List<Feed> feeds = [];
     Feed homeFeed = Feed(posts: [], keyword: 'All');
     final List<String> keywords = UserPreferences().getKeywords();
@@ -25,9 +27,13 @@ class PostsRepository extends ChangeNotifier{
     for (var keyword in keywords) {
       List<Post> _redditPosts = await _redditDataSource.getByKeyword(keyword);
       progress += 1/progressSteps;
+      if (oldProgress != 0) {
+        oldProgress += 1/progressSteps;
+      }
       notifyListeners();
       List<Post> _vkPosts = await _vkDataSource.getByKeyword(keyword);
       progress += 1/progressSteps;
+      oldProgress += 1/progressSteps;
       notifyListeners();
      // print('reddit: ${_redditPosts.length} vk: ${_vkPosts.length}');
       //telegram

@@ -19,12 +19,12 @@ class ProgressBarBloc extends Bloc<ProgressBarEvent, ProgressBarState> {
   }
 
   void _update() {
-    add(LoadProgressBarEvent(progress: _postsRepository.progress));
+    add(LoadProgressBarEvent(progress: _postsRepository.progress, oldProgress: _postsRepository.oldProgress));
   }
 
   Future<void> _onLoadEvent(LoadProgressBarEvent event, Emitter<ProgressBarState> emit) async {
     try {
-      emit(LoadingProgressBarState(progress: event.progress));
+      emit(LoadingProgressBarState(progress: event.progress, oldProgress: event.oldProgress));
     } catch (error) {
       print('Ошибка при загрузке прогресс бара: $error');
       emit(ErrorProgressBarState());
