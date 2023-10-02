@@ -46,21 +46,26 @@ class PostScreen extends StatelessWidget {
               Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
                 //const SizedBox(height: 8),
                 if (post.imageUrl != '' && post.imageUrl != null)
-                  Image.network(
-                    post.imageUrl!,
-                    errorBuilder: (context, error, stackTrace) {
-                      return Container(
-                        height: 200,
-                        color: Colors.grey[300],
-                        child: Center(
-                          child: Icon(
-                            Icons.error_outline,
-                            color: Colors.grey[500],
+                  ClipRRect(
+                    borderRadius: BorderRadius.circular(10),
+                    child: Image.network(
+                      post.imageUrl!,
+                      fit: BoxFit.cover,
+                      errorBuilder: (context, error, stackTrace) {
+                        return Container(
+                          height: 200,
+                          color: Colors.grey[300],
+                          child: Center(
+                            child: Icon(
+                              Icons.error_outline,
+                              color: Colors.grey[500],
+                            ),
                           ),
-                        ),
-                      );
-                    },
+                        );
+                      },
+                    ),
                   ),
+                if (post.imageUrl != '' && post.imageUrl != null) SizedBox(height: 15),
                 if (post.body != null)
                   Text(
                     post.body!,
@@ -68,6 +73,7 @@ class PostScreen extends StatelessWidget {
                     //softWrap: false,
                   ),
                 if (post.isGallery) _buildGallery(post.galleryUrls!),
+                SizedBox(height:8),
                 Text(
                   DateFormat('HH:mm dd.MM.yyyy').format(post.date),
                   style: TextStyle(fontSize: 11, color: Colors.grey[500]),
@@ -92,12 +98,12 @@ class PostScreen extends StatelessWidget {
                         ),
                       ),
                     const Spacer(),
-                    if (post.views != null) ...[
+                    if (post.views != null && post.views! > 0) ...[
                       const Icon(Icons.remove_red_eye_outlined, size: 12),
                       const SizedBox(width: 3),
                       Text(
                         post.views.toString(),
-                        style: const TextStyle(fontSize: 12),
+                        style: const TextStyle(fontSize: 13),
                       ),
                       const SizedBox(width: 5),
                     ],
@@ -108,7 +114,7 @@ class PostScreen extends StatelessWidget {
                     const SizedBox(width: 3),
                     Text(
                       post.likes.toString(),
-                      style: const TextStyle(fontSize: 12),
+                      style: const TextStyle(fontSize: 13),
                     ),
                   ],
                 ),
