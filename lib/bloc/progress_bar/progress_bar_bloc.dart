@@ -1,6 +1,7 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:hypester/bloc/progress_bar/progress_bar_event.dart';
 import 'package:hypester/bloc/progress_bar/progress_bar_state.dart';
+import 'package:hypester/data/user_preferences.dart';
 import '../../data/repository.dart';
 
 class ProgressBarBloc extends Bloc<ProgressBarEvent, ProgressBarState> {
@@ -24,7 +25,14 @@ class ProgressBarBloc extends Bloc<ProgressBarEvent, ProgressBarState> {
 
   Future<void> _onLoadEvent(LoadProgressBarEvent event, Emitter<ProgressBarState> emit) async {
     try {
-      emit(LoadingProgressBarState(progress: event.progress, oldProgress: event.oldProgress));
+      List<String> activeSources = [
+        if (UserPreferences().getRedditActive()) 'Reddit',
+        if (UserPreferences().getVKActive()) 'VK',
+        if (UserPreferences().getTelegramActive()) 'Telegram',
+        if (UserPreferences().getYoutubeActive()) 'Youtube',
+        if (UserPreferences().getInstagramActive()) 'Instagram',
+      ];
+      emit(LoadingProgressBarState(progress: event.progress, oldProgress: event.oldProgress, activeSources: activeSources));
     } catch (error) {
       print('Ошибка при загрузке прогресс бара: $error');
       emit(ErrorProgressBarState());

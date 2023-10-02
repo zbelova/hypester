@@ -51,7 +51,6 @@ class _ProgressBarState extends State<ProgressBar> with TickerProviderStateMixin
   }
 
   Widget _buildProgressBar(state) {
-    //_controller.forward(from: state.oldProgress);
     _controller.animateTo(state.progress, duration: const Duration(milliseconds: 1000));
     return Center(
       child: Padding(
@@ -71,7 +70,7 @@ class _ProgressBarState extends State<ProgressBar> with TickerProviderStateMixin
               ),
             ),
             SizedBox(height: 20),
-            Text('Loading posts from Reddit, VK...'),
+            Text('Loading posts from ${state.activeSources.join(', ')}...'),
           ],
         ),
       ),
