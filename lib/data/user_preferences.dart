@@ -39,12 +39,24 @@ class UserPreferences {
   }
 
   List<String> getKeywords() {
-    //return _preferences?.getStringList('keywords') ?? [];
+    return _preferences?.getStringList('keywords') ?? [];
     //TODO убрать тестовые данные
-    return ['Trailer', 'Блины'];
+    //return ['Trailer', 'Блины'];
   }
 
   Future<void> setKeywords(List<String> keywords) async {
+    await _preferences?.setStringList('keywords', keywords);
+  }
+
+  Future<void> addKeyword(String keyword) async {
+    List<String> keywords = getKeywords();
+    keywords.add(keyword);
+    await _preferences?.setStringList('keywords', keywords);
+  }
+
+  Future<void> deleteKeyword(String keyword) async {
+    List<String> keywords = getKeywords();
+    keywords.remove(keyword);
     await _preferences?.setStringList('keywords', keywords);
   }
 

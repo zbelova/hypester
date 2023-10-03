@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:hypester/data/hive/feed_filters.dart';
+import 'package:hypester/data/hive/feed_filters_local_data_source.dart';
+import 'package:hypester/data/user_preferences.dart';
 
 class AddFeedScreen extends StatefulWidget {
   const AddFeedScreen({super.key});
@@ -18,12 +21,34 @@ class _AddFeedScreenState extends State<AddFeedScreen> {
   final TextEditingController _instagramLikesController = TextEditingController();
   bool _redditSearchInSubreddits = false;
   bool _youtubeSearchInChannels = false;
+  final FeedFiltersLocalDataSource _feedFiltersLocalDataSource = FeedFiltersLocalDataSource();
 
   @override
   void initState() {
     super.initState();
-
+    _redditUpsController.text = '0';
+    _vkLikesController.text = '0';
+    _vkViewsController.text = '0';
+    _youtubeLikesController.text = '0';
+    _youtubeViewsController.text = '0';
+    _telegramViewsController.text = '0';
+    _instagramLikesController.text = '0';
+    //_getFilters();
   }
+
+  // Future<void> _getFilters() async {
+  //   FeedFilters feedFilters = await _feedFiltersLocalDataSource.get(_keywordController.text);
+  //     _redditUpsController.text = feedFilters.redditLikesFilter.toString();
+  //     _redditSearchInSubreddits = feedFilters.searchInSubreddits;
+  //     _vkLikesController.text = feedFilters.vkLikesFilter.toString();
+  //     _vkViewsController.text = feedFilters.vkViewsFilter.toString();
+  //     _youtubeLikesController.text = feedFilters.youtubeLikesFilter.toString();
+  //     _youtubeViewsController.text = feedFilters.youtubeViewsFilter.toString();
+  //     _youtubeSearchInChannels = feedFilters.searchInChannels;
+  //     _telegramViewsController.text = feedFilters.telegramViewsFilter.toString();
+  //     _instagramLikesController.text = feedFilters.instagramLikesFilter.toString();
+  //
+  // }
 
   @override
   void dispose() {
@@ -51,6 +76,9 @@ class _AddFeedScreenState extends State<AddFeedScreen> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
+              const SizedBox(
+                height: 10,
+              ),
               TextField(
                 controller: _keywordController,
                 decoration: const InputDecoration(
@@ -76,6 +104,21 @@ class _AddFeedScreenState extends State<AddFeedScreen> {
                   width: 200,
                   child: ElevatedButton(
                     onPressed: () {
+                      _feedFiltersLocalDataSource.add(
+                        FeedFilters(
+                          keyword: _keywordController.text,
+                          redditLikesFilter: int.parse(_redditUpsController.text),
+                          searchInSubreddits: _redditSearchInSubreddits,
+                          vkLikesFilter: int.parse(_vkLikesController.text),
+                          vkViewsFilter: int.parse(_vkViewsController.text),
+                          youtubeLikesFilter: int.parse(_youtubeLikesController.text),
+                          youtubeViewsFilter: int.parse(_youtubeViewsController.text),
+                          searchInChannels: _youtubeSearchInChannels,
+                          telegramViewsFilter: int.parse(_telegramViewsController.text),
+                          instagramLikesFilter: int.parse(_instagramLikesController.text),
+                        ),
+                      );
+                      UserPreferences().addKeyword(_keywordController.text);
                       Navigator.pop(context, _keywordController.text);
                     },
                     child: const Text('Add'),
@@ -128,18 +171,23 @@ class _AddFeedScreenState extends State<AddFeedScreen> {
               width: 130,
               child: Text(
                 'Ups threshold',
-                style: TextStyle(fontSize: 16),
+                style: TextStyle(
+                  fontSize: 16,
+                ),
               ),
             ),
             const SizedBox(width: 20),
             SizedBox(
               width: 70,
-              height: 40,
+              //height: 40,
               child: TextField(
+                textAlign: TextAlign.center,
                 keyboardType: TextInputType.number,
                 controller: _redditUpsController,
                 decoration: const InputDecoration(
                   border: OutlineInputBorder(),
+                  isDense: true,
+                  contentPadding: EdgeInsets.symmetric(horizontal: 0, vertical: 10),
                 ),
               ),
             ),
@@ -179,10 +227,13 @@ class _AddFeedScreenState extends State<AddFeedScreen> {
               width: 70,
               height: 40,
               child: TextField(
+                textAlign: TextAlign.center,
                 keyboardType: TextInputType.number,
                 controller: _vkLikesController,
                 decoration: const InputDecoration(
                   border: OutlineInputBorder(),
+                  isDense: true,
+                  contentPadding: EdgeInsets.symmetric(horizontal: 0, vertical: 10),
                 ),
               ),
             ),
@@ -203,10 +254,13 @@ class _AddFeedScreenState extends State<AddFeedScreen> {
               width: 70,
               height: 40,
               child: TextField(
+                textAlign: TextAlign.center,
                 keyboardType: TextInputType.number,
                 controller: _vkViewsController,
                 decoration: const InputDecoration(
                   border: OutlineInputBorder(),
+                  isDense: true,
+                  contentPadding: EdgeInsets.symmetric(horizontal: 0, vertical: 10),
                 ),
               ),
             ),
@@ -247,10 +301,13 @@ class _AddFeedScreenState extends State<AddFeedScreen> {
               width: 70,
               height: 40,
               child: TextField(
+                textAlign: TextAlign.center,
                 keyboardType: TextInputType.number,
                 controller: _telegramViewsController,
                 decoration: const InputDecoration(
                   border: OutlineInputBorder(),
+                  isDense: true,
+                  contentPadding: EdgeInsets.symmetric(horizontal: 0, vertical: 10),
                 ),
               ),
             ),
@@ -307,10 +364,13 @@ class _AddFeedScreenState extends State<AddFeedScreen> {
               width: 70,
               height: 40,
               child: TextField(
+                textAlign: TextAlign.center,
                 keyboardType: TextInputType.number,
                 controller: _youtubeLikesController,
                 decoration: const InputDecoration(
                   border: OutlineInputBorder(),
+                  isDense: true,
+                  contentPadding: EdgeInsets.symmetric(horizontal: 0, vertical: 10),
                 ),
               ),
             ),
@@ -331,10 +391,13 @@ class _AddFeedScreenState extends State<AddFeedScreen> {
               width: 70,
               height: 40,
               child: TextField(
+                textAlign: TextAlign.center,
                 keyboardType: TextInputType.number,
                 controller: _youtubeViewsController,
                 decoration: const InputDecoration(
                   border: OutlineInputBorder(),
+                  isDense: true,
+                  contentPadding: EdgeInsets.symmetric(horizontal: 0, vertical: 10),
                 ),
               ),
             ),
@@ -378,10 +441,13 @@ class _AddFeedScreenState extends State<AddFeedScreen> {
               width: 70,
               height: 40,
               child: TextField(
+                textAlign: TextAlign.center,
                 keyboardType: TextInputType.number,
                 controller: _instagramLikesController,
                 decoration: const InputDecoration(
                   border: OutlineInputBorder(),
+                  isDense: true,
+                  contentPadding: EdgeInsets.symmetric(horizontal: 0, vertical: 10),
                 ),
               ),
             ),
