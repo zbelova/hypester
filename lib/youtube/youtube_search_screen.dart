@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'dart:convert';
 
 import 'package:http/http.dart' as http;
-import 'package:hypester/youtube/const.dart';
+import 'package:hypester/youtube/api_keys.dart';
 import 'package:hypester/youtube/video_player_screen.dart';
 
 class YoutubeSearchScreen extends StatefulWidget {
@@ -16,7 +16,7 @@ class _YoutubeSearchScreenState extends State<YoutubeSearchScreen> {
 
   Future<void> searchVideos(String query) async {
     final response = await http.get(Uri.parse(
-        'https://www.googleapis.com/youtube/v3/search?part=snippet&maxResults=20&q=$query&key=$apiKey'));
+        'https://www.googleapis.com/youtube/v3/search?part=snippet&maxResults=20&q=$query&key=$youTubeApiKey'));
     if (response.statusCode == 200) {
       final data = jsonDecode(response.body);
       setState(() {
