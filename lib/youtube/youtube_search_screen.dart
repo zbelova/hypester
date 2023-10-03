@@ -72,6 +72,7 @@ class _YoutubeSearchScreenState extends State<YoutubeSearchScreen> {
     );
   }
 
+//просмотр видео на новой странице
   openVideo(String videoId) {
     Navigator.push(
       context,
