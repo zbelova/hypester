@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_login_vk/flutter_login_vk.dart';
 import 'package:get_it/get_it.dart';
 import 'package:hive/hive.dart';
+import 'package:hypester/data/hive/feed_filters.dart';
 import 'package:hypester/data/repository.dart';
 import 'package:hypester/presentation/home_page.dart';
 import 'package:path_provider/path_provider.dart';
@@ -32,18 +33,19 @@ Future<void> main() async {
   Hive
     ..init(directory.path)
     ..registerAdapter(RedditPostLocalDtoAdapter())
-    ..registerAdapter(SubredditLocalDtoAdapter());
+    ..registerAdapter(SubredditLocalDtoAdapter())
+    ..registerAdapter(FeedFiltersAdapter());
 
   final plugin = VKLogin(debug: true);
   await plugin.initSdk();
 
-  runApp( Hypester(plugin: plugin));
+  runApp(Hypester(plugin: plugin));
 }
 
 class Hypester extends StatelessWidget {
   final VKLogin plugin;
-  const Hypester({super.key, required this.plugin});
 
+  const Hypester({super.key, required this.plugin});
 
   @override
   Widget build(BuildContext context) {

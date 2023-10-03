@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
 
-enum RedditSearchSource { posts, subreddits }
-
 class AddFeedScreen extends StatefulWidget {
   const AddFeedScreen({super.key});
 
@@ -20,7 +18,25 @@ class _AddFeedScreenState extends State<AddFeedScreen> {
   final TextEditingController _instagramLikesController = TextEditingController();
   bool _redditSearchInSubreddits = false;
   bool _youtubeSearchInChannels = false;
-  RedditSearchSource? _rss = RedditSearchSource.posts;
+
+  @override
+  void initState() {
+    super.initState();
+
+  }
+
+  @override
+  void dispose() {
+    _keywordController.dispose();
+    _redditUpsController.dispose();
+    _vkLikesController.dispose();
+    _vkViewsController.dispose();
+    _youtubeLikesController.dispose();
+    _youtubeViewsController.dispose();
+    _telegramViewsController.dispose();
+    _instagramLikesController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -50,9 +66,10 @@ class _AddFeedScreenState extends State<AddFeedScreen> {
                 style: TextStyle(fontSize: 18),
               ),
               _buildRedditSettings(),
+              _buildYoutubeSettings(),
               _buildVkSettings(),
               _buildTelegramSettings(),
-              _buildYoutubeSettings(),
+              _buildInstagramSettings(),
               const SizedBox(height: 15),
               Center(
                 child: SizedBox(
@@ -77,9 +94,9 @@ class _AddFeedScreenState extends State<AddFeedScreen> {
       mainAxisAlignment: MainAxisAlignment.start,
       children: [
         const SizedBox(height: 15),
-        Align(
+        const Align(
           alignment: Alignment.centerLeft,
-          child: const Text(
+          child: Text(
             'Reddit',
             style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
           ),
@@ -134,11 +151,12 @@ class _AddFeedScreenState extends State<AddFeedScreen> {
 
   Widget _buildVkSettings() {
     return Column(
+      mainAxisAlignment: MainAxisAlignment.start,
       children: [
         const SizedBox(height: 15),
-        Align(
+        const Align(
           alignment: Alignment.centerLeft,
-          child: const Text(
+          child: Text(
             'VK',
             style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
           ),
@@ -200,11 +218,12 @@ class _AddFeedScreenState extends State<AddFeedScreen> {
 
   Widget _buildTelegramSettings() {
     return Column(
+      mainAxisAlignment: MainAxisAlignment.start,
       children: [
         const SizedBox(height: 15),
-        Align(
+        const Align(
           alignment: Alignment.centerLeft,
-          child: const Text(
+          child: Text(
             'Telegram',
             style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
           ),
@@ -246,9 +265,9 @@ class _AddFeedScreenState extends State<AddFeedScreen> {
       mainAxisAlignment: MainAxisAlignment.start,
       children: [
         const SizedBox(height: 15),
-        Align(
+        const Align(
           alignment: Alignment.centerLeft,
-          child: const Text(
+          child: Text(
             'Youtube',
             style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
           ),
@@ -297,7 +316,7 @@ class _AddFeedScreenState extends State<AddFeedScreen> {
             ),
           ],
         ),
-        SizedBox(height: 5),
+        const SizedBox(height: 5),
         Row(
           children: [
             const SizedBox(
@@ -327,17 +346,21 @@ class _AddFeedScreenState extends State<AddFeedScreen> {
 
   Widget _buildInstagramSettings() {
     return Column(
+      mainAxisAlignment: MainAxisAlignment.start,
       children: [
         const SizedBox(height: 15),
-        Align(
+        const Align(
           alignment: Alignment.centerLeft,
-          child: const Text(
+          child: Text(
             'Instagram',
             style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
           ),
         ),
-        const Text(
-          'Only search in description text available.',
+        const Align(
+          alignment: Alignment.centerLeft,
+          child: Text(
+            'Only search in description text available.',
+          ),
         ),
         const SizedBox(height: 15),
         const SizedBox(height: 5),
