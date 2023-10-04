@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:get_it/get_it.dart';
 import 'package:hypester/data/hive/feed_filters.dart';
 import 'package:hypester/data/hive/feed_filters_local_data_source.dart';
 import 'package:hypester/data/user_preferences.dart';
@@ -21,7 +22,7 @@ class _AddFeedScreenState extends State<AddFeedScreen> {
   final TextEditingController _instagramLikesController = TextEditingController();
   bool _redditSearchInSubreddits = false;
   bool _youtubeSearchInChannels = false;
-  final FeedFiltersLocalDataSource _feedFiltersLocalDataSource = FeedFiltersLocalDataSource();
+  final FeedFiltersLocalDataSource _feedFiltersLocalDataSource = GetIt.I.get();
 
   @override
   void initState() {
@@ -89,24 +90,32 @@ class _AddFeedScreenState extends State<AddFeedScreen> {
               const SizedBox(height: 5),
               const Text('Choose a keyword that will be used to search for content for the new feed.'),
               const SizedBox(height: 15),
-              const Text(
-                'Settings for each source when enabled:',
-                style: TextStyle(fontSize: 18),
+              ExpansionTile(
+                expandedCrossAxisAlignment: CrossAxisAlignment.start,
+                childrenPadding: const EdgeInsets.only(left: 16, bottom: 10),
+                title: Text('Filters'),
+                children: [
+                  const Text(
+                    'Settings for each source when enabled:',
+                    style: TextStyle(fontSize: 16),
+                  ),
+                  _buildRedditSettings(),
+                  _buildYoutubeSettings(),
+                  _buildVkSettings(),
+                  _buildTelegramSettings(),
+                  _buildInstagramSettings(),
+                ],
               ),
-              _buildRedditSettings(),
-              _buildYoutubeSettings(),
-              _buildVkSettings(),
-              _buildTelegramSettings(),
-              _buildInstagramSettings(),
               const SizedBox(height: 15),
               Center(
                 child: SizedBox(
                   width: 200,
                   child: ElevatedButton(
                     onPressed: () {
+                      var capitalizedKeyword = _keywordController.text.split(' ').map((e) => e[0].toUpperCase() + e.substring(1)).join(' ');
                       _feedFiltersLocalDataSource.add(
                         FeedFilters(
-                          keyword: _keywordController.text,
+                          keyword: capitalizedKeyword,
                           redditLikesFilter: int.parse(_redditUpsController.text),
                           searchInSubreddits: _redditSearchInSubreddits,
                           vkLikesFilter: int.parse(_vkLikesController.text),

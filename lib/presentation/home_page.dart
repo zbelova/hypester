@@ -1,8 +1,10 @@
+import 'package:draw/draw.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_login_vk/flutter_login_vk.dart';
 import 'package:get_it/get_it.dart';
 import 'package:hypester/bloc/homepage/homepage_bloc.dart';
+import 'package:hypester/data/hive/feed_filters_local_data_source.dart';
 import 'package:hypester/data/repository.dart';
 import 'package:hypester/data/user_preferences.dart';
 import 'package:hypester/presentation/add_feed_screen.dart';
@@ -214,6 +216,13 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                 context.read<HomePageBloc>().add(LoadHomePageEvent());
               },
               child: Text('Refresh')),
+          SizedBox(height: 5),
+          ElevatedButton(
+              onPressed: () {
+                FeedFiltersLocalDataSource.clear();
+                UserPreferences().setKeywords([]);
+              },
+              child: Text('Clear Feeds')),
           SizedBox(height: 20),
           // ElevatedButton(
           //     onPressed: () {
