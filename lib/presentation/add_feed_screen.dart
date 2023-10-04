@@ -97,7 +97,7 @@ class _AddFeedScreenState extends State<AddFeedScreen> {
                 children: [
                   const Text(
                     'Settings for each source when enabled:',
-                    style: TextStyle(fontSize: 16),
+                    style: TextStyle(fontSize: 15),
                   ),
                   _buildRedditSettings(),
                   _buildYoutubeSettings(),

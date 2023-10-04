@@ -82,11 +82,32 @@ class _FeedScreenState extends State<FeedScreen> {
                         ),
                       ),
                     ),
-
                   if (widget.feed.posts[index].isGallery) GalleryPreview(imageUrls: widget.feed.posts[index].galleryUrls!),
-                  if (widget.feed.posts[index].body != null) ...[
-                    Row(
-                      children: [
+
+                  Row(
+                    children: [
+                      if (widget.feed.posts[index].isVideo && widget.feed.posts[index].relinkUrl != null && widget.feed.posts[index].relinkUrl != '' && widget.feed.posts[index].sourceName == 'VK') ...[
+                        Padding(
+                          padding: const EdgeInsets.only(right: 15),
+                          child: Image.asset(
+                            'assets/images/vkvideo.png',
+                            width: 40,
+                          ),
+                        ),
+                      ],
+                      if (!widget.feed.posts[index].isVideo &&
+                          widget.feed.posts[index].relinkUrl != null &&
+                          widget.feed.posts[index].relinkUrl != '' &&
+                          widget.feed.posts[index].sourceName == 'VK') ...[
+                        Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: Image.asset(
+                            'assets/images/multimedia.png',
+                            width: 40,
+                          ),
+                        ),
+                      ],
+                      if (widget.feed.posts[index].body != null)
                         Expanded(
                           child: Text(
                             widget.feed.posts[index].body!,
@@ -95,20 +116,9 @@ class _FeedScreenState extends State<FeedScreen> {
                             //softWrap: false,
                           ),
                         ),
-                        if (widget.feed.posts[index].isVideo && widget.feed.posts[index].relinkUrl != null && widget.feed.posts[index].relinkUrl != '') ...[
-                          Padding(
-                            padding: const EdgeInsets.all(8.0),
-                            child: Image.asset(
-                              'assets/images/video.png',
-                              width: 40,
-                            ),
-                          ),
-                        ],
-                      ],
-                    )
-
-                  ],
-                  const SizedBox(height: 10),
+                    ],
+                  ),
+                  const SizedBox(height: 15),
                   Row(
                     children: [
                       SourceNameWidget(title: widget.feed.posts[index].sourceName),
