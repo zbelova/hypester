@@ -2,6 +2,7 @@ import 'package:draw/draw.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_login_vk/flutter_login_vk.dart';
+import 'package:flutter_slider_drawer/flutter_slider_drawer.dart';
 import 'package:get_it/get_it.dart';
 import 'package:hypester/bloc/homepage/homepage_bloc.dart';
 import 'package:hypester/data/hive/feed_filters_local_data_source.dart';
@@ -91,54 +92,11 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
     _tabController = TabController(vsync: this, length: state.feedNames.length);
     return Scaffold(
       extendBody: true,
-      appBar: AppBar(
-        toolbarHeight: 60,
-        leading: IconButton(onPressed: () {}, icon: const Icon(Icons.menu, color: Colors.black)),
-        actions: [
-          IconButton(onPressed: () {}, icon: const Icon(Icons.add_circle_outline, color: Colors.black)),
-        ],
-        //backgroundColor: const Color(0xFFFFCD8D),
-        title: const Text('Hypester', style: TextStyle(fontSize: 30, fontWeight: FontWeight.w600, fontFamily: 'Caveat-Variable')),
-        bottom: PreferredSize(
-          preferredSize: const Size.fromHeight(30),
-          child: TabBar(
-            tabAlignment: TabAlignment.start,
-            labelColor: Colors.black,
-            indicatorColor: Colors.black,
-            isScrollable: true,
-            controller: _tabController,
-            tabs: [
-              for (var feed in state.feedNames)
-                Tab(
-                  child: Text(
-                    feed,
-                    style: const TextStyle(
-                      fontSize: 17,
-                      fontWeight: FontWeight.w400,
-                      fontStyle: FontStyle.normal,
-                    ),
-                  ),
-                ),
-            ],
-          ),
-        ),
-      ),
-      body: body,
-    );
-  }
-
-  Widget _buildHomePage(BuildContext context, state) {
-    _tabController = TabController(vsync: this, length: state.feeds.length);
-    return Scaffold(
-      extendBody: true,
-      appBar: AppBar(
-        toolbarHeight: 60,
-        centerTitle: true,
-
-        leading: IconButton(onPressed: () {}, icon: const Icon(Icons.menu, color: Colors.black)),
-        actions: [
-          IconButton(
-            onPressed: () async{
+      body: SliderDrawer(
+        appBar: SliderAppBar(
+          appBarHeight: 100,
+          trailing: IconButton(
+            onPressed: () async {
               await Navigator.of(context).push(MaterialPageRoute(builder: (context) => const AddFeedScreen()));
               context.read<HomePageBloc>().add(LoadHomePageEvent());
             },
@@ -148,90 +106,148 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
               size: 25,
             ),
           ),
-        ],
-        //backgroundColor: const Color(0xFFFFCD8D),
-        title: const Text('Hypester', style: TextStyle(fontSize: 30, fontWeight: FontWeight.w600, fontFamily: 'Caveat-Variable')),
-        bottom: PreferredSize(
-          preferredSize: const Size.fromHeight(25),
-          child: TabBar(
-            tabAlignment: TabAlignment.center,
-            labelColor: Colors.black,
-            indicatorColor: Colors.black,
-            isScrollable: true,
-            controller: _tabController,
-            tabs: [
-              for (var feed in state.feeds)
-                Tab(
-                  child: Text(
-                    feed.keyword,
-                    style: const TextStyle(
-                      fontSize: 17,
-                      fontWeight: FontWeight.w400,
-                      fontStyle: FontStyle.normal,
+          title: const Text('Hypester', style: TextStyle(fontSize: 30, fontWeight: FontWeight.w600, fontFamily: 'Caveat-Variable')),
+        ),
+        key: const ValueKey('drawer'),
+        slider: Container(color: Colors.red),
+        child: Column(
+
+          children: [
+            SizedBox(
+              height: 35,
+              child: TabBar(
+                tabAlignment: TabAlignment.center,
+                labelColor: Colors.black,
+                indicatorColor: Colors.black,
+                isScrollable: true,
+                controller: _tabController,
+                tabs: [
+                  for (var feedName in state.feedNames)
+                    Tab(
+                      child: Text(
+                        feedName,
+                        style: const TextStyle(
+                          fontSize: 17,
+                          fontWeight: FontWeight.w400,
+                          fontStyle: FontStyle.normal,
+                        ),
+                      ),
                     ),
-                  ),
-                ),
-            ],
-          ),
+                ],
+              ),
+            ),
+            Spacer(),
+            Center(child: body),
+            Spacer()
+          ],
         ),
       ),
-      body: Column(
-        children: [
-          Expanded(
-            child: TabBarView(
-              controller: _tabController,
-              children: [
-                for (var feed in state.feeds)
-                  Padding(
-                    padding: const EdgeInsets.all(16),
-                    child: FeedScreen(feed: feed),
-                  ),
-              ],
+    );
+  }
+
+  Widget _buildHomePage(BuildContext context, state) {
+    _tabController = TabController(vsync: this, length: state.feeds.length);
+    return Scaffold(
+      extendBody: true,
+      body: SliderDrawer(
+        appBar: SliderAppBar(
+          appBarHeight: 100,
+          trailing: IconButton(
+            onPressed: () async {
+              await Navigator.of(context).push(MaterialPageRoute(builder: (context) => const AddFeedScreen()));
+              context.read<HomePageBloc>().add(LoadHomePageEvent());
+            },
+            icon: const Icon(
+              Icons.add_circle_outline,
+              color: Colors.black,
+              size: 25,
             ),
           ),
-          _token == null
-              ? Container(
-                  color: Colors.grey[100],
-                  width: double.infinity,
-                  child: ElevatedButton(
-                    onPressed: loginVK,
-                    child: Text('Login to VK'),
-                  ),
-                )
-              : Container(
-                  color: Colors.grey[200],
-                  width: double.infinity,
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                    children: [
-                      Text('You are logged in to VK'),
-                      ElevatedButton(
-                        onPressed: loginVK,
-                        child: Text('Logout'),
+          title: const Text('Hypester', style: TextStyle(fontSize: 30, fontWeight: FontWeight.w600, fontFamily: 'Caveat-Variable')),
+        ),
+        key: const ValueKey('drawer'),
+        slider: Container(color: Colors.red),
+        child: Column(
+          children: [
+            SizedBox(
+              height: 35,
+              child: TabBar(
+                tabAlignment: TabAlignment.center,
+                labelColor: Colors.black,
+                indicatorColor: Colors.black,
+                isScrollable: true,
+                controller: _tabController,
+                tabs: [
+                  for (var feed in state.feeds)
+                    Tab(
+                      child: Text(
+                        feed.keyword,
+                        style: const TextStyle(
+                          fontSize: 17,
+                          fontWeight: FontWeight.w400,
+                          fontStyle: FontStyle.normal,
+                        ),
                       ),
-                    ],
+                    ),
+                ],
+              ),
+            ),
+            Expanded(
+              child: TabBarView(
+                controller: _tabController,
+                children: [
+                  for (var feed in state.feeds)
+                    Padding(
+                      padding: const EdgeInsets.all(16),
+                      child: FeedScreen(feed: feed),
+                    ),
+                ],
+              ),
+            ),
+            _token == null
+                ? Container(
+                    color: Colors.grey[100],
+                    width: double.infinity,
+                    child: ElevatedButton(
+                      onPressed: loginVK,
+                      child: Text('Login to VK'),
+                    ),
+                  )
+                : Container(
+                    color: Colors.grey[200],
+                    width: double.infinity,
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      children: [
+                        Text('You are logged in to VK'),
+                        ElevatedButton(
+                          onPressed: loginVK,
+                          child: Text('Logout'),
+                        ),
+                      ],
+                    ),
                   ),
-                ),
-          ElevatedButton(
-              onPressed: () {
-                context.read<HomePageBloc>().add(LoadHomePageEvent());
-              },
-              child: Text('Refresh')),
-          SizedBox(height: 5),
-          ElevatedButton(
-              onPressed: () {
-                FeedFiltersLocalDataSource.clear();
-                UserPreferences().setKeywords([]);
-              },
-              child: Text('Clear Feeds')),
-          SizedBox(height: 20),
-          // ElevatedButton(
-          //     onPressed: () {
-          //       Navigator.of(context).push(MaterialPageRoute(builder: (context) => const WebViewScreen()));
-          //     },
-          //     child: Text('Webview')),
-          // SizedBox(height: 20),
-        ],
+            ElevatedButton(
+                onPressed: () {
+                  context.read<HomePageBloc>().add(LoadHomePageEvent());
+                },
+                child: Text('Refresh')),
+            SizedBox(height: 5),
+            ElevatedButton(
+                onPressed: () {
+                  FeedFiltersLocalDataSource.clear();
+                  UserPreferences().setKeywords([]);
+                },
+                child: Text('Clear Feeds')),
+            SizedBox(height: 20),
+            // ElevatedButton(
+            //     onPressed: () {
+            //       Navigator.of(context).push(MaterialPageRoute(builder: (context) => const WebViewScreen()));
+            //     },
+            //     child: Text('Webview')),
+            // SizedBox(height: 20),
+          ],
+        ),
       ),
     );
   }

@@ -15,16 +15,11 @@ class HomePageBloc extends Bloc<HomePageEvent, HomePageState> {
     add(LoadHomePageEvent());
   }
 
-
-
-
-
-
   Future<void> _onLoadEvent(LoadHomePageEvent event, Emitter<HomePageState> emit) async {
     var feedNames = await _feedFiltersLocalDataSource.getAll().then((value) => value.map((e) => e.keyword).toList()..insert(0, 'All'));
-    emit( LoadingHomePageState(feedNames: feedNames));
+    emit(LoadingHomePageState(feedNames: feedNames));
     try {
-      final feeds= await _postsRepository.getAllFeeds();
+      final feeds = await _postsRepository.getAllFeeds();
       emit(LoadedHomePageState(feeds: feeds));
     } catch (error, stackTrace) {
       emit(ErrorHomePageState(feedNames: feedNames));

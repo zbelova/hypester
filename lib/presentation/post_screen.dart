@@ -35,7 +35,7 @@ class PostScreen extends StatelessWidget {
         actions: <Widget>[
           PopupMenuButton<String>(
             onSelected: (value) {
-              handleClick(value, context);
+              _handleClick(value, context);
             },
             elevation: 1,
             itemBuilder: (BuildContext context) {
@@ -154,7 +154,7 @@ class PostScreen extends StatelessWidget {
     );
   }
 
-  void handleClick(String value, BuildContext context) {
+  void _handleClick(String value, BuildContext context) {
     switch (value) {
       case 'Report':
         showGeneralDialog(context: context, pageBuilder: (context, anim1, anim2) => Container(), barrierColor: Colors.black.withOpacity(0.5), barrierDismissible: true, barrierLabel: '', transitionDuration: const Duration(milliseconds: 200), transitionBuilder: (context, anim1, anim2, child) {
