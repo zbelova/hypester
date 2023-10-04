@@ -29,12 +29,10 @@ class _FeedScreenState extends State<FeedScreen> {
         child: ListView.builder(
           itemCount: widget.feed.posts.length,
           itemBuilder: (context, index) {
-
-            return GestureDetector(
+            return InkWell(
               onTap: () {
                 if (widget.feed.posts[index].relinkUrl != null && widget.feed.posts[index].relinkUrl != '') {
-                  Navigator.push(context, MaterialPageRoute(builder: (context) =>WebViewScreen(post: widget.feed.posts[index])));
-
+                  Navigator.push(context, MaterialPageRoute(builder: (context) => WebViewScreen(post: widget.feed.posts[index])));
                 } else {
                   Navigator.push(context, MaterialPageRoute(builder: (context) => PostScreen(post: widget.feed.posts[index], keyword: widget.feed.keyword)));
                 }
@@ -42,7 +40,19 @@ class _FeedScreenState extends State<FeedScreen> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-              if (widget.feed.posts[index].title != '' &&widget.feed.posts[index].title!= null) Text(widget.feed.posts[index].title!, style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w500)),
+                  Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      if (widget.feed.posts[index].title != '' && widget.feed.posts[index].title != null)
+                        Container(
+                          constraints: BoxConstraints(maxWidth: MediaQuery.of(context).size.width * 0.9),
+                          child: Text(
+                            widget.feed.posts[index].title!,
+                            style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
+                          ),
+                        ),
+                    ],
+                  ),
                   Text(
                     DateFormat('HH:mm dd.MM.yyyy').format(widget.feed.posts[index].date),
                     style: TextStyle(fontSize: 11, color: Colors.grey[500]),
@@ -68,26 +78,44 @@ class _FeedScreenState extends State<FeedScreen> {
                                 ),
                               ),
                             );
-                          }
+                          },
                         ),
                       ),
                     ),
+
                   if (widget.feed.posts[index].isGallery) GalleryPreview(imageUrls: widget.feed.posts[index].galleryUrls!),
-                  if (widget.feed.posts[index].body != null)
-                    Text(
-                      widget.feed.posts[index].body!,
-                      overflow: TextOverflow.ellipsis,
-                      maxLines: 4,
-                      //softWrap: false,
-                    ),
-                  const SizedBox(height: 8),
+                  if (widget.feed.posts[index].body != null) ...[
+                    Row(
+                      children: [
+                        Expanded(
+                          child: Text(
+                            widget.feed.posts[index].body!,
+                            overflow: TextOverflow.ellipsis,
+                            maxLines: 4,
+                            //softWrap: false,
+                          ),
+                        ),
+                        if (widget.feed.posts[index].isVideo && widget.feed.posts[index].relinkUrl != null && widget.feed.posts[index].relinkUrl != '') ...[
+                          Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: Image.asset(
+                              'assets/images/video.png',
+                              width: 40,
+                            ),
+                          ),
+                        ],
+                      ],
+                    )
+
+                  ],
+                  const SizedBox(height: 10),
                   Row(
                     children: [
                       SourceNameWidget(title: widget.feed.posts[index].sourceName),
                       Container(
                         padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 2),
                         margin: const EdgeInsets.only(right: 5),
-                        constraints: const BoxConstraints(maxWidth: 230),
+                        constraints: BoxConstraints(maxWidth: MediaQuery.of(context).size.width * 0.45),
                         decoration: BoxDecoration(
                           color: Colors.grey[300],
                           borderRadius: BorderRadius.circular(15),
@@ -95,10 +123,13 @@ class _FeedScreenState extends State<FeedScreen> {
                         child: Text(
                           widget.feed.posts[index].channel!,
                           overflow: TextOverflow.ellipsis,
-
                           style: TextStyle(fontSize: 12),
                         ),
                       ),
+                      if (widget.feed.posts[index].relinkUrl != '' && widget.feed.posts[index].relinkUrl != null) ...[
+                        const SizedBox(width: 5),
+                        const Icon(Icons.link, size: 25),
+                      ],
                       Spacer(),
                       if (widget.feed.posts[index].views! > 0) ...[
                         const Icon(Icons.remove_red_eye_outlined, size: 13),
@@ -118,6 +149,7 @@ class _FeedScreenState extends State<FeedScreen> {
                         widget.feed.posts[index].likes.toString(),
                         style: TextStyle(fontSize: 12),
                       ),
+                      const SizedBox(width: 5),
                     ],
                   ),
                   const SizedBox(height: 8),

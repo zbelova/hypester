@@ -86,7 +86,7 @@ class PostScreen extends StatelessWidget {
                       Container(
                         padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 2),
                         margin: const EdgeInsets.only(right: 5),
-                        constraints: const BoxConstraints(maxWidth: 230),
+                        constraints: BoxConstraints(maxWidth: MediaQuery.of(context).size.width * 0.5),
                         decoration: BoxDecoration(
                           color: Colors.grey[300],
                           borderRadius: BorderRadius.circular(15),
@@ -116,6 +116,7 @@ class PostScreen extends StatelessWidget {
                       post.likes.toString(),
                       style: const TextStyle(fontSize: 13),
                     ),
+                    const SizedBox(width: 5),
                   ],
                 ),
               ]),

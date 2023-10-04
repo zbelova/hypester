@@ -3,6 +3,7 @@
 import 'dart:async';
 import 'package:draw/draw.dart';
 import 'package:flutter/material.dart';
+import 'package:hypester/data/hive/feed_filters.dart';
 import '../../api_keys.dart';
 import '../../dev_screens/reddit_dev.dart';
 import '../../globals.dart';
@@ -13,7 +14,7 @@ import 'abstract_datasource.dart';
 class RedditDataSource extends DataSource {
   //возвращает список постов по всем ключевым словам
   @override
-  Future<List<Post>> getByKeyword(String keyword) async {
+  Future<List<Post>> getByKeyword(FeedFilters feedFilters) async {
     List<Post> posts = [];
 
     //инициализация реддита
@@ -25,7 +26,7 @@ class RedditDataSource extends DataSource {
     //Completer нужен, чтобы забрать из стрима все посты. Особенности апи реддита
     Completer<List<Post>> completer = Completer<List<Post>>(); // Создаем Completer
 
-    reddit.subreddit('all').search(keyword, sort: Sort.top, timeFilter: TimeFilter.day, params: {'limit': limitFilter.toString()}).listen(
+    reddit.subreddit('all').search(feedFilters.keyword, sort: Sort.top, timeFilter: TimeFilter.day, params: {'limit': limitFilter.toString()}).listen(
       (event) {
         var data = event as Submission;
 
@@ -36,26 +37,26 @@ class RedditDataSource extends DataSource {
             galleryUrls.add(convertRedditUrl(metadata['s']['u'].toString()));
           }
         }
-
-        posts.add(
-          Post(
-            title: data.title,
-            body: data.selftext,
-            id: data.id!,
-            imageUrl: data.preview.isNotEmpty ? data.preview[0].source.url.toString() : '',
-            date: data.createdUtc,
-            sourceName: 'Reddit',
-            views: 0,
-            linkToOriginal: data.url.toString(),
-            likes: data.upvotes,
-            channel: data.subreddit.displayName,
-            //relinkUrl: data.url.toString(),
-            relinkUrl: data.url.toString().contains('www.reddit.com/') ||  data.url.toString().contains('redd.it/')?'':data.url.toString(),
-            videoUrl: data.isVideo ? data.url.toString() : '',
-            isGallery: isGallery,
-            galleryUrls: isGallery ? galleryUrls : null,
-          ),
-        );
+        if (data.upvotes > feedFilters.redditLikesFilter) {
+          posts.add(
+            Post(
+              title: data.title,
+              body: data.selftext,
+              id: data.id!,
+              imageUrl: data.preview.isNotEmpty ? data.preview[0].source.url.toString() : '',
+              date: data.createdUtc,
+              sourceName: 'Reddit',
+              views: 0,
+              linkToOriginal: data.url.toString(),
+              likes: data.upvotes,
+              channel: data.subreddit.displayName,
+              relinkUrl: data.url.toString().contains('www.reddit.com/') || data.url.toString().contains('redd.it/') ? '' : data.url.toString(),
+              videoUrl: data.isVideo ? data.url.toString() : '',
+              isGallery: isGallery,
+              galleryUrls: isGallery ? galleryUrls : null,
+            ),
+          );
+        }
       },
       onDone: () {
         if (!completer.isCompleted) completer.complete(posts); // Завершаем выполнение Completer и передаем готовый список

@@ -112,10 +112,10 @@ class _AddFeedScreenState extends State<AddFeedScreen> {
                   width: 200,
                   child: ElevatedButton(
                     onPressed: () {
-                      var capitalizedKeyword = _keywordController.text.split(' ').map((e) => e[0].toUpperCase() + e.substring(1)).join(' ');
+                      //var capitalizedKeyword = _keywordController.text.split(' ').map((e) => e[0].toUpperCase() + e.substring(1)).join(' ');
                       _feedFiltersLocalDataSource.add(
                         FeedFilters(
-                          keyword: capitalizedKeyword,
+                          keyword: capitalizeEnglishWords(_keywordController.text),
                           redditLikesFilter: int.parse(_redditUpsController.text),
                           searchInSubreddits: _redditSearchInSubreddits,
                           vkLikesFilter: int.parse(_vkLikesController.text),
@@ -465,4 +465,24 @@ class _AddFeedScreenState extends State<AddFeedScreen> {
       ],
     );
   }
+}
+
+String capitalizeEnglishWords(String text) {
+  final prepositions = [
+    'a', 'an', 'the', 'at', 'in', 'on', 'by', 'to', 'for', 'of', 'from', 'with',
+    'about', 'above', 'below', 'under', 'over', 'into', 'onto', 'out', 'through',
+    'during', 'before', 'after', 'between', 'among',
+  ];
+
+  final words = text.split(' ');
+
+  for (var i = 0; i < words.length; i++) {
+    final word = words[i];
+    if (word.isNotEmpty && !prepositions.contains(word.toLowerCase())) {
+      final capitalizedWord = word[0].toUpperCase() + word.substring(1);
+      words[i] = capitalizedWord;
+    }
+  }
+
+  return words.join(' ');
 }

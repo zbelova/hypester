@@ -20,12 +20,12 @@ class _WebViewScreenState extends State<WebViewScreen> {
   @override
   void initState() {
     super.initState();
-    //if (widget.post.relinkUrl!.startsWith('https://www.youtube.com/')) _isYoutube = true;
     if (widget.post.relinkUrl!.startsWith('https://www.youtube.com/') || widget.post.relinkUrl!.startsWith('https://youtu.be/')) _isYoutube = true;
 
     _controller = WebViewController()
       ..setJavaScriptMode(JavaScriptMode.unrestricted)
       ..setBackgroundColor(const Color(0x00000000))
+
       ..setNavigationDelegate(
         NavigationDelegate(
           onProgress: (int progress) {

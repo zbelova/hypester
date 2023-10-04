@@ -138,8 +138,9 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
         leading: IconButton(onPressed: () {}, icon: const Icon(Icons.menu, color: Colors.black)),
         actions: [
           IconButton(
-            onPressed: () {
-              Navigator.of(context).push(MaterialPageRoute(builder: (context) => const AddFeedScreen()));
+            onPressed: () async{
+              await Navigator.of(context).push(MaterialPageRoute(builder: (context) => const AddFeedScreen()));
+              context.read<HomePageBloc>().add(LoadHomePageEvent());
             },
             icon: const Icon(
               Icons.add_circle_outline,
