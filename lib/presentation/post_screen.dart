@@ -1,5 +1,6 @@
 import 'package:hypester/presentation/widgets/source_name_widgets.dart';
 import 'package:intl/intl.dart';
+import 'package:share_plus/share_plus.dart';
 
 import '../data/models/post_model.dart';
 import 'package:flutter/material.dart';
@@ -31,12 +32,37 @@ class PostScreen extends StatelessWidget {
       appBar: AppBar(
         centerTitle: false,
         toolbarHeight: toolBarHeight,
+        actions: <Widget>[
+          PopupMenuButton<String>(
+            onSelected: (value) {
+              _handleClick(value, context);
+            },
+            elevation: 1,
+            itemBuilder: (BuildContext context) {
+              return {'Share', 'Report'}.map((String choice) {
+                return PopupMenuItem<String>(
+                  value: choice,
+                  child: Row(
+                    children: [
+                      Icon(
+                        choice == 'Share' ? Icons.ios_share : Icons.report_outlined,
+                        size: 20,
+                      ),
+                      SizedBox(width: 10),
+                      Text(choice),
+                    ],
+                  ),
+                );
+              }).toList();
+            },
+          ),
+        ],
         title: (post.title != null)
             ? Text(
-                post.title!,
-                style: const TextStyle(fontSize: 18),
-                maxLines: maxLines,
-              )
+          post.title!,
+          style: const TextStyle(fontSize: 18),
+          maxLines: maxLines,
+        )
             : null,
       ),
       body: Padding(
@@ -73,7 +99,7 @@ class PostScreen extends StatelessWidget {
                     //softWrap: false,
                   ),
                 if (post.isGallery) _buildGallery(post.galleryUrls!),
-                SizedBox(height:8),
+                SizedBox(height: 8),
                 Text(
                   DateFormat('HH:mm dd.MM.yyyy').format(post.date),
                   style: TextStyle(fontSize: 11, color: Colors.grey[500]),
@@ -86,7 +112,10 @@ class PostScreen extends StatelessWidget {
                       Container(
                         padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 2),
                         margin: const EdgeInsets.only(right: 5),
-                        constraints: const BoxConstraints(maxWidth: 230),
+                        constraints: BoxConstraints(maxWidth: MediaQuery
+                            .of(context)
+                            .size
+                            .width * 0.5),
                         decoration: BoxDecoration(
                           color: Colors.grey[300],
                           borderRadius: BorderRadius.circular(15),
@@ -116,12 +145,50 @@ class PostScreen extends StatelessWidget {
                       post.likes.toString(),
                       style: const TextStyle(fontSize: 13),
                     ),
+                    const SizedBox(width: 5),
                   ],
                 ),
               ]),
             ],
           )),
     );
+  }
+
+  void _handleClick(String value, BuildContext context) {
+    switch (value) {
+      case 'Report':
+        showGeneralDialog(context: context, pageBuilder: (context, anim1, anim2) => Container(), barrierColor: Colors.black.withOpacity(0.5), barrierDismissible: true, barrierLabel: '', transitionDuration: const Duration(milliseconds: 200), transitionBuilder: (context, anim1, anim2, child) {
+          return Transform.scale(
+            scale: anim1.value,
+            child: Opacity(
+              opacity: anim1.value,
+              child: AlertDialog(
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                title: Text('Report'),
+                content: Text('Are you sure you want to report this post?'),
+                actions: [
+                  TextButton(
+                    onPressed: () {
+                      Navigator.of(context).pop();
+                    },
+                    child: Text('Cancel'),
+                  ),
+                  TextButton(
+                    onPressed: () {
+                      Navigator.of(context).pop();
+                    },
+                    child: Text('Report'),
+                  ),
+                ],
+              ),
+            ),
+          );
+        });
+        break;
+      case 'Share':
+        Share.share(post.linkToOriginal!);
+        break;
+    }
   }
 
   Widget _buildGallery(List<String> imageUrls) {

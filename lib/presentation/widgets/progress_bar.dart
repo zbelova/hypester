@@ -65,7 +65,7 @@ class _ProgressBarState extends State<ProgressBar> with TickerProviderStateMixin
                 maxValue: 100,
                 displayText: '%',
                 borderRadius: BorderRadius.circular(10),
-                progressColor: Colors.blue,
+                progressColor: Colors.orangeAccent,
                 backgroundColor: Colors.grey[200]!,
               ),
             ),
