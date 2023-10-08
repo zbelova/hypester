@@ -20,7 +20,7 @@ class HomePageBloc extends Bloc<HomePageEvent, HomePageState> {
     emit(LoadingHomePageState(feedNames: feedNames));
     try {
       final feeds = await _postsRepository.getAllFeeds();
-      emit(LoadedHomePageState(feeds: feeds));
+      emit(LoadedHomePageState(feeds: feeds, feedNames: feedNames));
     } catch (error, stackTrace) {
       emit(ErrorHomePageState(feedNames: feedNames));
     }

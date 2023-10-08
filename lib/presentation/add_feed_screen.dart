@@ -219,7 +219,7 @@ class _AddFeedScreenState extends State<AddFeedScreen> {
           ),
         ),
         const Text(
-          'Only search in group names available. You will see new posts from the groups found.',
+          'Only search in group names and descriptions available. You will see new posts from the groups found.',
         ),
         const SizedBox(height: 15),
         Row(
@@ -469,9 +469,32 @@ class _AddFeedScreenState extends State<AddFeedScreen> {
 
 String capitalizeEnglishWords(String text) {
   final prepositions = [
-    'a', 'an', 'the', 'at', 'in', 'on', 'by', 'to', 'for', 'of', 'from', 'with',
-    'about', 'above', 'below', 'under', 'over', 'into', 'onto', 'out', 'through',
-    'during', 'before', 'after', 'between', 'among',
+    'a',
+    'an',
+    'the',
+    'at',
+    'in',
+    'on',
+    'by',
+    'to',
+    'for',
+    'of',
+    'from',
+    'with',
+    'about',
+    'above',
+    'below',
+    'under',
+    'over',
+    'into',
+    'onto',
+    'out',
+    'through',
+    'during',
+    'before',
+    'after',
+    'between',
+    'among',
   ];
 
   final words = text.split(' ');

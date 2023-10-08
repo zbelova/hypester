@@ -37,15 +37,28 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
       create: (_) => HomePageBloc(GetIt.I.get()),
       child: BlocBuilder<HomePageBloc, HomePageState>(builder: (context, state) {
         return switch (state) {
-          LoadingHomePageState() => _buildLoadingPage(state, const ProgressBar()),
-          LoadedHomePageState() => _buildHomePage(context, state),
-          ErrorHomePageState() => _buildLoadingPage(state, const Center(child: Text('Something went wrong'))),
+          LoadingHomePageState() => _buildScaffold(
+              context,
+              state,
+              const Column(
+                children: [
+                  Spacer(),
+                  Center(child: ProgressBar()),
+                  Spacer(),
+                ],
+              )),
+          LoadedHomePageState() => _buildScaffold(context, state, Container(), true),
+          ErrorHomePageState() => _buildScaffold(
+              context,
+              state,
+              const Center(child: Text('Something went wrong')),
+            ),
         };
       }),
     );
   }
 
-  Widget _buildLoadingPage(state, Widget body) {
+  Widget _buildScaffold(BuildContext context, state, Widget content, [bool isLoaded = false]) {
     _tabController = TabController(vsync: this, length: state.feedNames.length);
     return Scaffold(
       extendBody: true,
@@ -66,7 +79,9 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
           title: const Text('Hypester', style: TextStyle(fontSize: 30, fontWeight: FontWeight.w600, fontFamily: 'Caveat-Variable')),
         ),
         key: const ValueKey('drawer'),
-        slider: SliderMenu(plugin: widget.plugin,),
+        slider: SliderMenu(
+          plugin: widget.plugin,
+        ),
         child: Column(
           children: [
             SizedBox(
@@ -92,75 +107,20 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                 ],
               ),
             ),
-            Spacer(),
-            Center(child: body),
-            Spacer()
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget _buildHomePage(BuildContext context, state) {
-    _tabController = TabController(vsync: this, length: state.feeds.length);
-    return Scaffold(
-      extendBody: true,
-      body: SliderDrawer(
-        appBar: SliderAppBar(
-          appBarHeight: 100,
-          trailing: IconButton(
-            onPressed: () async {
-              await Navigator.of(context).push(MaterialPageRoute(builder: (context) => const AddFeedScreen()));
-              context.read<HomePageBloc>().add(LoadHomePageEvent());
-            },
-            icon: const Icon(
-              Icons.add_circle_outline,
-              color: Colors.black,
-              size: 25,
-            ),
-          ),
-          title: const Text('Hypester', style: TextStyle(fontSize: 30, fontWeight: FontWeight.w600, fontFamily: 'Caveat-Variable')),
-        ),
-        key: const ValueKey('drawer'),
-        slider: SliderMenu(plugin: widget.plugin,),
-        child: Column(
-          children: [
-            SizedBox(
-              height: 35,
-              child: TabBar(
-                tabAlignment: TabAlignment.center,
-                labelColor: Colors.black,
-                indicatorColor: Colors.black,
-                isScrollable: true,
-                controller: _tabController,
-                tabs: [
-                  for (var feed in state.feeds)
-                    Tab(
-                      child: Text(
-                        feed.keyword,
-                        style: const TextStyle(
-                          fontSize: 17,
-                          fontWeight: FontWeight.w400,
-                          fontStyle: FontStyle.normal,
-                        ),
-                      ),
+            (isLoaded)
+                ? Expanded(
+                    child: TabBarView(
+                      controller: _tabController,
+                      children: [
+                        for (var feed in state.feeds)
+                          Padding(
+                            padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 14),
+                            child: FeedScreen(feed: feed),
+                          ),
+                      ],
                     ),
-                ],
-              ),
-            ),
-            Expanded(
-              child: TabBarView(
-                controller: _tabController,
-                children: [
-                  for (var feed in state.feeds)
-                    Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 14),
-                      child: FeedScreen(feed: feed),
-                    ),
-                ],
-              ),
-            ),
-
+                  )
+                : content,
             SizedBox(height: 5),
             ElevatedButton(
                 onPressed: () {
@@ -168,11 +128,17 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                   UserPreferences().setKeywords([]);
                 },
                 child: Text('Clear Feeds')),
-
           ],
         ),
       ),
     );
   }
-
 }
+//
+// Widget _feedContent(BuildContext context, state, TabController tabController) {
+//   return for (var feed in state.feeds)
+//     Padding(
+//       padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 14),
+//       child: FeedScreen(feed: feed),
+//     );
+// }
