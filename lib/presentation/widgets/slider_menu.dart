@@ -4,8 +4,8 @@ import 'package:flutter_login_vk/flutter_login_vk.dart';
 import '../../data/user_preferences.dart';
 
 class SliderMenu extends StatefulWidget {
-  const SliderMenu({super.key, required this.plugin});
-
+  SliderMenu({super.key, required this.plugin, required this.reload});
+  Function reload;
   final VKLogin plugin;
 
   @override
@@ -25,30 +25,36 @@ class _SliderMenuState extends State<SliderMenu> {
   @override
   void initState() {
     super.initState();
-    _initSdk();
+    _initVKSdk();
   }
 
-  Future<void> _initSdk() async {
+  Future<void> _initVKSdk() async {
     await widget.plugin.initSdk();
     _sdkInitialized = true;
-    await _getLoginInfo();
+    await _getVKLoginInfo();
   }
 
-  Future<void> _updateLoginInfo() async {
+  Future<void> _updateVKLoginInfo() async {
     if (!_sdkInitialized) return;
 
     final token = await widget.plugin.accessToken;
     token != null ? UserPreferences().setVKToken(token.token) : UserPreferences().setVKToken('');
     token != null ? UserPreferences().setVKActive(true) : UserPreferences().setVKActive(false);
-    _token = token;
+    setState(() {
+      _token = token;
+      _vkActive = token != null;
+    });
   }
 
-  Future<void> _getLoginInfo() async {
+  Future<void> _getVKLoginInfo() async {
     if (!_sdkInitialized) return;
 
     final token = await widget.plugin.accessToken;
     token != null ? UserPreferences().setVKToken(token.token) : UserPreferences().setVKToken('');
-    _token = token;
+    setState(() {
+      _token = token;
+      _vkActive = token != null;
+    });
   }
 
   @override
@@ -78,6 +84,7 @@ class _SliderMenuState extends State<SliderMenu> {
                   onChanged: (value) async {
                     setState(() {
                       _redditActive = value;
+                      if (_redditActive) widget.reload();
                     });
                     await UserPreferences().setRedditActive(_redditActive);
                   },
@@ -104,6 +111,7 @@ class _SliderMenuState extends State<SliderMenu> {
                   onChanged: (value) async{
                     setState(() {
                       _youtubeActive = value;
+                      if(_youtubeActive) widget.reload();
                     });
                     await UserPreferences().setYoutubeActive(_youtubeActive);
                   },
@@ -130,6 +138,7 @@ class _SliderMenuState extends State<SliderMenu> {
                   onChanged: (value) async {
                     setState(() {
                       _telegramActive = value;
+                      if(_telegramActive) widget.reload();
                     });
                     await UserPreferences().setTelegramActive(_telegramActive);
                   },
@@ -157,6 +166,7 @@ class _SliderMenuState extends State<SliderMenu> {
                       ? (value) async {
                           setState(() {
                             _vkActive = value;
+                            if(_vkActive) widget.reload();
                           });
                           await UserPreferences().setVKActive(_vkActive);
                         }
@@ -166,7 +176,7 @@ class _SliderMenuState extends State<SliderMenu> {
             ),
             _token != null
                 ? InkWell(
-                    onTap: _onPressedLogOutButton,
+                    onTap: _onPressedVKLogOutButton,
                     child: Text(
                       'Sign out',
                       style: TextStyle(color: Colors.grey[700]),
@@ -174,7 +184,7 @@ class _SliderMenuState extends State<SliderMenu> {
                   )
                 : InkWell(
                     onTap: () {
-                      _onPressedLogInButton(context);
+                      _onPressedVKLogInButton(context);
                     },
                     child: Text('Sign in', style: TextStyle(color: Colors.grey[700])),
                   ),
@@ -199,6 +209,7 @@ class _SliderMenuState extends State<SliderMenu> {
                   //     (value) {
                   //   setState(() {
                   //     _instagramActive = value;
+                  //     if(_instagramActive) widget.reload();
                   //   });
                   //   UserPreferences().setInstagramActive(_instagramActive);
                   // },
@@ -241,7 +252,7 @@ class _SliderMenuState extends State<SliderMenu> {
     );
   }
 
-  Future<void> _onPressedLogInButton(BuildContext context) async {
+  Future<void> _onPressedVKLogInButton(BuildContext context) async {
     final res = await widget.plugin.logIn(scope: [
       VKScope.email,
     ]);
@@ -254,14 +265,15 @@ class _SliderMenuState extends State<SliderMenu> {
     } else {
       final loginResult = res.asValue!.value;
 
-      if (!loginResult.isCanceled) await _updateLoginInfo();
+      if (!loginResult.isCanceled) await _updateVKLoginInfo();
+      widget.reload();
       //Navigator.of(context).pop();
     }
   }
 
-  Future<void> _onPressedLogOutButton() async {
+  Future<void> _onPressedVKLogOutButton() async {
     widget.plugin.logOut();
-    await _updateLoginInfo();
+    await _updateVKLoginInfo();
   }
 }
 

@@ -81,6 +81,9 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
         key: const ValueKey('drawer'),
         slider: SliderMenu(
           plugin: widget.plugin,
+          reload: () {
+            context.read<HomePageBloc>().add(LoadHomePageEvent());
+          },
         ),
         child: Column(
           children: [
@@ -120,7 +123,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                       ],
                     ),
                   )
-                : content,
+                : Expanded(child: content),
             SizedBox(height: 5),
             ElevatedButton(
                 onPressed: () {
@@ -134,11 +137,3 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
     );
   }
 }
-//
-// Widget _feedContent(BuildContext context, state, TabController tabController) {
-//   return for (var feed in state.feeds)
-//     Padding(
-//       padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 14),
-//       child: FeedScreen(feed: feed),
-//     );
-// }

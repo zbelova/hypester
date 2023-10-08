@@ -27,7 +27,18 @@ class _FeedScreenState extends State<FeedScreen> {
     return Scaffold(
       backgroundColor: Colors.white,
       body: Column(
+
         children: [
+          if (widget.feed.posts.length == 0)
+            const SizedBox(
+              height: 50,
+              child: Center(
+                child: Text(
+                  'No active sources',
+                  style: TextStyle(fontSize: 18),
+                ),
+              ),
+            ),
           Expanded(
             child: ListView.builder(
               padding: const EdgeInsets.symmetric(vertical: 0),
@@ -137,22 +148,22 @@ class _FeedScreenState extends State<FeedScreen> {
                             child: Text(
                               widget.feed.posts[index].channel!,
                               overflow: TextOverflow.ellipsis,
-                              style: TextStyle(fontSize: 12),
+                              style: const TextStyle(fontSize: 12),
                             ),
                           ),
                           if (widget.feed.posts[index].relinkUrl != '' && widget.feed.posts[index].relinkUrl != null) ...[
                             const SizedBox(width: 5),
                             const Icon(Icons.link, size: 25),
                           ],
-                          Spacer(),
+                          const Spacer(),
                           if (widget.feed.posts[index].views! > 0) ...[
                             const Icon(Icons.remove_red_eye_outlined, size: 13),
                             const SizedBox(width: 3),
                             Text(
                               widget.feed.posts[index].views.toString(),
-                              style: TextStyle(fontSize: 13),
+                              style: const TextStyle(fontSize: 13),
                             ),
-                            SizedBox(width: 5),
+                            const SizedBox(width: 5),
                           ],
                           const Icon(
                             Icons.favorite_outline,
@@ -161,7 +172,7 @@ class _FeedScreenState extends State<FeedScreen> {
                           const SizedBox(width: 3),
                           Text(
                             widget.feed.posts[index].likes.toString(),
-                            style: TextStyle(fontSize: 12),
+                            style: const TextStyle(fontSize: 12),
                           ),
                           const SizedBox(width: 5),
                         ],
