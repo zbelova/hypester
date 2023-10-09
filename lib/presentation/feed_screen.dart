@@ -45,8 +45,9 @@ class _FeedScreenState extends State<FeedScreen> {
               itemBuilder: (context, index) {
                 return InkWell(
                   onTap: () {
-                    if (widget.feed.posts[index].relinkUrl != null && widget.feed.posts[index].relinkUrl != '') {
+                    if ((widget.feed.posts[index].relinkUrl != null && widget.feed.posts[index].relinkUrl != '') || widget.feed.posts[index].sourceName=='Youtube') {
                       Navigator.push(context, MaterialPageRoute(builder: (context) => WebViewScreen(post: widget.feed.posts[index])));
+
                     } else {
                       Navigator.push(context, MaterialPageRoute(builder: (context) => PostScreen(post: widget.feed.posts[index], keyword: widget.feed.keyword)));
                     }
@@ -59,7 +60,10 @@ class _FeedScreenState extends State<FeedScreen> {
                         children: [
                           if (widget.feed.posts[index].title != '' && widget.feed.posts[index].title != null)
                             Container(
-                              constraints: BoxConstraints(maxWidth: MediaQuery.of(context).size.width * 0.9),
+                              constraints: BoxConstraints(maxWidth: MediaQuery
+                                  .of(context)
+                                  .size
+                                  .width * 0.9),
                               child: Text(
                                 widget.feed.posts[index].title!,
                                 style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
@@ -80,7 +84,10 @@ class _FeedScreenState extends State<FeedScreen> {
                             child: Image.network(
                               widget.feed.posts[index].imageUrl!,
                               fit: BoxFit.cover,
-                              width: MediaQuery.of(context).size.width,
+                              width: MediaQuery
+                                  .of(context)
+                                  .size
+                                  .width,
                               errorBuilder: (context, error, stackTrace) {
                                 return Container(
                                   height: 200,
@@ -141,7 +148,10 @@ class _FeedScreenState extends State<FeedScreen> {
                           Container(
                             padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 2),
                             margin: const EdgeInsets.only(right: 5),
-                            constraints: BoxConstraints(maxWidth: MediaQuery.of(context).size.width * 0.45),
+                            constraints: BoxConstraints(maxWidth: MediaQuery
+                                .of(context)
+                                .size
+                                .width * 0.45),
                             decoration: BoxDecoration(
                               color: Colors.grey[300],
                               borderRadius: BorderRadius.circular(15),

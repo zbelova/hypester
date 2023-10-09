@@ -38,6 +38,7 @@ class YoutubeDataSource extends DataSource {
                   sourceName: 'Youtube',
                   views: video.engagement.viewCount,
                   linkToOriginal: url,
+                  relinkUrl: url,
                   channel: video.author,
                   isGallery: false,
                   videoUrl: url,
