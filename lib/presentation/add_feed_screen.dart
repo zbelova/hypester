@@ -295,7 +295,6 @@ class _AddFeedScreenState extends State<AddFeedScreen> {
           'Only search in channel names available. You will see new posts from the channels found.',
         ),
         const SizedBox(height: 15),
-        const SizedBox(height: 5),
         Row(
           children: [
             const SizedBox(
@@ -329,6 +328,7 @@ class _AddFeedScreenState extends State<AddFeedScreen> {
   Widget _buildYoutubeSettings() {
     return Column(
       mainAxisAlignment: MainAxisAlignment.start,
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         const SizedBox(height: 15),
         const Align(
@@ -338,54 +338,58 @@ class _AddFeedScreenState extends State<AddFeedScreen> {
             style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
           ),
         ),
-        RadioListTile<bool>(
-          title: const Text('Search in titles everywhere'),
-          value: false,
-          groupValue: _youtubeSearchInChannels,
-          onChanged: (bool? value) {
-            setState(() {
-              _youtubeSearchInChannels = value!;
-            });
-          },
+        const Text(
+          'Only search titles and descriptions available.',
         ),
-        RadioListTile<bool>(
-          title: const Text('Search in channel names and show videos from them'),
-          value: true,
-          groupValue: _youtubeSearchInChannels,
-          onChanged: (bool? value) {
-            setState(() {
-              _youtubeSearchInChannels = value!;
-            });
-          },
-        ),
-        const SizedBox(height: 10),
-        Row(
-          children: [
-            const SizedBox(
-              width: 130,
-              child: Text(
-                'Likes threshold',
-                style: TextStyle(fontSize: 16),
-              ),
-            ),
-            const SizedBox(width: 20),
-            SizedBox(
-              width: 70,
-              height: 40,
-              child: TextField(
-                textAlign: TextAlign.center,
-                keyboardType: TextInputType.number,
-                controller: _youtubeLikesController,
-                decoration: const InputDecoration(
-                  border: OutlineInputBorder(),
-                  isDense: true,
-                  contentPadding: EdgeInsets.symmetric(horizontal: 0, vertical: 10),
-                ),
-              ),
-            ),
-          ],
-        ),
-        const SizedBox(height: 5),
+        const SizedBox(height: 15),
+        // RadioListTile<bool>(
+        //   title: const Text('Search in titles everywhere'),
+        //   value: false,
+        //   groupValue: _youtubeSearchInChannels,
+        //   onChanged: (bool? value) {
+        //     setState(() {
+        //       _youtubeSearchInChannels = value!;
+        //     });
+        //   },
+        // ),
+        // RadioListTile<bool>(
+        //   title: const Text('Search in channel names and show videos from them'),
+        //   value: true,
+        //   groupValue: _youtubeSearchInChannels,
+        //   onChanged: (bool? value) {
+        //     setState(() {
+        //       _youtubeSearchInChannels = value!;
+        //     });
+        //   },
+        // ),
+        // const SizedBox(height: 10),
+        // Row(
+        //   children: [
+        //     const SizedBox(
+        //       width: 130,
+        //       child: Text(
+        //         'Likes threshold',
+        //         style: TextStyle(fontSize: 16),
+        //       ),
+        //     ),
+        //     const SizedBox(width: 20),
+        //     SizedBox(
+        //       width: 70,
+        //       height: 40,
+        //       child: TextField(
+        //         textAlign: TextAlign.center,
+        //         keyboardType: TextInputType.number,
+        //         controller: _youtubeLikesController,
+        //         decoration: const InputDecoration(
+        //           border: OutlineInputBorder(),
+        //           isDense: true,
+        //           contentPadding: EdgeInsets.symmetric(horizontal: 0, vertical: 10),
+        //         ),
+        //       ),
+        //     ),
+        //   ],
+        // ),
+       // const SizedBox(height: 5),
         Row(
           children: [
             const SizedBox(

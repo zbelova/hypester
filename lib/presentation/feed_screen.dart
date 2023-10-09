@@ -27,7 +27,6 @@ class _FeedScreenState extends State<FeedScreen> {
     return Scaffold(
       backgroundColor: Colors.white,
       body: Column(
-
         children: [
           if (widget.feed.posts.length == 0)
             const SizedBox(
@@ -98,10 +97,12 @@ class _FeedScreenState extends State<FeedScreen> {
                           ),
                         ),
                       if (widget.feed.posts[index].isGallery) GalleryPreview(imageUrls: widget.feed.posts[index].galleryUrls!),
-
                       Row(
                         children: [
-                          if (widget.feed.posts[index].isVideo && widget.feed.posts[index].relinkUrl != null && widget.feed.posts[index].relinkUrl != '' && widget.feed.posts[index].sourceName == 'VK') ...[
+                          if (widget.feed.posts[index].isVideo &&
+                              widget.feed.posts[index].relinkUrl != null &&
+                              widget.feed.posts[index].relinkUrl != '' &&
+                              widget.feed.posts[index].sourceName == 'VK') ...[
                             Padding(
                               padding: const EdgeInsets.only(right: 15),
                               child: Image.asset(
@@ -165,16 +166,18 @@ class _FeedScreenState extends State<FeedScreen> {
                             ),
                             const SizedBox(width: 5),
                           ],
-                          const Icon(
-                            Icons.favorite_outline,
-                            size: 12,
-                          ),
-                          const SizedBox(width: 3),
-                          Text(
-                            widget.feed.posts[index].likes.toString(),
-                            style: const TextStyle(fontSize: 12),
-                          ),
-                          const SizedBox(width: 5),
+                          if (widget.feed.posts[index].likes != null && widget.feed.posts[index].likes! > 0) ...[
+                            const Icon(
+                              Icons.favorite_outline,
+                              size: 12,
+                            ),
+                            const SizedBox(width: 3),
+                            Text(
+                              widget.feed.posts[index].likes.toString(),
+                              style: const TextStyle(fontSize: 12),
+                            ),
+                            const SizedBox(width: 5),
+                          ],
                         ],
                       ),
                       const SizedBox(height: 8),
