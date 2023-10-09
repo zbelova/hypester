@@ -53,7 +53,7 @@ class _SliderMenuState extends State<SliderMenu> {
     token != null ? UserPreferences().setVKToken(token.token) : UserPreferences().setVKToken('');
     setState(() {
       _token = token;
-      _vkActive = token != null;
+      // _vkActive = token != null;
     });
   }
 

@@ -111,13 +111,13 @@ class _YoutubeVideoState extends State<YoutubeVideo> {
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
                     _space,
-                    Text(_videoMetaData.title,
+                    Text( widget.post.title?? '',
                         style: const TextStyle(
                           fontWeight: FontWeight.bold,
                           fontSize: 18.0,
                         )),
                     _space,
-                    Text(_videoMetaData.author,
+                    Text(widget.post.channel ?? '',
                         style: const TextStyle(
                           fontWeight: FontWeight.w300,
                           fontSize: 14.0,
