@@ -25,71 +25,64 @@ class _WebViewScreenState extends State<WebViewScreen> {
   @override
   void initState() {
     super.initState();
-    if (widget.post.relinkUrl!.startsWith('https://www.youtube.com/') || widget.post.relinkUrl!.startsWith('https://youtu.be/')) _isYoutube = true;
+    if ( (widget.post.relinkUrl!.startsWith('https://www.youtube.com/') || widget.post.relinkUrl!.startsWith('https://youtu.be/'))) _isYoutube = true;
+    if (!_isYoutube) {
+      // #docregion platform_features
+      late final PlatformWebViewControllerCreationParams params;
+      if (WebViewPlatform.instance is WebKitWebViewPlatform) {
+        params = WebKitWebViewControllerCreationParams(
+          allowsInlineMediaPlayback: true,
+          mediaTypesRequiringUserAction: const <PlaybackMediaTypes>{},
+        );
+      } else {
+        params = const PlatformWebViewControllerCreationParams();
+      }
 
-    // #docregion platform_features
-    late final PlatformWebViewControllerCreationParams params;
-    if (WebViewPlatform.instance is WebKitWebViewPlatform) {
-      params = WebKitWebViewControllerCreationParams(
-        allowsInlineMediaPlayback: true,
-        mediaTypesRequiringUserAction: const <PlaybackMediaTypes>{},
-      );
-    } else {
-      params = const PlatformWebViewControllerCreationParams();
+      final WebViewController controller = WebViewController.fromPlatformCreationParams(params);
+
+      if (controller.platform is AndroidWebViewController) {}
+
+      controller
+        ..setJavaScriptMode(JavaScriptMode.unrestricted)
+        ..setBackgroundColor(const Color(0x00000000))
+        ..setNavigationDelegate(
+          NavigationDelegate(
+            onProgress: (int progress) {},
+            onPageStarted: (String url) {},
+            onPageFinished: (String url) {
+              setState(() {
+                _showLoading = false;
+              });
+            },
+            onWebResourceError: (WebResourceError error) {},
+            onNavigationRequest: (NavigationRequest request) {
+              if (_isYoutube) {
+                return NavigationDecision.prevent;
+              }
+              return NavigationDecision.navigate;
+            },
+            onUrlChange: (UrlChange change) {},
+          ),
+        )
+        ..addJavaScriptChannel(
+          'Toaster',
+          onMessageReceived: (JavaScriptMessage message) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(content: Text(message.message)),
+            );
+          },
+        )
+        ..loadRequest(Uri.parse(widget.post.relinkUrl!));
+
+      // #docregion platform_features
+      if (controller.platform is AndroidWebViewController) {
+        AndroidWebViewController.enableDebugging(true);
+        (controller.platform as AndroidWebViewController).setMediaPlaybackRequiresUserGesture(false);
+      }
+      // #enddocregion platform_features
+
+      _controller = controller;
     }
-
-    final WebViewController controller = WebViewController.fromPlatformCreationParams(params);
-
-    if(controller.platform is AndroidWebViewController) {
-
-    }
-
-    controller
-      ..setJavaScriptMode(JavaScriptMode.unrestricted)
-      ..setBackgroundColor(const Color(0x00000000))
-      ..setNavigationDelegate(
-        NavigationDelegate(
-          onProgress: (int progress) {
-          },
-          onPageStarted: (String url) {
-          },
-          onPageFinished: (String url) {
-            setState(() {
-              _showLoading = false;
-            });
-          },
-          onWebResourceError: (WebResourceError error) {
-          },
-          onNavigationRequest: (NavigationRequest request) {
-            if (_isYoutube) {
-              return NavigationDecision.prevent;
-            }
-            return NavigationDecision.navigate;
-          },
-          onUrlChange: (UrlChange change) {
-
-          },
-        ),
-      )
-      ..addJavaScriptChannel(
-        'Toaster',
-        onMessageReceived: (JavaScriptMessage message) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text(message.message)),
-          );
-        },
-      )
-      ..loadRequest(Uri.parse(widget.post.relinkUrl!));
-
-    // #docregion platform_features
-    if (controller.platform is AndroidWebViewController) {
-      AndroidWebViewController.enableDebugging(true);
-      (controller.platform as AndroidWebViewController).setMediaPlaybackRequiresUserGesture(false);
-    }
-    // #enddocregion platform_features
-
-    _controller = controller;
-
   }
 
   @override
@@ -109,7 +102,7 @@ class _WebViewScreenState extends State<WebViewScreen> {
     if (!_isYoutube) {
       return WebViewWidget(controller: _controller);
     } else {
-      return YoutubeVideo(videoUrl: widget.post.relinkUrl!);
+      return YoutubeVideo(videoUrl: widget.post.relinkUrl!, post: widget.post);
     }
   }
 }

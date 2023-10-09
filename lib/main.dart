@@ -40,7 +40,7 @@ Future<void> main() async {
 
 
 
-  final plugin = VKLogin(debug: true);
+  final plugin = VKLogin();
   await plugin.initSdk();
 
   runApp(Hypester(plugin: plugin));

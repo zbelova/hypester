@@ -1,12 +1,14 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:youtube_player_flutter/youtube_player_flutter.dart';
 
+import '../../data/models/post_model.dart';
+
 class YoutubeVideo extends StatefulWidget {
   final String videoUrl;
+  final Post post;
 
-  const YoutubeVideo({super.key, required this.videoUrl});
+  const YoutubeVideo({super.key, required this.videoUrl, required this.post});
 
   @override
   State<YoutubeVideo> createState() => _YoutubeVideoState();
@@ -109,17 +111,39 @@ class _YoutubeVideoState extends State<YoutubeVideo> {
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
                     _space,
-                    Text(_videoMetaData.title,
+                    Text( widget.post.title?? '',
                         style: const TextStyle(
                           fontWeight: FontWeight.bold,
                           fontSize: 18.0,
                         )),
                     _space,
-                    Text(_videoMetaData.author,
+                    Text(widget.post.channel ?? '',
                         style: const TextStyle(
                           fontWeight: FontWeight.w300,
                           fontSize: 14.0,
                         )),
+                    _space,
+                    Wrap(
+                      children: [
+                        Icon(Icons.remove_red_eye_outlined, size: 20, color: Colors.grey,),
+                        SizedBox(width: 5,),
+                        Text(
+                          widget.post.views.toString(),
+                          style: const TextStyle(
+                            fontWeight: FontWeight.w300,
+                            fontSize: 14.0,
+                          ),
+                        ),
+                      ]
+                    ),
+                    _space,
+                    Text(
+                      widget.post.body ?? '',
+                      style: const TextStyle(
+                        fontWeight: FontWeight.w300,
+                        fontSize: 14.0,
+                      ),
+                    ),
                   ],
                 ),
               ),
@@ -130,26 +154,6 @@ class _YoutubeVideoState extends State<YoutubeVideo> {
     );
   }
 
-  Widget _text(String title, String value) {
-    return RichText(
-      text: TextSpan(
-        text: '$title : ',
-        style: const TextStyle(
-          color: Colors.blueAccent,
-          fontWeight: FontWeight.bold,
-        ),
-        children: [
-          TextSpan(
-            text: value,
-            style: const TextStyle(
-              color: Colors.blueAccent,
-              fontWeight: FontWeight.w300,
-            ),
-          ),
-        ],
-      ),
-    );
-  }
 
   Widget get _space => const SizedBox(height: 10);
 }

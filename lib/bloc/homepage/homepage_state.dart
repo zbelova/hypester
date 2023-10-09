@@ -25,8 +25,9 @@ class LoadingHomePageState extends HomePageState {
 
 class LoadedHomePageState extends HomePageState {
   final List<Feed> feeds;
+  final List<String> feedNames;
 
-  const LoadedHomePageState({required this.feeds});
+  const LoadedHomePageState( {required this.feeds, required this.feedNames});
 
   @override
   bool operator ==(Object other) =>

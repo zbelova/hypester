@@ -5,6 +5,7 @@ import 'package:hypester/data/user_preferences.dart';
 
 import 'datasource/reddit_datasource.dart';
 import 'datasource/vk_datasource.dart';
+import 'datasource/youtube_datasource.dart';
 import 'models/feed_model.dart';
 import 'models/post_model.dart';
 
@@ -12,6 +13,7 @@ class PostsRepository extends ChangeNotifier {
   final RedditDataSource _redditDataSource;
   final VKDataSource _vkDataSource;
   final FeedFiltersLocalDataSource _feedFiltersLocalDataSource;
+  final YoutubeDataSource _youtubeDataSource = YoutubeDataSource();
   double progress = 0.0;
   double oldProgress = 0.0;
   bool isLoaded = false;
@@ -52,9 +54,15 @@ class PostsRepository extends ChangeNotifier {
         _allPosts.addAll(_vkPosts);
         homeFeed.posts.addAll(_vkPosts);
       }
-
+      if (activeSources['Youtube']!) {
+        List<Post> _youtubePosts = await _youtubeDataSource.getByKeyword(feedFilter);
+        oldProgress = progress;
+        progress += 1 / progressSteps;
+        notifyListeners();
+        _allPosts.addAll(_youtubePosts);
+        homeFeed.posts.addAll(_youtubePosts);
+      }
       //telegram
-      //youtube
       //instagram
 
       _allPosts.sort((a, b) => b.date.compareTo(a.date));

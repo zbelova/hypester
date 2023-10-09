@@ -28,6 +28,16 @@ class _FeedScreenState extends State<FeedScreen> {
       backgroundColor: Colors.white,
       body: Column(
         children: [
+          if (widget.feed.posts.length == 0)
+            const SizedBox(
+              height: 50,
+              child: Center(
+                child: Text(
+                  'No active sources',
+                  style: TextStyle(fontSize: 18),
+                ),
+              ),
+            ),
           Expanded(
             child: ListView.builder(
               padding: const EdgeInsets.symmetric(vertical: 0),
@@ -35,8 +45,9 @@ class _FeedScreenState extends State<FeedScreen> {
               itemBuilder: (context, index) {
                 return InkWell(
                   onTap: () {
-                    if (widget.feed.posts[index].relinkUrl != null && widget.feed.posts[index].relinkUrl != '') {
+                    if ((widget.feed.posts[index].relinkUrl != null && widget.feed.posts[index].relinkUrl != '') || widget.feed.posts[index].sourceName=='Youtube') {
                       Navigator.push(context, MaterialPageRoute(builder: (context) => WebViewScreen(post: widget.feed.posts[index])));
+
                     } else {
                       Navigator.push(context, MaterialPageRoute(builder: (context) => PostScreen(post: widget.feed.posts[index], keyword: widget.feed.keyword)));
                     }
@@ -49,7 +60,10 @@ class _FeedScreenState extends State<FeedScreen> {
                         children: [
                           if (widget.feed.posts[index].title != '' && widget.feed.posts[index].title != null)
                             Container(
-                              constraints: BoxConstraints(maxWidth: MediaQuery.of(context).size.width * 0.9),
+                              constraints: BoxConstraints(maxWidth: MediaQuery
+                                  .of(context)
+                                  .size
+                                  .width * 0.9),
                               child: Text(
                                 widget.feed.posts[index].title!,
                                 style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
@@ -70,7 +84,10 @@ class _FeedScreenState extends State<FeedScreen> {
                             child: Image.network(
                               widget.feed.posts[index].imageUrl!,
                               fit: BoxFit.cover,
-                              width: MediaQuery.of(context).size.width,
+                              width: MediaQuery
+                                  .of(context)
+                                  .size
+                                  .width,
                               errorBuilder: (context, error, stackTrace) {
                                 return Container(
                                   height: 200,
@@ -87,10 +104,12 @@ class _FeedScreenState extends State<FeedScreen> {
                           ),
                         ),
                       if (widget.feed.posts[index].isGallery) GalleryPreview(imageUrls: widget.feed.posts[index].galleryUrls!),
-
                       Row(
                         children: [
-                          if (widget.feed.posts[index].isVideo && widget.feed.posts[index].relinkUrl != null && widget.feed.posts[index].relinkUrl != '' && widget.feed.posts[index].sourceName == 'VK') ...[
+                          if (widget.feed.posts[index].isVideo &&
+                              widget.feed.posts[index].relinkUrl != null &&
+                              widget.feed.posts[index].relinkUrl != '' &&
+                              widget.feed.posts[index].sourceName == 'VK') ...[
                             Padding(
                               padding: const EdgeInsets.only(right: 15),
                               child: Image.asset(
@@ -129,7 +148,10 @@ class _FeedScreenState extends State<FeedScreen> {
                           Container(
                             padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 2),
                             margin: const EdgeInsets.only(right: 5),
-                            constraints: BoxConstraints(maxWidth: MediaQuery.of(context).size.width * 0.45),
+                            constraints: BoxConstraints(maxWidth: MediaQuery
+                                .of(context)
+                                .size
+                                .width * 0.45),
                             decoration: BoxDecoration(
                               color: Colors.grey[300],
                               borderRadius: BorderRadius.circular(15),
@@ -137,33 +159,35 @@ class _FeedScreenState extends State<FeedScreen> {
                             child: Text(
                               widget.feed.posts[index].channel!,
                               overflow: TextOverflow.ellipsis,
-                              style: TextStyle(fontSize: 12),
+                              style: const TextStyle(fontSize: 12),
                             ),
                           ),
                           if (widget.feed.posts[index].relinkUrl != '' && widget.feed.posts[index].relinkUrl != null) ...[
                             const SizedBox(width: 5),
                             const Icon(Icons.link, size: 25),
                           ],
-                          Spacer(),
+                          const Spacer(),
                           if (widget.feed.posts[index].views! > 0) ...[
                             const Icon(Icons.remove_red_eye_outlined, size: 13),
                             const SizedBox(width: 3),
                             Text(
                               widget.feed.posts[index].views.toString(),
-                              style: TextStyle(fontSize: 13),
+                              style: const TextStyle(fontSize: 13),
                             ),
-                            SizedBox(width: 5),
+                            const SizedBox(width: 5),
                           ],
-                          const Icon(
-                            Icons.favorite_outline,
-                            size: 12,
-                          ),
-                          const SizedBox(width: 3),
-                          Text(
-                            widget.feed.posts[index].likes.toString(),
-                            style: TextStyle(fontSize: 12),
-                          ),
-                          const SizedBox(width: 5),
+                          if (widget.feed.posts[index].likes != null && widget.feed.posts[index].likes! > 0) ...[
+                            const Icon(
+                              Icons.favorite_outline,
+                              size: 12,
+                            ),
+                            const SizedBox(width: 3),
+                            Text(
+                              widget.feed.posts[index].likes.toString(),
+                              style: const TextStyle(fontSize: 12),
+                            ),
+                            const SizedBox(width: 5),
+                          ],
                         ],
                       ),
                       const SizedBox(height: 8),
