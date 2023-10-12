@@ -40,20 +40,21 @@ class RedditDataSource extends DataSource {
           if (data.upvotes > feedFilters.redditLikesFilter) {
             posts.add(
               Post(
-                title: data.title,
-                body: data.selftext,
-                id: data.id!,
-                imageUrl: data.preview.isNotEmpty ? data.preview[0].source.url.toString() : '',
-                date: data.createdUtc,
-                sourceName: 'Reddit',
-                views: 0,
-                linkToOriginal: data.url.toString(),
-                likes: data.upvotes,
-                channel: data.subreddit.displayName,
-                relinkUrl: data.url.toString().contains('www.reddit.com/') || data.url.toString().contains('redd.it/') ? '' : data.url.toString(),
-                videoUrl: data.isVideo ? data.url.toString() : '',
-                isGallery: isGallery,
-                galleryUrls: isGallery ? galleryUrls : null,
+                  title: data.title,
+                  body: data.selftext,
+                  id: data.id!,
+                  imageUrl: data.preview.isNotEmpty ? data.preview[0].source.url.toString() : '',
+                  date: data.createdUtc,
+                  sourceName: 'Reddit',
+                  views: 0,
+                  linkToOriginal: data.url.toString(),
+                  likes: data.upvotes,
+                  channel: data.subreddit.displayName,
+                  relinkUrl: data.url.toString().contains('www.reddit.com/') || data.url.toString().contains('redd.it/') ? '' : data.url.toString(),
+                  videoUrl: data.isVideo ? data.url.toString() : '',
+                  isGallery: isGallery,
+                  galleryUrls: isGallery ? galleryUrls : null,
+                  numComments: data.numComments,
               ),
             );
           }
@@ -67,7 +68,7 @@ class RedditDataSource extends DataSource {
       );
     } else {
       int numSubreddits = 5;
-      int numPosts = numSubreddits * 20;
+      int numPosts = numSubreddits * 10;
       List<String> subreddits = [];
       reddit.subreddits.search(feedFilters.keyword, limit: numSubreddits).listen(
         (event) {
@@ -88,27 +89,27 @@ class RedditDataSource extends DataSource {
               if (data.upvotes > feedFilters.redditLikesFilter) {
                 posts.add(
                   Post(
-                    title: data.title,
-                    body: data.selftext,
-                    id: data.id!,
-                    imageUrl: data.preview.isNotEmpty ? data.preview[0].source.url.toString() : '',
-                    date: data.createdUtc,
-                    sourceName: 'Reddit',
-                    views: 0,
-                    linkToOriginal: data.url.toString(),
-                    likes: data.upvotes,
-                    channel: data.subreddit.displayName,
-                    relinkUrl: data.url.toString().contains('www.reddit.com/') || data.url.toString().contains('redd.it/') ? '' : data.url.toString(),
-                    videoUrl: data.isVideo ? data.url.toString() : '',
-                    isGallery: isGallery,
-                    galleryUrls: isGallery ? galleryUrls : null,
-                  ),
+                      title: data.title,
+                      body: data.selftext,
+                      id: data.id!,
+                      imageUrl: data.preview.isNotEmpty ? data.preview[0].source.url.toString() : '',
+                      date: data.createdUtc,
+                      sourceName: 'Reddit',
+                      views: 0,
+                      linkToOriginal: data.shortlink.toString(),
+                      likes: data.upvotes,
+                      channel: data.subreddit.displayName,
+                      relinkUrl: data.url.toString().contains('www.reddit.com/') || data.url.toString().contains('redd.it/') ? '' : data.url.toString(),
+                      videoUrl: data.isVideo ? data.url.toString() : '',
+                      isGallery: isGallery,
+                      galleryUrls: isGallery ? galleryUrls : null,
+                      numComments: data.numComments,
+                      ),
                 );
               }
             },
             onDone: () {
               if (!completer.isCompleted) completer.complete(posts);
-
             },
             onError: (e) {
               if (!completer.isCompleted) completer.complete(posts); // Завершаем выполнение Completer и передаем готовый список

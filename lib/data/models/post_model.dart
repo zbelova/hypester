@@ -1,3 +1,5 @@
+import 'package:draw/draw.dart';
+
 class Post {
   final String? title;
   final String? body;
@@ -14,6 +16,7 @@ class Post {
   final String? relinkUrl; //если пост состоит из одной ссылки на другой сайт, как у реддита
   final bool isGallery;
   final List<String>? galleryUrls; //если пост состоит из галереи картинок, как у телеграма или реддита
+  final int numComments;
 
   Post({
     this.videoUrl,
@@ -30,6 +33,7 @@ class Post {
     this.relinkUrl,
     this.galleryUrls,
     this.isGallery = false,
-    this.isVideo = false
+    this.isVideo = false,
+    this.numComments = 0,
   });
 }

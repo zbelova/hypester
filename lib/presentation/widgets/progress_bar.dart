@@ -70,7 +70,7 @@ class _ProgressBarState extends State<ProgressBar> with TickerProviderStateMixin
               ),
             ),
             SizedBox(height: 20),
-            Text('Loading posts from ${state.activeSources.join(', ')}...'),
+            Text('Loading content from ${state.activeSources.join(', ')}...'),
           ],
         ),
       ),
