@@ -4,8 +4,6 @@ import 'package:flutter_login_vk/flutter_login_vk.dart';
 import 'package:flutter_slider_drawer/flutter_slider_drawer.dart';
 import 'package:get_it/get_it.dart';
 import 'package:hypester/bloc/homepage/homepage_bloc.dart';
-import 'package:hypester/data/hive/feed_filters_local_data_source.dart';
-import 'package:hypester/data/user_preferences.dart';
 import 'package:hypester/presentation/add_feed_screen.dart';
 import 'package:hypester/presentation/widgets/progress_bar.dart';
 import 'package:hypester/presentation/widgets/slider_menu.dart';
@@ -111,31 +109,51 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
               ),
             ),
             (isLoaded)
-                ? Expanded(
-                    child: TabBarView(
-                      controller: _tabController,
-                      children: [
-                        for (var feed in state.feeds)
-                          Padding(
-                            padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 14),
-                            child: FeedScreen(
-                              feed: feed,
-                              onRefresh: () {
+                ? ((state.feeds.length > 1)
+                    ? Expanded(
+                        child: TabBarView(
+                          controller: _tabController,
+                          children: [
+                            for (var feed in state.feeds)
+                              Padding(
+                                padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 14),
+                                child: FeedScreen(
+                                  feed: feed,
+                                  onRefresh: () {
+                                    context.read<HomePageBloc>().add(LoadHomePageEvent());
+                                  },
+                                ),
+                              ),
+                          ],
+                        ),
+                      )
+                    : Expanded(
+                        child: Center(
+                        child: Row(
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            const Text(
+                              'Add some feeds',
+                              style: TextStyle(
+                                fontSize: 20,
+                              ),
+                            ),
+                            const SizedBox(width: 15),
+                            ElevatedButton(
+                              onPressed: () async {
+                                await Navigator.of(context).push(MaterialPageRoute(builder: (context) => const AddFeedScreen()));
                                 context.read<HomePageBloc>().add(LoadHomePageEvent());
                               },
+                              child: const Text(
+                                '+',
+                                style: TextStyle(fontSize: 25),
+                              ),
                             ),
-                          ),
-                      ],
-                    ),
-                  )
+                          ],
+                        ),
+                      )))
                 : Expanded(child: content),
-            SizedBox(height: 5),
-            ElevatedButton(
-                onPressed: () {
-                  FeedFiltersLocalDataSource.clear();
-                  UserPreferences().setKeywords([]);
-                },
-                child: Text('Clear Feeds')),
           ],
         ),
       ),

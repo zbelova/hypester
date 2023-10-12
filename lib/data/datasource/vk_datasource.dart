@@ -60,6 +60,7 @@ class VKDataSource extends DataSource {
                       isGallery: false,
                       galleryUrls: null,
                       isVideo: isVideo ? true : false,
+                      numComments: post['comments']['count'] ?? 0,
                     ));
                   }
                 }
