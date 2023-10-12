@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:get_it/get_it.dart';
 import 'package:hypester/data/hive/feed_filters_local_data_source.dart';
+import 'package:hypester/presentation/feed_edit_settings.dart';
 
 import '../data/hive/feed_filters.dart';
 
@@ -11,7 +13,7 @@ class FeedSettingsList extends StatefulWidget {
 }
 
 class _FeedSettingsListState extends State<FeedSettingsList> {
-  FeedFiltersLocalDataSource _feedFiltersLocalDataSource = FeedFiltersLocalDataSource();
+  final FeedFiltersLocalDataSource _feedFiltersLocalDataSource = GetIt.I.get();
   List<FeedFilters> feeds = [];
 
   @override
@@ -34,16 +36,29 @@ class _FeedSettingsListState extends State<FeedSettingsList> {
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.done) {
             return Padding(
-              padding: const EdgeInsets.only(top: 8.0, left: 8.0, ),
+              padding: const EdgeInsets.only(
+                top: 8.0,
+                left: 8.0,
+              ),
               child: ListView.builder(
                 itemCount: feeds.length,
                 itemBuilder: (context, index) {
                   return ListTile(
-                    title: Text(feeds[index].keyword, maxLines: 3,),
+                    title: InkWell(
+                      onTap: () {
+                        Navigator.of(context).push(MaterialPageRoute(builder: (context) => EditFeedScreen(keyword: feeds[index].keyword)));
+                      },
+                      child: Text(
+                        feeds[index].keyword,
+                        maxLines: 3,
+                      ),
+                    ),
                     trailing: Wrap(
                       children: [
                         IconButton(
-                          onPressed: (){Navigator.of(context).push(MaterialPageRoute(builder: (context) => FeedSettingsList()));},
+                          onPressed: () {
+                            Navigator.of(context).push(MaterialPageRoute(builder: (context) => EditFeedScreen(keyword: feeds[index].keyword)));
+                          },
                           icon: const Icon(Icons.settings),
                         ),
                         IconButton(

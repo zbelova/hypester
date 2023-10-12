@@ -67,17 +67,17 @@ class RedditDataSource extends DataSource {
       );
     } else {
       int numSubreddits = 5;
-      int numPosts = numSubreddits * limitFilter;
-      int i = 0;
+      int numPosts = numSubreddits * 20;
+      List<String> subreddits = [];
       reddit.subreddits.search(feedFilters.keyword, limit: numSubreddits).listen(
         (event) {
           var data = event as Subreddit;
-          print(data.displayName);
-//limitFilter.toString()
-          reddit.subreddit(data.displayName).top(timeFilter: TimeFilter.day, params: {'limit': limitFilter.toString()}).listen(
+          subreddits.add(data.displayName);
+        },
+        onDone: () {
+          reddit.subreddit(subreddits.join('+')).top(timeFilter: TimeFilter.day, params: {'limit': numPosts.toString()}).listen(
             (event) {
               var data = event as Submission;
-              i++;
               List<String> galleryUrls = [];
               var isGallery = data.data!['media_metadata'] != null;
               if (isGallery) {
@@ -107,18 +107,16 @@ class RedditDataSource extends DataSource {
               }
             },
             onDone: () {
-              if (!completer.isCompleted && i >= numPosts) completer.complete(posts); // Завершаем выполнение Completer и передаем готовый список
+              if (!completer.isCompleted) completer.complete(posts);
+
             },
             onError: (e) {
               if (!completer.isCompleted) completer.complete(posts); // Завершаем выполнение Completer и передаем готовый список
             },
           );
         },
-        onDone: () {
-          //    if (!completer.isCompleted) completer.complete(posts); // Завершаем выполнение Completer и передаем готовый список
-        },
         onError: (e) {
-          //     if (!completer.isCompleted) completer.complete(posts); // Завершаем выполнение Completer и передаем готовый список
+          if (!completer.isCompleted) completer.complete(posts); // Завершаем выполнение Completer и передаем готовый список
         },
       );
     }
