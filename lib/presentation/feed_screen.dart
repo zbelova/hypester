@@ -159,7 +159,7 @@ class _FeedScreenState extends State<FeedScreen> {
                             Container(
                               padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 2),
                               margin: const EdgeInsets.only(right: 5),
-                              constraints: BoxConstraints(maxWidth: MediaQuery.of(context).size.width * 0.45),
+                              constraints: BoxConstraints(maxWidth: MediaQuery.of(context).size.width * 0.40),
                               decoration: BoxDecoration(
                                 color: Colors.grey[300],
                                 borderRadius: BorderRadius.circular(15),
@@ -187,15 +187,30 @@ class _FeedScreenState extends State<FeedScreen> {
                             if (widget.feed.posts[index].likes != null && widget.feed.posts[index].likes! > 0) ...[
                               const Icon(
                                 Icons.favorite_outline,
-                                size: 12,
+                                size: 13,
                               ),
                               const SizedBox(width: 3),
                               Text(
                                 widget.feed.posts[index].likes.toString(),
                                 style: const TextStyle(fontSize: 12),
                               ),
-                              const SizedBox(width: 5),
+
                             ],
+                              if(widget.feed.posts[index].numComments > 0) ...[
+                                const SizedBox(width: 5),
+                                Padding(
+                                  padding: const EdgeInsets.only(top: 2),
+                                  child: const Icon(
+                                    Icons.mode_comment_outlined,
+                                    size: 13,
+                                  ),
+                                ),
+                                const SizedBox(width: 3),
+                                Text(widget.feed.posts[index].numComments.toString(),
+                                  style: const TextStyle(fontSize: 12),)
+                              ],
+                              const SizedBox(width: 5),
+
                           ],
                         ),
                         const SizedBox(height: 8),
