@@ -123,4 +123,12 @@ class UserPreferences {
   bool getTelegramActive() {
     return _preferences?.getBool('telegram_active') ?? false;
   }
+
+  Future<void> setNSFWActive(bool isActive) async {
+    await _preferences?.setBool('nsfw_active', isActive);
+  }
+
+  getNSFWActive() {
+    return _preferences?.getBool('nsfw_active') ?? false;
+  }
 }

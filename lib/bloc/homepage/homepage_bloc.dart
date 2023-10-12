@@ -10,7 +10,7 @@ class HomePageBloc extends Bloc<HomePageEvent, HomePageState> {
   final PostsRepository _postsRepository;
   final FeedFiltersLocalDataSource _feedFiltersLocalDataSource = GetIt.I.get();
 
-  HomePageBloc(this._postsRepository) : super(LoadingHomePageState(feedNames: UserPreferences().getKeywords()..insert(0, 'All'))) {
+  HomePageBloc(this._postsRepository) : super(LoadingHomePageState(feedNames: [])) {
     on<LoadHomePageEvent>(_onLoadEvent);
     add(LoadHomePageEvent());
   }

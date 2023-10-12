@@ -4,52 +4,44 @@ import 'package:hypester/data/hive/feed_filters.dart';
 import 'package:hypester/data/hive/feed_filters_local_data_source.dart';
 import 'package:hypester/data/user_preferences.dart';
 
-class AddFeedScreen extends StatefulWidget {
-  const AddFeedScreen({super.key});
+class EditFeedScreen extends StatefulWidget {
+  final String keyword;
+  const EditFeedScreen({super.key, required this.keyword});
 
   @override
-  State<AddFeedScreen> createState() => _AddFeedScreenState();
+  State<EditFeedScreen> createState() => _EditFeedScreenState();
 }
 
-class _AddFeedScreenState extends State<AddFeedScreen> {
+class _EditFeedScreenState extends State<EditFeedScreen> {
   final TextEditingController _keywordController = TextEditingController();
   final TextEditingController _redditUpsController = TextEditingController();
   final TextEditingController _vkLikesController = TextEditingController();
   final TextEditingController _vkViewsController = TextEditingController();
-  final TextEditingController _youtubeLikesController = TextEditingController();
   final TextEditingController _youtubeViewsController = TextEditingController();
   final TextEditingController _telegramViewsController = TextEditingController();
   final TextEditingController _instagramLikesController = TextEditingController();
   bool _redditSearchInSubreddits = false;
-  bool _youtubeSearchInChannels = false;
   final FeedFiltersLocalDataSource _feedFiltersLocalDataSource = GetIt.I.get();
 
   @override
   void initState() {
     super.initState();
-    _redditUpsController.text = '0';
-    _vkLikesController.text = '0';
-    _vkViewsController.text = '0';
-    _youtubeLikesController.text = '0';
-    _youtubeViewsController.text = '0';
-    _telegramViewsController.text = '0';
-    _instagramLikesController.text = '0';
-    //_getFilters();
+    _getFilters();
   }
 
-  // Future<void> _getFilters() async {
-  //   FeedFilters feedFilters = await _feedFiltersLocalDataSource.get(_keywordController.text);
-  //     _redditUpsController.text = feedFilters.redditLikesFilter.toString();
-  //     _redditSearchInSubreddits = feedFilters.searchInSubreddits;
-  //     _vkLikesController.text = feedFilters.vkLikesFilter.toString();
-  //     _vkViewsController.text = feedFilters.vkViewsFilter.toString();
-  //     _youtubeLikesController.text = feedFilters.youtubeLikesFilter.toString();
-  //     _youtubeViewsController.text = feedFilters.youtubeViewsFilter.toString();
-  //     _youtubeSearchInChannels = feedFilters.searchInChannels;
-  //     _telegramViewsController.text = feedFilters.telegramViewsFilter.toString();
-  //     _instagramLikesController.text = feedFilters.instagramLikesFilter.toString();
-  //
-  // }
+  Future<void> _getFilters() async {
+    FeedFilters feedFilters = await _feedFiltersLocalDataSource.get(widget.keyword);
+      _redditUpsController.text = feedFilters.redditLikesFilter.toString();
+      _redditSearchInSubreddits = feedFilters.searchInSubreddits;
+      _vkLikesController.text = feedFilters.vkLikesFilter.toString();
+      _vkViewsController.text = feedFilters.vkViewsFilter.toString();
+      _youtubeViewsController.text = feedFilters.youtubeViewsFilter.toString();
+      _telegramViewsController.text = feedFilters.telegramViewsFilter.toString();
+      _instagramLikesController.text = feedFilters.instagramLikesFilter.toString();
+      setState(() {
+
+      });
+  }
 
   @override
   void dispose() {
@@ -57,7 +49,6 @@ class _AddFeedScreenState extends State<AddFeedScreen> {
     _redditUpsController.dispose();
     _vkLikesController.dispose();
     _vkViewsController.dispose();
-    _youtubeLikesController.dispose();
     _youtubeViewsController.dispose();
     _telegramViewsController.dispose();
     _instagramLikesController.dispose();
@@ -69,7 +60,7 @@ class _AddFeedScreenState extends State<AddFeedScreen> {
     return Scaffold(
       extendBody: true,
       appBar: AppBar(
-        title: const Text('Add feed'),
+        title: Text(widget.keyword),
       ),
       body: Padding(
         padding: const EdgeInsets.all(20),
@@ -80,57 +71,35 @@ class _AddFeedScreenState extends State<AddFeedScreen> {
               const SizedBox(
                 height: 10,
               ),
-              TextField(
-                controller: _keywordController,
-                decoration: const InputDecoration(
-                  labelText: 'Keyword',
-                  border: OutlineInputBorder(),
-                ),
+              const Text(
+                'Settings for each source when enabled:',
+                style: TextStyle(fontSize: 15),
               ),
-              const SizedBox(height: 5),
-              const Text('Choose a keyword that will be used to search for content for the new feed.'),
-              const SizedBox(height: 15),
-              ExpansionTile(
-                expandedCrossAxisAlignment: CrossAxisAlignment.start,
-                childrenPadding: const EdgeInsets.only(left: 16, bottom: 10),
-                title: Text('Filters'),
-                children: [
-                  const Text(
-                    'Settings for each source when enabled:',
-                    style: TextStyle(fontSize: 15),
-                  ),
-                  _buildRedditSettings(),
-                  _buildYoutubeSettings(),
-                  _buildTelegramSettings(),
-                  _buildVkSettings(),
-                  //_buildInstagramSettings(),
-                ],
-              ),
+              _buildRedditSettings(),
+              _buildYoutubeSettings(),
+              _buildTelegramSettings(),
+              _buildVkSettings(),
               const SizedBox(height: 15),
               Center(
                 child: SizedBox(
                   width: 200,
                   child: ElevatedButton(
                     onPressed: () {
-                      //var capitalizedKeyword = _keywordController.text.split(' ').map((e) => e[0].toUpperCase() + e.substring(1)).join(' ');
-                      _feedFiltersLocalDataSource.add(
+                      _feedFiltersLocalDataSource.edit(
                         FeedFilters(
-                          keyword: capitalizeEnglishWords(_keywordController.text),
+                          keyword: capitalizeEnglishWords(widget.keyword),
                           redditLikesFilter: int.parse(_redditUpsController.text),
                           searchInSubreddits: _redditSearchInSubreddits,
                           vkLikesFilter: int.parse(_vkLikesController.text),
                           vkViewsFilter: int.parse(_vkViewsController.text),
-                          youtubeLikesFilter: int.parse(_youtubeLikesController.text),
                           youtubeViewsFilter: int.parse(_youtubeViewsController.text),
-                          searchInChannels: _youtubeSearchInChannels,
                           telegramViewsFilter: int.parse(_telegramViewsController.text),
                           instagramLikesFilter: int.parse(_instagramLikesController.text),
                         ),
                       );
-                      UserPreferences().addKeyword(_keywordController.text);
                       Navigator.pop(context, _keywordController.text);
                     },
-                    child: const Text('Add'),
+                    child: const Text('Save'),
                   ),
                 ),
               ),
@@ -389,7 +358,7 @@ class _AddFeedScreenState extends State<AddFeedScreen> {
         //     ),
         //   ],
         // ),
-       // const SizedBox(height: 5),
+        // const SizedBox(height: 5),
         Row(
           children: [
             const SizedBox(

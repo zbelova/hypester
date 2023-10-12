@@ -688,6 +688,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "1.2.3"
+  pull_to_refresh:
+    dependency: "direct main"
+    description:
+      name: pull_to_refresh
+      sha256: bbadd5a931837b57739cf08736bea63167e284e71fb23b218c8c9a6e042aad12
+      url: "https://pub.dev"
+    source: hosted
+    version: "2.0.0"
   quiver:
     dependency: transitive
     description:
@@ -845,6 +853,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "1.2.0"
+  teledart:
+    dependency: "direct main"
+    description:
+      name: teledart
+      sha256: "3ff1768b175048aab9b657aac014075a7b5cd62df448080140bf9ea0ba9a0691"
+      url: "https://pub.dev"
+    source: hosted
+    version: "0.5.6"
   term_glyph:
     dependency: transitive
     description:
