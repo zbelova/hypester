@@ -118,7 +118,12 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                         for (var feed in state.feeds)
                           Padding(
                             padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 14),
-                            child: FeedScreen(feed: feed),
+                            child: FeedScreen(
+                              feed: feed,
+                              onRefresh: () {
+                                context.read<HomePageBloc>().add(LoadHomePageEvent());
+                              },
+                            ),
                           ),
                       ],
                     ),

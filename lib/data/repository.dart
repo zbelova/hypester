@@ -4,6 +4,7 @@ import 'package:hypester/data/hive/feed_filters_local_data_source.dart';
 import 'package:hypester/data/user_preferences.dart';
 
 import 'datasource/reddit_datasource.dart';
+import 'datasource/telegram_datasource.dart';
 import 'datasource/vk_datasource.dart';
 import 'datasource/youtube_datasource.dart';
 import 'models/feed_model.dart';
@@ -14,6 +15,7 @@ class PostsRepository extends ChangeNotifier {
   final VKDataSource _vkDataSource;
   final FeedFiltersLocalDataSource _feedFiltersLocalDataSource;
   final YoutubeDataSource _youtubeDataSource = YoutubeDataSource();
+  final TelegramDataSource _telegramDataSource = TelegramDataSource();
   double progress = 0.0;
   double oldProgress = 0.0;
   bool isLoaded = false;
@@ -62,7 +64,14 @@ class PostsRepository extends ChangeNotifier {
         _allPosts.addAll(_youtubePosts);
         homeFeed.posts.addAll(_youtubePosts);
       }
-      //telegram
+      if (activeSources['Telegram']!) {
+        List<Post> _telegramPosts = await _telegramDataSource.getByKeyword(feedFilter);
+        oldProgress = progress;
+        progress += 1 / progressSteps;
+        notifyListeners();
+        _allPosts.addAll(_telegramPosts);
+        homeFeed.posts.addAll(_telegramPosts);
+      }
       //instagram
 
       _allPosts.sort((a, b) => b.date.compareTo(a.date));

@@ -25,46 +25,103 @@ class RedditDataSource extends DataSource {
 
     //Completer нужен, чтобы забрать из стрима все посты. Особенности апи реддита
     Completer<List<Post>> completer = Completer<List<Post>>(); // Создаем Completer
+    if (!feedFilters.searchInSubreddits) {
+      reddit.subreddit('all').search(feedFilters.keyword, sort: Sort.top, timeFilter: TimeFilter.day, params: {'limit': limitFilter.toString()}).listen(
+        (event) {
+          var data = event as Submission;
 
-    reddit.subreddit('all').search(feedFilters.keyword, sort: Sort.top, timeFilter: TimeFilter.day, params: {'limit': limitFilter.toString()}).listen(
-      (event) {
-        var data = event as Submission;
-
-        List<String> galleryUrls = [];
-        var isGallery = data.data!['media_metadata'] != null;
-        if (isGallery) {
-          for (var metadata in data.data!['media_metadata'].values) {
-            galleryUrls.add(convertRedditUrl(metadata['s']['u'].toString()));
+          List<String> galleryUrls = [];
+          var isGallery = data.data!['media_metadata'] != null;
+          if (isGallery) {
+            for (var metadata in data.data!['media_metadata'].values) {
+              galleryUrls.add(convertRedditUrl(metadata['s']['u'].toString()));
+            }
           }
-        }
-        if (data.upvotes > feedFilters.redditLikesFilter) {
-          posts.add(
-            Post(
-              title: data.title,
-              body: data.selftext,
-              id: data.id!,
-              imageUrl: data.preview.isNotEmpty ? data.preview[0].source.url.toString() : '',
-              date: data.createdUtc,
-              sourceName: 'Reddit',
-              views: 0,
-              linkToOriginal: data.url.toString(),
-              likes: data.upvotes,
-              channel: data.subreddit.displayName,
-              relinkUrl: data.url.toString().contains('www.reddit.com/') || data.url.toString().contains('redd.it/') ? '' : data.url.toString(),
-              videoUrl: data.isVideo ? data.url.toString() : '',
-              isGallery: isGallery,
-              galleryUrls: isGallery ? galleryUrls : null,
-            ),
+          if (data.upvotes > feedFilters.redditLikesFilter) {
+            posts.add(
+              Post(
+                title: data.title,
+                body: data.selftext,
+                id: data.id!,
+                imageUrl: data.preview.isNotEmpty ? data.preview[0].source.url.toString() : '',
+                date: data.createdUtc,
+                sourceName: 'Reddit',
+                views: 0,
+                linkToOriginal: data.url.toString(),
+                likes: data.upvotes,
+                channel: data.subreddit.displayName,
+                relinkUrl: data.url.toString().contains('www.reddit.com/') || data.url.toString().contains('redd.it/') ? '' : data.url.toString(),
+                videoUrl: data.isVideo ? data.url.toString() : '',
+                isGallery: isGallery,
+                galleryUrls: isGallery ? galleryUrls : null,
+              ),
+            );
+          }
+        },
+        onDone: () {
+          if (!completer.isCompleted) completer.complete(posts); // Завершаем выполнение Completer и передаем готовый список
+        },
+        onError: (e) {
+          if (!completer.isCompleted) completer.complete(posts); // Завершаем выполнение Completer и передаем готовый список
+        },
+      );
+    } else {
+      int numSubreddits = 5;
+      int numPosts = numSubreddits * limitFilter;
+      int i = 0;
+      reddit.subreddits.search(feedFilters.keyword, limit: numSubreddits).listen(
+        (event) {
+          var data = event as Subreddit;
+          print(data.displayName);
+//limitFilter.toString()
+          reddit.subreddit(data.displayName).top(timeFilter: TimeFilter.day, params: {'limit': limitFilter.toString()}).listen(
+            (event) {
+              var data = event as Submission;
+              i++;
+              List<String> galleryUrls = [];
+              var isGallery = data.data!['media_metadata'] != null;
+              if (isGallery) {
+                for (var metadata in data.data!['media_metadata'].values) {
+                  galleryUrls.add(convertRedditUrl(metadata['s']['u'].toString()));
+                }
+              }
+              if (data.upvotes > feedFilters.redditLikesFilter) {
+                posts.add(
+                  Post(
+                    title: data.title,
+                    body: data.selftext,
+                    id: data.id!,
+                    imageUrl: data.preview.isNotEmpty ? data.preview[0].source.url.toString() : '',
+                    date: data.createdUtc,
+                    sourceName: 'Reddit',
+                    views: 0,
+                    linkToOriginal: data.url.toString(),
+                    likes: data.upvotes,
+                    channel: data.subreddit.displayName,
+                    relinkUrl: data.url.toString().contains('www.reddit.com/') || data.url.toString().contains('redd.it/') ? '' : data.url.toString(),
+                    videoUrl: data.isVideo ? data.url.toString() : '',
+                    isGallery: isGallery,
+                    galleryUrls: isGallery ? galleryUrls : null,
+                  ),
+                );
+              }
+            },
+            onDone: () {
+              if (!completer.isCompleted && i >= numPosts) completer.complete(posts); // Завершаем выполнение Completer и передаем готовый список
+            },
+            onError: (e) {
+              if (!completer.isCompleted) completer.complete(posts); // Завершаем выполнение Completer и передаем готовый список
+            },
           );
-        }
-      },
-      onDone: () {
-        if (!completer.isCompleted) completer.complete(posts); // Завершаем выполнение Completer и передаем готовый список
-      },
-      onError: (e) {
-        if (!completer.isCompleted) completer.complete(posts); // Завершаем выполнение Completer и передаем готовый список
-      },
-    );
+        },
+        onDone: () {
+          //    if (!completer.isCompleted) completer.complete(posts); // Завершаем выполнение Completer и передаем готовый список
+        },
+        onError: (e) {
+          //     if (!completer.isCompleted) completer.complete(posts); // Завершаем выполнение Completer и передаем готовый список
+        },
+      );
+    }
     return completer.future; // Возвращаем Future, который будет завершен, когда Completer будет выполнен
   }
 }

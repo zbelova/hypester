@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_login_vk/flutter_login_vk.dart';
 
 import '../../data/user_preferences.dart';
+import '../feed_settings_list.dart';
 
 class SliderMenu extends StatefulWidget {
   SliderMenu({super.key, required this.plugin, required this.reload});
@@ -191,32 +192,32 @@ class _SliderMenuState extends State<SliderMenu> {
             const SizedBox(
               height: 10,
             ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.start,
-              children: [
-                Container(
-                  width: 110,
-                  child: Text('Instagram',
-                      style: TextStyle(
-                        fontSize: 20,
-                        color: Colors.grey[800],
-                      )),
-                ),
-                Switch(
-                  activeColor: Colors.white,
-                  value: _instagramActive,
-                  onChanged: null,
-                  //     (value) {
-                  //   setState(() {
-                  //     _instagramActive = value;
-                  //     if(_instagramActive) widget.reload();
-                  //   });
-                  //   UserPreferences().setInstagramActive(_instagramActive);
-                  // },
-                ),
-              ],
-            ),
-            Text('Sign in', style: TextStyle(color: Colors.grey[700])),
+            // Row(
+            //   mainAxisAlignment: MainAxisAlignment.start,
+            //   children: [
+            //     Container(
+            //       width: 110,
+            //       child: Text('Instagram',
+            //           style: TextStyle(
+            //             fontSize: 20,
+            //             color: Colors.grey[800],
+            //           )),
+            //     ),
+            //     Switch(
+            //       activeColor: Colors.white,
+            //       value: _instagramActive,
+            //       onChanged: null,
+            //       //     (value) {
+            //       //   setState(() {
+            //       //     _instagramActive = value;
+            //       //     if(_instagramActive) widget.reload();
+            //       //   });
+            //       //   UserPreferences().setInstagramActive(_instagramActive);
+            //       // },
+            //     ),
+            //   ],
+            // ),
+            // Text('Sign in', style: TextStyle(color: Colors.grey[700])),
             SizedBox(height: 60),
             InkWell(
               child: Row(
@@ -229,7 +230,13 @@ class _SliderMenuState extends State<SliderMenu> {
                   ),
                 ],
               ),
-              onTap: () {},
+              onTap: () {
+                Navigator.of(context).push(
+                  MaterialPageRoute(
+                    builder: (context) => FeedSettingsList(),
+                  ),
+                );
+              },
             ),
             SizedBox(height: 20),
             InkWell(
