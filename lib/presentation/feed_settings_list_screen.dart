@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
 import 'package:hypester/data/hive/feed_filters_local_data_source.dart';
-import 'package:hypester/presentation/feed_edit_settings.dart';
+import 'package:hypester/presentation/feed_edit_settings_screen.dart';
 
 import '../data/hive/feed_filters.dart';
 

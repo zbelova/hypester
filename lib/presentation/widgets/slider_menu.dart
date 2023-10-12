@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_login_vk/flutter_login_vk.dart';
+import 'package:hypester/presentation/general_settings_screen.dart';
 
 import '../../data/user_preferences.dart';
-import '../feed_settings_list.dart';
+import '../feed_settings_list_screen.dart';
 
 class SliderMenu extends StatefulWidget {
   SliderMenu({super.key, required this.plugin, required this.reload});
@@ -250,7 +251,12 @@ class _SliderMenuState extends State<SliderMenu> {
                   ),
                 ],
               ),
-              onTap: () {},
+              onTap: () {Navigator.of(context).push(
+                MaterialPageRoute(
+                  builder: (context) => GeneralSettingsScreen(),
+                ),
+              );
+                },
             ),
             Spacer(),
           ],
