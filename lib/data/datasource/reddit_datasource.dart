@@ -38,7 +38,8 @@ class RedditDataSource extends DataSource {
             }
           }
           if (data.upvotes > feedFilters.redditLikesFilter) {
-            posts.add(
+            if(!data.over18 || (data.over18 && UserPreferences().getNSFWActive())) {
+              posts.add(
               Post(
                   title: data.title,
                   body: data.selftext,
@@ -57,6 +58,7 @@ class RedditDataSource extends DataSource {
                   numComments: data.numComments,
               ),
             );
+            }
           }
         },
         onDone: () {
@@ -87,8 +89,9 @@ class RedditDataSource extends DataSource {
                 }
               }
               if (data.upvotes > feedFilters.redditLikesFilter) {
-                posts.add(
-                  Post(
+                if (!data.over18 || (data.over18 && UserPreferences().getNSFWActive())) {
+                  posts.add(
+                    Post(
                       title: data.title,
                       body: data.selftext,
                       id: data.id!,
@@ -104,8 +107,9 @@ class RedditDataSource extends DataSource {
                       isGallery: isGallery,
                       galleryUrls: isGallery ? galleryUrls : null,
                       numComments: data.numComments,
-                      ),
-                );
+                    ),
+                  );
+                }
               }
             },
             onDone: () {
