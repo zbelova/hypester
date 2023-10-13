@@ -1,3 +1,5 @@
+import 'package:get_it/get_it.dart';
+import 'package:hypester/data/report_repository.dart';
 import 'package:hypester/presentation/webview.dart';
 import 'package:hypester/presentation/widgets/source_name_widgets.dart';
 import 'package:intl/intl.dart';
@@ -17,6 +19,7 @@ class PostScreen extends StatefulWidget {
 }
 
 class _PostScreenState extends State<PostScreen> {
+  ReportRepository _reportRepository = GetIt.I.get();
 
   @override
   void initState() {
@@ -71,10 +74,10 @@ class _PostScreenState extends State<PostScreen> {
         ],
         title: (widget.post.title != null)
             ? Text(
-          widget.post.title!,
-          style: const TextStyle(fontSize: 18),
-          maxLines: maxLines,
-        )
+                widget.post.title!,
+                style: const TextStyle(fontSize: 18),
+                maxLines: maxLines,
+              )
             : null,
       ),
       body: Padding(
@@ -124,10 +127,7 @@ class _PostScreenState extends State<PostScreen> {
                       Container(
                         padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 2),
                         margin: const EdgeInsets.only(right: 5),
-                        constraints: BoxConstraints(maxWidth: MediaQuery
-                            .of(context)
-                            .size
-                            .width * 0.5),
+                        constraints: BoxConstraints(maxWidth: MediaQuery.of(context).size.width * 0.5),
                         decoration: BoxDecoration(
                           color: Colors.grey[300],
                           borderRadius: BorderRadius.circular(15),
@@ -158,10 +158,9 @@ class _PostScreenState extends State<PostScreen> {
                       style: const TextStyle(fontSize: 13),
                     ),
                     const SizedBox(width: 5),
-
                   ],
                 ),
-                if(widget.post.numComments >0) _buildRedditComments(),
+                if (widget.post.numComments > 0) _buildRedditComments(),
               ]),
             ],
           )),
@@ -171,7 +170,8 @@ class _PostScreenState extends State<PostScreen> {
   void _handleClick(String value, BuildContext context) {
     switch (value) {
       case 'Report':
-        showGeneralDialog(context: context,
+        showGeneralDialog(
+            context: context,
             pageBuilder: (context, anim1, anim2) => Container(),
             barrierColor: Colors.black.withOpacity(0.5),
             barrierDismissible: true,
@@ -195,6 +195,7 @@ class _PostScreenState extends State<PostScreen> {
                       ),
                       TextButton(
                         onPressed: () {
+                          _reportRepository.saveReport(widget.post.date, widget.post.sourceName, widget.post.linkToOriginal!, widget.post.id);
                           Navigator.of(context).pop();
                         },
                         child: Text('Report'),
@@ -245,21 +246,24 @@ class _PostScreenState extends State<PostScreen> {
   Widget _buildRedditComments() {
     return Column(
       children: [
-        SizedBox(height: 20,),
+        SizedBox(
+          height: 20,
+        ),
         Container(
           width: double.infinity,
           child: ElevatedButton(
-            onPressed: (){
-              Navigator.of(context).push(MaterialPageRoute(builder: (context) => WebViewScreen(post: Post(
-                title: widget.post.title,
-                relinkUrl: widget.post.linkToOriginal,
-                numComments: widget.post.numComments,
-                id: widget.post.id,
-                sourceName: widget.post.sourceName,
-                date: widget.post.date,
-                linkToOriginal: widget.post.linkToOriginal
-              ),
-              )));
+            onPressed: () {
+              Navigator.of(context).push(MaterialPageRoute(
+                  builder: (context) => WebViewScreen(
+                        post: Post(
+                            title: widget.post.title,
+                            relinkUrl: widget.post.linkToOriginal,
+                            numComments: widget.post.numComments,
+                            id: widget.post.id,
+                            sourceName: widget.post.sourceName,
+                            date: widget.post.date,
+                            linkToOriginal: widget.post.linkToOriginal),
+                      )));
             },
             child: Text('View comments (${widget.post.numComments})'),
           ),

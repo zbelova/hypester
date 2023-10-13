@@ -2,7 +2,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:hypester/bloc/progress_bar/progress_bar_event.dart';
 import 'package:hypester/bloc/progress_bar/progress_bar_state.dart';
 import 'package:hypester/data/user_preferences.dart';
-import '../../data/repository.dart';
+import '../../data/posts_repository.dart';
 
 class ProgressBarBloc extends Bloc<ProgressBarEvent, ProgressBarState> {
   final PostsRepository _postsRepository;

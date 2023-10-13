@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:get_it/get_it.dart';
 import 'package:hypester/presentation/widgets/youtube_video.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:webview_flutter/webview_flutter.dart';
@@ -8,6 +9,7 @@ import 'package:webview_flutter_android/webview_flutter_android.dart';
 import 'package:webview_flutter_wkwebview/webview_flutter_wkwebview.dart';
 
 import '../data/models/post_model.dart';
+import '../data/report_repository.dart';
 
 class WebViewScreen extends StatefulWidget {
   final Post post;
@@ -22,6 +24,7 @@ class _WebViewScreenState extends State<WebViewScreen> {
   late final WebViewController _controller;
   bool _showLoading = true;
   bool _isYoutube = false;
+  ReportRepository _reportRepository = GetIt.I.get();
 
   @override
   void initState() {
@@ -161,6 +164,7 @@ class _WebViewScreenState extends State<WebViewScreen> {
                       ),
                       TextButton(
                         onPressed: () {
+                          _reportRepository.saveReport(widget.post.date, widget.post.sourceName, widget.post.linkToOriginal!, widget.post.id);
                           Navigator.of(context).pop();
                         },
                         child: Text('Report'),

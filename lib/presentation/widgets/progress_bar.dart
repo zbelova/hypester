@@ -5,7 +5,7 @@ import 'package:get_it/get_it.dart';
 
 import '../../bloc/progress_bar/progress_bar_bloc.dart';
 import '../../bloc/progress_bar/progress_bar_state.dart';
-import '../../data/repository.dart';
+import '../../data/posts_repository.dart';
 
 class ProgressBar extends StatefulWidget {
   const ProgressBar({
