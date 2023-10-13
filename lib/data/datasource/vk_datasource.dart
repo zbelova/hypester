@@ -15,11 +15,12 @@ class VKDataSource extends DataSource {
     String token = UserPreferences().getVKToken();
     if (token != '') {
       try {
-        final response = await _dio.get<Map<String, dynamic>>('https://api.vk.com/method/groups.search?access_token=$token&q=${feedFilters.keyword}&count=5&v=5.131&sort=6');
+        final response = await _dio.get<Map<String, dynamic>>('https://api.vk.com/method/groups.search?access_token=$token&q=${feedFilters.keyword}&count=5&v=5.131&sort=6&fields=age_limits');
 
         final result = response.data;
         var groups = result!['response']['items'];
         for (var group in groups) {
+         if(group['age_limits'] > 1 && !UserPreferences().getNSFWActive()) continue;
           var groupPostsResponse = await _dio.get<Map<String, dynamic>>('https://api.vk.com/method/wall.get?access_token=$token&owner_id=-${group['id']}&count=3&v=5.131');
           if (groupPostsResponse.data != null && groupPostsResponse.data!['response'] != null) {
             var groupPosts = groupPostsResponse.data!['response']['items'];

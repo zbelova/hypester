@@ -19,7 +19,6 @@ class YoutubeDataSource extends DataSource {
     try {
 
       var result = await client.search(feedFilters.keyword, filter: UploadDateFilter.today);
-      //print(result);
       for(var video in result) {
         if(video.engagement.viewCount > feedFilters.youtubeViewsFilter) {
           posts.add(Post(
