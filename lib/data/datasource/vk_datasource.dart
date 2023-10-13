@@ -45,6 +45,7 @@ class VKDataSource extends DataSource {
                     }
                   }
                   if (post['likes']['count'] > feedFilters.vkLikesFilter && (post['views'] == null || post['views']['count'] > feedFilters.vkViewsFilter)) {
+
                     posts.add(Post(
                       title: '',
                       body: post['text'],

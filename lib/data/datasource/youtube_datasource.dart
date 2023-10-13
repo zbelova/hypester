@@ -10,44 +10,68 @@ import 'abstract_datasource.dart';
 import 'package:youtube_explode_dart/youtube_explode_dart.dart';
 
 class YoutubeDataSource extends DataSource {
+  SearchClient client = SearchClient(YoutubeHttpClient());
   //возвращает список постов по всем ключевым словам
   @override
   Future<List<Post>> getByKeyword(FeedFilters feedFilters) async {
     List<Post> posts = [];
     List<String> urls = [];
     try {
-      var parser = await Chaleno().load('https://www.google.com/search?q=youtube+${feedFilters.keyword}&tbm=vid&tbs=qdr:d');
-      //get all url from google search
-      var i = 0;
-      var results = parser!.getElementsByTagName('a');
-      for (var result in results!) {
-        if (result.href!.contains('https://www.youtube.com/watch%3Fv%3D')) {
-          var url = extractYouTubeLink(result.href);
-          if (url != '' && !urls.contains(url)) {
-            if (i++ < 3) {
-              urls.add(url);
-              var yt = YoutubeExplode();
-              var video = await yt.videos.get(url);
-              if (video.engagement.viewCount > feedFilters.youtubeViewsFilter) {
-                posts.add(Post(
-                  title: video.title,
-                  body: video.description,
-                  id: video.id.value,
-                  imageUrl: video.thumbnails.highResUrl,
-                  date: DateTime.now(),
-                  sourceName: 'Youtube',
-                  views: video.engagement.viewCount,
-                  linkToOriginal: url,
-                  relinkUrl: url,
-                  channel: video.author,
-                  isGallery: false,
-                  videoUrl: url,
-                ));
-              }
-            }
-          }
+
+      var result = await client.search(feedFilters.keyword, filter: UploadDateFilter.today);
+      //print(result);
+      for(var video in result) {
+        if(video.engagement.viewCount > feedFilters.youtubeViewsFilter) {
+          posts.add(Post(
+            title: video.title,
+            body: video.description,
+            id: video.id.value,
+            imageUrl: video.thumbnails.highResUrl,
+            date: video.uploadDate??DateTime.now(),
+            sourceName: 'Youtube',
+            views: video.engagement.viewCount,
+            linkToOriginal: video.url,
+            relinkUrl: video.url,
+            channel: video.author,
+            isGallery: false,
+            videoUrl: video.url,
+          ));
         }
       }
+
+      // var parser = await Chaleno().load('https://www.google.com/search?q=youtube+${feedFilters.keyword}&tbm=vid&tbs=qdr:d');
+      // //get all url from google search
+      // var i = 0;
+      // var results = parser!.getElementsByTagName('a');
+      // for (var result in results!) {
+      //   if (result.href!.contains('https://www.youtube.com/watch%3Fv%3D')) {
+      //     var url = extractYouTubeLink(result.href);
+      //     if (url != '' && !urls.contains(url)) {
+      //       if (i++ < 5) {
+      //         urls.add(url);
+      //         var yt = YoutubeExplode();
+      //         var video = await yt.videos.get(url);
+      //         if (video.engagement.viewCount > feedFilters.youtubeViewsFilter) {
+      //
+      //           posts.add(Post(
+      //             title: video.title,
+      //             body: video.description,
+      //             id: video.id.value,
+      //             imageUrl: video.thumbnails.highResUrl,
+      //             date: video.publishDate!,
+      //             sourceName: 'Youtube',
+      //             views: video.engagement.viewCount,
+      //             linkToOriginal: url,
+      //             relinkUrl: url,
+      //             channel: video.author,
+      //             isGallery: false,
+      //             videoUrl: url,
+      //           ));
+      //         }
+      //       }
+      //     }
+      //   }
+      // }
     } catch (e) {
       print(e);
     }

@@ -14,13 +14,13 @@ class PostsRepository extends ChangeNotifier {
   final RedditDataSource _redditDataSource;
   final VKDataSource _vkDataSource;
   final FeedFiltersLocalDataSource _feedFiltersLocalDataSource;
-  final YoutubeDataSource _youtubeDataSource = YoutubeDataSource();
+  final YoutubeDataSource _youtubeDataSource;
   final TelegramDataSource _telegramDataSource = TelegramDataSource();
   double progress = 0.0;
   double oldProgress = 0.0;
   bool isLoaded = false;
 
-  PostsRepository(this._redditDataSource, this._vkDataSource, this._feedFiltersLocalDataSource);
+  PostsRepository(this._redditDataSource, this._vkDataSource, this._feedFiltersLocalDataSource, this._youtubeDataSource);
 
   Future<List<Feed>> getAllFeeds() async {
     progress = 0;

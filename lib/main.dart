@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_login_vk/flutter_login_vk.dart';
 import 'package:get_it/get_it.dart';
 import 'package:hive/hive.dart';
+import 'package:hypester/data/datasource/youtube_datasource.dart';
 import 'package:hypester/data/hive/feed_filters.dart';
 import 'package:hypester/data/hive/feed_filters_local_data_source.dart';
 import 'package:hypester/data/repository.dart';
@@ -36,7 +37,8 @@ Future<void> main() async {
   GetIt.I.registerSingleton(RedditDataSource());
   GetIt.I.registerSingleton(VKDataSource(dio));
   GetIt.I.registerSingleton(FeedFiltersLocalDataSource());
-  GetIt.I.registerSingleton(PostsRepository(GetIt.I.get(), GetIt.I.get(), GetIt.I.get()));
+  GetIt.I.registerSingleton(YoutubeDataSource());
+  GetIt.I.registerSingleton(PostsRepository(GetIt.I.get(), GetIt.I.get(), GetIt.I.get(), GetIt.I.get()));
 
 
 
