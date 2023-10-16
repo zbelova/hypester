@@ -43,7 +43,7 @@ Future<void> main() async {
   GetIt.I.registerSingleton(RedditDataSource());
   GetIt.I.registerSingleton(VKDataSource(dio));
   GetIt.I.registerSingleton(FeedFiltersLocalDataSource());
-  GetIt.I.registerSingleton(YoutubeDataSource());
+  GetIt.I.registerSingleton(YoutubeDataSource(dio));
   GetIt.I.registerSingleton(PostsRepository(GetIt.I.get(), GetIt.I.get(), GetIt.I.get(), GetIt.I.get()));
   GetIt.I.registerSingleton(ReportFirebaseDatasource());
   GetIt.I.registerSingleton(ReportRepository(GetIt.I.get()));

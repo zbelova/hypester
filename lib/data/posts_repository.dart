@@ -61,6 +61,7 @@ class PostsRepository extends ChangeNotifier {
         oldProgress = progress;
         progress += 1 / progressSteps;
         notifyListeners();
+        if(!UserPreferences().getNSFWActive()) _youtubePosts = await _youtubeDataSource.filterNsfw(_youtubePosts);
         _allPosts.addAll(_youtubePosts);
         homeFeed.posts.addAll(_youtubePosts);
       }
