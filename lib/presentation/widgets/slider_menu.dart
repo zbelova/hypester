@@ -153,7 +153,7 @@ class _SliderMenuState extends State<SliderMenu> {
             Row(
               mainAxisAlignment: MainAxisAlignment.start,
               children: [
-                Container(
+                SizedBox(
                   width: 110,
                   child: Text('VK',
                       style: TextStyle(
@@ -231,12 +231,13 @@ class _SliderMenuState extends State<SliderMenu> {
                   ),
                 ],
               ),
-              onTap: () {
-                Navigator.of(context).push(
+              onTap: () async{
+              var res = await Navigator.of(context).push(
                   MaterialPageRoute(
                     builder: (context) => FeedSettingsList(),
                   ),
                 );
+              if (res) widget.reload();
               },
             ),
             SizedBox(height: 20),
