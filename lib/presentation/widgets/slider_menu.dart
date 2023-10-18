@@ -123,33 +123,33 @@ class _SliderMenuState extends State<SliderMenu> {
             const SizedBox(
               height: 10,
             ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.start,
-              children: [
-                Container(
-                  width: 110,
-                  child: Text('Telegram',
-                      style: TextStyle(
-                        fontSize: 20,
-                        color: Colors.grey[800],
-                      )),
-                ),
-                Switch(
-                  activeColor: Colors.white,
-                  value: _telegramActive,
-                  onChanged: (value) async {
-                    setState(() {
-                      _telegramActive = value;
-                      if(_telegramActive) widget.reload();
-                    });
-                    await UserPreferences().setTelegramActive(_telegramActive);
-                  },
-                ),
-              ],
-            ),
-            const SizedBox(
-              height: 10,
-            ),
+            // Row(
+            //   mainAxisAlignment: MainAxisAlignment.start,
+            //   children: [
+            //     Container(
+            //       width: 110,
+            //       child: Text('Telegram',
+            //           style: TextStyle(
+            //             fontSize: 20,
+            //             color: Colors.grey[800],
+            //           )),
+            //     ),
+            //     Switch(
+            //       activeColor: Colors.white,
+            //       value: _telegramActive,
+            //       onChanged: (value) async {
+            //         setState(() {
+            //           _telegramActive = value;
+            //           if(_telegramActive) widget.reload();
+            //         });
+            //         await UserPreferences().setTelegramActive(_telegramActive);
+            //       },
+            //     ),
+            //   ],
+            // ),
+            // const SizedBox(
+            //   height: 10,
+            // ),
             Row(
               mainAxisAlignment: MainAxisAlignment.start,
               children: [

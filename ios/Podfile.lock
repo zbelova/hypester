@@ -677,6 +677,8 @@ PODS:
   - flutter_login_vk (0.1.0):
     - Flutter
     - VK-ios-sdk (~> 1.6.2)
+  - flutter_native_splash (0.0.1):
+    - Flutter
   - GoogleUtilities/Environment (7.11.5):
     - PromisesObjC (< 3.0, >= 1.2)
   - GoogleUtilities/Logger (7.11.5):
@@ -769,6 +771,7 @@ DEPENDENCIES:
   - Flutter (from `Flutter`)
   - flutter_inappwebview (from `.symlinks/plugins/flutter_inappwebview/ios`)
   - flutter_login_vk (from `.symlinks/plugins/flutter_login_vk/ios`)
+  - flutter_native_splash (from `.symlinks/plugins/flutter_native_splash/ios`)
   - "gRPC-C++"
   - gRPC-Core
   - path_provider_foundation (from `.symlinks/plugins/path_provider_foundation/darwin`)
@@ -804,6 +807,8 @@ EXTERNAL SOURCES:
     :path: ".symlinks/plugins/flutter_inappwebview/ios"
   flutter_login_vk:
     :path: ".symlinks/plugins/flutter_login_vk/ios"
+  flutter_native_splash:
+    :path: ".symlinks/plugins/flutter_native_splash/ios"
   path_provider_foundation:
     :path: ".symlinks/plugins/path_provider_foundation/darwin"
   share_plus:
@@ -825,6 +830,7 @@ SPEC CHECKSUMS:
   Flutter: f04841e97a9d0b0a8025694d0796dd46242b2854
   flutter_inappwebview: acd4fc0f012cefd09015000c241137d82f01ba62
   flutter_login_vk: 3ca1f7f18d014a6ff7855b660488fb539fdeec52
+  flutter_native_splash: 52501b97d1c0a5f898d687f1646226c1f93c56ef
   GoogleUtilities: 13e2c67ede716b8741c7989e26893d151b2b2084
   "gRPC-C++": 0968bace703459fd3e5dcb0b2bed4c573dbff046
   gRPC-Core: 17108291d84332196d3c8466b48f016fc17d816d
