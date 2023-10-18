@@ -62,7 +62,8 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
       extendBody: true,
       body: SliderDrawer(
         appBar: SliderAppBar(
-          appBarHeight: 100,
+          appBarHeight: 105,
+          appBarPadding: const EdgeInsets.only(top:45),
           trailing: IconButton(
             onPressed: () async {
               await Navigator.of(context).push(MaterialPageRoute(builder: (context) => const AddFeedScreen()));

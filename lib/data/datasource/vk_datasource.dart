@@ -21,12 +21,12 @@ class VKDataSource extends DataSource {
         var groups = result!['response']['items'];
         for (var group in groups) {
          if(group['age_limits'] > 1 && !UserPreferences().getNSFWActive()) continue;
-          var groupPostsResponse = await _dio.get<Map<String, dynamic>>('https://api.vk.com/method/wall.get?access_token=$token&owner_id=-${group['id']}&count=3&v=5.131');
+          var groupPostsResponse = await _dio.get<Map<String, dynamic>>('https://api.vk.com/method/wall.get?access_token=$token&owner_id=-${group['id']}&count=5&v=5.131');
           if (groupPostsResponse.data != null && groupPostsResponse.data!['response'] != null) {
             var groupPosts = groupPostsResponse.data!['response']['items'];
             if (groupPosts.length > 0) {
               for (var post in groupPosts) {
-                if (post['date'] > DateTime.now().millisecondsSinceEpoch / 1000 - 86400) {
+                if (post['date'] > DateTime.now().millisecondsSinceEpoch / 1000 - 604800) {
                   bool isRelink = false;
                   bool isVideo = false;
                   for (final attachment in post['attachments']) {

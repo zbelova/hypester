@@ -24,7 +24,7 @@ class YoutubeDataSource extends DataSource {
   Future<List<Post>> getByKeyword(FeedFilters feedFilters) async {
     List<Post> posts = [];
     try {
-      var result = await client.search(feedFilters.keyword, filter: UploadDateFilter.today);
+      var result = await client.search(feedFilters.keyword, filter: UploadDateFilter.lastWeek);
       for (var video in result) {
         if (video.engagement.viewCount > feedFilters.youtubeViewsFilter) {
           //

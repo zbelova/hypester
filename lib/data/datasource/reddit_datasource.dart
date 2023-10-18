@@ -25,7 +25,7 @@ class RedditDataSource extends DataSource {
     //Completer нужен, чтобы забрать из стрима все посты. Особенности апи реддита
     Completer<List<Post>> completer = Completer<List<Post>>(); // Создаем Completer
     if (!feedFilters.searchInSubreddits) {
-      reddit.subreddit('all').search(feedFilters.keyword, sort: Sort.top, timeFilter: TimeFilter.day, params: {'limit': limitFilter.toString()}).listen(
+      reddit.subreddit('all').search(feedFilters.keyword, sort: Sort.top, timeFilter: TimeFilter.week, params: {'limit': limitFilter.toString()}).listen(
         (event) {
           var data = event as Submission;
 
@@ -33,6 +33,7 @@ class RedditDataSource extends DataSource {
           var isGallery = data.data!['media_metadata'] != null;
           if (isGallery) {
             for (var metadata in data.data!['media_metadata'].values) {
+              if(metadata['s']!= null && metadata['s']['u']!= null)
               galleryUrls.add(convertRedditUrl(metadata['s']['u'].toString()));
             }
           }
