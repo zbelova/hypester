@@ -15,6 +15,7 @@ class FeedSettingsList extends StatefulWidget {
 class _FeedSettingsListState extends State<FeedSettingsList> {
   final FeedFiltersLocalDataSource _feedFiltersLocalDataSource = GetIt.I.get();
   List<FeedFilters> feeds = [];
+  bool _updateFeeds = false;
 
   @override
   void initState() {
@@ -30,6 +31,12 @@ class _FeedSettingsListState extends State<FeedSettingsList> {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Feed settings'),
+        leading: IconButton(
+          onPressed: () {
+            Navigator.of(context).pop(_updateFeeds);
+          },
+          icon: const Icon(Icons.arrow_back),
+        ),
       ),
       body: FutureBuilder(
         future: _loadFeedsList(),
@@ -65,6 +72,7 @@ class _FeedSettingsListState extends State<FeedSettingsList> {
                           icon: const Icon(Icons.delete),
                           onPressed: () async {
                             await _feedFiltersLocalDataSource.delete(feeds[index].keyword);
+                            _updateFeeds = true;
                             setState(() {});
                           },
                         ),

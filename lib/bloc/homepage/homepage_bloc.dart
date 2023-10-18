@@ -4,7 +4,7 @@ import 'package:hypester/bloc/homepage/homepage_event.dart';
 import 'package:hypester/bloc/homepage/homepage_state.dart';
 import 'package:hypester/data/user_preferences.dart';
 import '../../data/hive/feed_filters_local_data_source.dart';
-import '../../data/repository.dart';
+import '../../data/posts_repository.dart';
 
 class HomePageBloc extends Bloc<HomePageEvent, HomePageState> {
   final PostsRepository _postsRepository;

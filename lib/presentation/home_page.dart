@@ -62,7 +62,8 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
       extendBody: true,
       body: SliderDrawer(
         appBar: SliderAppBar(
-          appBarHeight: 100,
+          appBarHeight: 105,
+          appBarPadding: const EdgeInsets.only(top:45),
           trailing: IconButton(
             onPressed: () async {
               await Navigator.of(context).push(MaterialPageRoute(builder: (context) => const AddFeedScreen()));
@@ -74,7 +75,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
               size: 25,
             ),
           ),
-          title: const Text('Hypester', style: TextStyle(fontSize: 30, fontWeight: FontWeight.w600, fontFamily: 'Caveat-Variable')),
+          title: const Text('Hypestr', style: TextStyle(fontSize: 30, fontWeight: FontWeight.w600, fontFamily: 'Caveat-Variable')),
         ),
         key: const ValueKey('drawer'),
         slider: SliderMenu(

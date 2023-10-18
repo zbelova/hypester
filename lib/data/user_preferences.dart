@@ -113,7 +113,7 @@ class UserPreferences {
   }
 
   bool getYoutubeActive() {
-    return _preferences?.getBool('youtube_active') ?? false;
+    return _preferences?.getBool('youtube_active') ?? true;
   }
 
   Future<void> setTelegramActive(bool isActive) async {

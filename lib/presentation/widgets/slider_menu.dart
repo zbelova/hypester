@@ -153,7 +153,7 @@ class _SliderMenuState extends State<SliderMenu> {
             Row(
               mainAxisAlignment: MainAxisAlignment.start,
               children: [
-                Container(
+                SizedBox(
                   width: 110,
                   child: Text('VK',
                       style: TextStyle(
@@ -226,17 +226,18 @@ class _SliderMenuState extends State<SliderMenu> {
                   Icon(Icons.list_alt, color: Colors.grey[800], size: 25),
                   SizedBox(width: 10),
                   Text(
-                    'Manage feeds',
+                    'Edit feeds',
                     style: TextStyle(color: Colors.grey[800], fontSize: 18),
                   ),
                 ],
               ),
-              onTap: () {
-                Navigator.of(context).push(
+              onTap: () async{
+              var res = await Navigator.of(context).push(
                   MaterialPageRoute(
                     builder: (context) => FeedSettingsList(),
                   ),
                 );
+              if (res) widget.reload();
               },
             ),
             SizedBox(height: 20),

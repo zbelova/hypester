@@ -27,7 +27,7 @@ class _YoutubeVideoState extends State<YoutubeVideo> {
       initialVideoId: YoutubePlayer.convertUrlToId(widget.videoUrl) ?? '',
       flags: const YoutubePlayerFlags(
         mute: false,
-        autoPlay: true,
+        autoPlay: false,
         disableDragSeek: false,
         loop: false,
         isLive: false,
@@ -72,6 +72,10 @@ class _YoutubeVideoState extends State<YoutubeVideo> {
         controller: _controller,
         showVideoProgressIndicator: true,
         progressIndicatorColor: Colors.blueAccent,
+
+        // bottomActions: [
+        //   PlayPauseButton(),
+        // ],
         topActions: <Widget>[
           const SizedBox(width: 8.0),
           Expanded(

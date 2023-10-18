@@ -1,3 +1,3 @@
-const int limitFilter = 20;
+const int limitFilter = 30;
 //TODO заменить на настоящую политику конфиденциальности
-const privacyPolicyUrl = 'https://sites.google.com/view/carrotapps/unfocus-privacy-policy?authuser=0';
+const privacyPolicyUrl = 'https://sites.google.com/view/hypestr/privace-policy';

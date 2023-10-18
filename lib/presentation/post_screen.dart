@@ -1,3 +1,5 @@
+import 'package:get_it/get_it.dart';
+import 'package:hypester/data/report_repository.dart';
 import 'package:hypester/presentation/webview.dart';
 import 'package:hypester/presentation/widgets/source_name_widgets.dart';
 import 'package:intl/intl.dart';
@@ -17,6 +19,8 @@ class PostScreen extends StatefulWidget {
 }
 
 class _PostScreenState extends State<PostScreen> {
+  ReportRepository _reportRepository = GetIt.I.get();
+  String selectedOption = 'Content of a sexual nature';
 
   @override
   void initState() {
@@ -47,7 +51,7 @@ class _PostScreenState extends State<PostScreen> {
         actions: <Widget>[
           PopupMenuButton<String>(
             onSelected: (value) {
-              _handleClick(value, context);
+              _handlePopupItemClick(value, context);
             },
             elevation: 1,
             itemBuilder: (BuildContext context) {
@@ -71,10 +75,10 @@ class _PostScreenState extends State<PostScreen> {
         ],
         title: (widget.post.title != null)
             ? Text(
-          widget.post.title!,
-          style: const TextStyle(fontSize: 18),
-          maxLines: maxLines,
-        )
+                widget.post.title!,
+                style: const TextStyle(fontSize: 18),
+                maxLines: maxLines,
+              )
             : null,
       ),
       body: Padding(
@@ -124,10 +128,7 @@ class _PostScreenState extends State<PostScreen> {
                       Container(
                         padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 2),
                         margin: const EdgeInsets.only(right: 5),
-                        constraints: BoxConstraints(maxWidth: MediaQuery
-                            .of(context)
-                            .size
-                            .width * 0.5),
+                        constraints: BoxConstraints(maxWidth: MediaQuery.of(context).size.width * 0.5),
                         decoration: BoxDecoration(
                           color: Colors.grey[300],
                           borderRadius: BorderRadius.circular(15),
@@ -158,51 +159,196 @@ class _PostScreenState extends State<PostScreen> {
                       style: const TextStyle(fontSize: 13),
                     ),
                     const SizedBox(width: 5),
-
                   ],
                 ),
-                if(widget.post.numComments >0) _buildRedditComments(),
+                if (widget.post.numComments > 0) _buildRedditComments(),
               ]),
             ],
           )),
     );
   }
 
-  void _handleClick(String value, BuildContext context) {
+  void _handlePopupItemClick(String value, BuildContext context) {
     switch (value) {
       case 'Report':
-        showGeneralDialog(context: context,
+        showGeneralDialog(
+            context: context,
             pageBuilder: (context, anim1, anim2) => Container(),
             barrierColor: Colors.black.withOpacity(0.5),
             barrierDismissible: true,
             barrierLabel: '',
             transitionDuration: const Duration(milliseconds: 200),
             transitionBuilder: (context, anim1, anim2, child) {
-              return Transform.scale(
-                scale: anim1.value,
-                child: Opacity(
-                  opacity: anim1.value,
-                  child: AlertDialog(
-                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-                    title: Text('Report'),
-                    content: Text('Are you sure you want to report this post?'),
-                    actions: [
-                      TextButton(
-                        onPressed: () {
-                          Navigator.of(context).pop();
-                        },
-                        child: Text('Cancel'),
+              return StatefulBuilder(builder: (context, setState) {
+                return Transform.scale(
+                  scale: anim1.value,
+                  child: Opacity(
+                    opacity: anim1.value,
+                    child: AlertDialog(
+                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                      title: Text('Report'),
+                      //content: Text('Are you sure you want to report this post?'),
+                      content: SizedBox(
+                        width: 300,
+                        height: MediaQuery.of(context).size.height * 0.6,
+                        child: ListView(
+                          padding: const EdgeInsets.all(0),
+                          children: [
+                            Text('Choose a reason for the report:'),
+                            ListTile(
+                              title: Text('Content of a sexual nature'),
+                              leading: Radio(
+                                value: 'Content of a sexual nature',
+                                groupValue: selectedOption,
+                                onChanged: (value) {
+                                  setState(() {
+                                    selectedOption = value!;
+                                  });
+                                },
+                              ),
+                            ),
+                            ListTile(
+                              title: Text('Violent or repulsive scenes'),
+                              leading: Radio(
+                                value: 'Violent or repulsive scenes',
+                                groupValue: selectedOption,
+                                onChanged: (value) {
+                                  setState(() {
+                                    selectedOption = value!;
+                                  });
+                                },
+                              ),
+                            ),
+                            ListTile(
+                              title: Text('Verbal abuse or intolerance'),
+                              leading: Radio(
+                                value: 'Verbal abuse or intolerance',
+                                groupValue: selectedOption,
+                                onChanged: (value) {
+                                  setState(() {
+                                    selectedOption = value!;
+                                  });
+                                },
+                              ),
+                            ),
+                            ListTile(
+                              title: Text('Harassment or bullying'),
+                              leading: Radio(
+                                value: 'Harassment or bullying',
+                                groupValue: selectedOption,
+                                onChanged: (value) {
+                                  setState(() {
+                                    selectedOption = value!;
+                                  });
+                                },
+                              ),
+                            ),
+                            ListTile(
+                              title: Text('Harmful or dangerous actions'),
+                              leading: Radio(
+                                value: 'Harmful or dangerous actions',
+                                groupValue: selectedOption,
+                                onChanged: (value) {
+                                  setState(() {
+                                    selectedOption = value!;
+                                  });
+                                },
+                              ),
+                            ),
+                            ListTile(
+                              title: Text('False information'),
+                              leading: Radio(
+                                value: 'False information',
+                                groupValue: selectedOption,
+                                onChanged: (value) {
+                                  setState(() {
+                                    selectedOption = value!;
+                                  });
+                                },
+                              ),
+                            ),
+                            ListTile(
+                              title: Text('Cruelty towards children'),
+                              leading: Radio(
+                                value: 'Cruelty towards children',
+                                groupValue: selectedOption,
+                                onChanged: (value) {
+                                  setState(() {
+                                    selectedOption = value!;
+                                  });
+                                },
+                              ),
+                            ),
+                            ListTile(
+                              title: Text('Terrorism propaganda'),
+                              leading: Radio(
+                                value: 'Terrorism propaganda',
+                                groupValue: selectedOption,
+                                onChanged: (value) {
+                                  setState(() {
+                                    selectedOption = value!;
+                                  });
+                                },
+                              ),
+                            ),
+                            ListTile(
+                              title: Text('Spam or false information'),
+                              leading: Radio(
+                                value: 'Spam or false information',
+                                groupValue: selectedOption,
+                                onChanged: (value) {
+                                  setState(() {
+                                    selectedOption = value!;
+                                  });
+                                },
+                              ),
+                            ),
+                            ListTile(
+                              title: Text('Violation of the law'),
+                              leading: Radio(
+                                value: 'Violation of the law',
+                                groupValue: selectedOption,
+                                onChanged: (value) {
+                                  setState(() {
+                                    selectedOption = value!;
+                                  });
+                                },
+                              ),
+                            ),
+                            ListTile(
+                              title: Text('Other'),
+                              leading: Radio(
+                                value: 'Other',
+                                groupValue: selectedOption,
+                                onChanged: (value) {
+                                  setState(() {
+                                    selectedOption = value!;
+                                  });
+                                },
+                              ),
+                            ),
+                          ],
+                        ),
                       ),
-                      TextButton(
-                        onPressed: () {
-                          Navigator.of(context).pop();
-                        },
-                        child: Text('Report'),
-                      ),
-                    ],
+                      actions: [
+                        TextButton(
+                          onPressed: () {
+                            Navigator.of(context).pop();
+                          },
+                          child: Text('Cancel'),
+                        ),
+                        TextButton(
+                          onPressed: () {
+                            _reportRepository.saveReport(widget.post.date, widget.post.sourceName, widget.post.linkToOriginal!, widget.post.id, selectedOption);
+                            Navigator.of(context).pop();
+                          },
+                          child: Text('Report'),
+                        ),
+                      ],
+                    ),
                   ),
-                ),
-              );
+                );
+              });
             });
         break;
       case 'Share':
@@ -245,21 +391,24 @@ class _PostScreenState extends State<PostScreen> {
   Widget _buildRedditComments() {
     return Column(
       children: [
-        SizedBox(height: 20,),
+        SizedBox(
+          height: 20,
+        ),
         Container(
           width: double.infinity,
           child: ElevatedButton(
-            onPressed: (){
-              Navigator.of(context).push(MaterialPageRoute(builder: (context) => WebViewScreen(post: Post(
-                title: widget.post.title,
-                relinkUrl: widget.post.linkToOriginal,
-                numComments: widget.post.numComments,
-                id: widget.post.id,
-                sourceName: widget.post.sourceName,
-                date: widget.post.date,
-                linkToOriginal: widget.post.linkToOriginal
-              ),
-              )));
+            onPressed: () {
+              Navigator.of(context).push(MaterialPageRoute(
+                  builder: (context) => WebViewScreen(
+                        post: Post(
+                            title: widget.post.title,
+                            relinkUrl: widget.post.linkToOriginal,
+                            numComments: widget.post.numComments,
+                            id: widget.post.id,
+                            sourceName: widget.post.sourceName,
+                            date: widget.post.date,
+                            linkToOriginal: widget.post.linkToOriginal),
+                      )));
             },
             child: Text('View comments (${widget.post.numComments})'),
           ),
