@@ -33,6 +33,12 @@ class TelegramDataSource extends DataSource {
 
                 var dateElement = message.querySelector('.time');
 
+                var imageElement = message.querySelector('.tgme_widget_message_photo_wrap');
+                var image;
+                if(imageElement != null){
+                  image = extractImage(imageElement.attr('style')!);
+                }
+
                 // print('Text: $text');
                 // print('Views: $views');
                 // print(dateElement!.attr('datetime'));
@@ -41,7 +47,7 @@ class TelegramDataSource extends DataSource {
                   posts.add(Post(
                     body: text,
                     id: channel,
-                    //imageUrl: '',
+                    imageUrl: image,
                     date: DateTime.parse(dateElement.attr('datetime')!),
                     sourceName: 'Telegram',
                     views: views != null ? parseViews(views) : 0,
@@ -95,4 +101,21 @@ int parseViews(String viewsString) {
   }
 
   return views;
+}
+
+String? extractImage(String text) {
+  int startIndex = text.indexOf("url('") + 5;
+  if (startIndex == -1) {
+    return null;
+  }
+
+  // Поиск индекса конца ссылки
+  int endIndex = text.indexOf("')", startIndex);
+  if (endIndex == -1) {
+    return null;
+  }
+
+  // Извлечение ссылки из строки
+  String link = text.substring(startIndex, endIndex);
+  return link;
 }
