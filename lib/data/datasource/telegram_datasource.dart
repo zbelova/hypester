@@ -39,10 +39,15 @@ class TelegramDataSource extends DataSource {
                   image = extractImage(imageElement.attr('style')!);
                 }
 
-                // print('Text: $text');
-                // print('Views: $views');
-                // print(dateElement!.attr('datetime'));
-                // print('Date: ${isWithinSevenDays(dateElement.attr('datetime')!)}');
+                var videoElement = message.querySelector('video');
+                var video;
+                var isVideo = false;
+                if(videoElement != null){
+                  video = videoElement.attr('src');
+                  isVideo = true;
+                  imageElement = message.querySelector('.tgme_widget_message_video_thumb');
+                  image = extractImage(imageElement!.attr('style')!);
+                }
                 if (isWithinSevenDays(dateElement!.attr('datetime')!)) {
                   posts.add(Post(
                     body: text,
@@ -52,10 +57,10 @@ class TelegramDataSource extends DataSource {
                     sourceName: 'Telegram',
                     views: views != null ? parseViews(views) : 0,
                     linkToOriginal: 'https://t.me/s/$channel',
-                    //relinkUrl: 'https://t.me/s/$channel',
                     channel: channel,
                     isGallery: false,
-                    videoUrl: '',
+                    videoUrl: video,
+                    isVideo: isVideo,
                     isHtml: true,
                   ));
                 }

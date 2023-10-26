@@ -116,6 +116,30 @@ class _FeedScreenState extends State<FeedScreen> {
                             ),
                           ),
                         if (widget.feed.posts[index].isGallery) GalleryPreview(imageUrls: widget.feed.posts[index].galleryUrls!),
+                        if (widget.feed.posts[index].isVideo && widget.feed.posts[index].videoUrl != null && widget.feed.posts[index].videoUrl != '')
+                          Padding(
+                            padding: const EdgeInsets.only(bottom: 8),
+                            child: ClipRRect(
+                              borderRadius: BorderRadius.circular(10),
+                              child: Image.network(
+                                widget.feed.posts[index].imageUrl!,
+                                fit: BoxFit.cover,
+                                width: MediaQuery.of(context).size.width,
+                                errorBuilder: (context, error, stackTrace) {
+                                  return Container(
+                                    height: 200,
+                                    color: Colors.grey[300],
+                                    child: Center(
+                                      child: Icon(
+                                        Icons.error_outline,
+                                        color: Colors.grey[500],
+                                      ),
+                                    ),
+                                  );
+                                },
+                              ),
+                            ),
+                          ),
                         Row(
                           children: [
                             if (widget.feed.posts[index].isVideo &&
