@@ -17,6 +17,7 @@ class Post {
   final bool isGallery;
   final List<String>? galleryUrls; //если пост состоит из галереи картинок, как у телеграма или реддита
   final int numComments;
+  final bool isHtml;
 
   Post({
     this.videoUrl,
@@ -35,5 +36,6 @@ class Post {
     this.isGallery = false,
     this.isVideo = false,
     this.numComments = 0,
+    this.isHtml = false,
   });
 }
