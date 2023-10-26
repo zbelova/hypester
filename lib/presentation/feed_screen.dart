@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_widget_from_html/flutter_widget_from_html.dart';
 import 'package:hypester/presentation/post_screen.dart';
 import 'package:hypester/presentation/webview.dart';
 import 'package:hypester/presentation/widgets/gallery_preview_widget.dart';
@@ -141,13 +142,23 @@ class _FeedScreenState extends State<FeedScreen> {
                                 ),
                               ),
                             ],
-                            if (widget.feed.posts[index].body != null)
+                            if (widget.feed.posts[index].body != null && !widget.feed.posts[index].isHtml)
                               Expanded(
                                 child: Text(
                                   widget.feed.posts[index].body!,
                                   overflow: TextOverflow.ellipsis,
                                   maxLines: 4,
                                   //softWrap: false,
+                                ),
+                              ),
+                            if (widget.feed.posts[index].body != null && widget.feed.posts[index].isHtml)
+                              Expanded(
+                                child: HtmlWidget(
+                                  widget.feed.posts[index].body!,
+                                  textStyle: const TextStyle(fontSize: 14),
+                                  //onTapUrl: (url) => Navigator.push(context, MaterialPageRoute(builder: (context) => WebViewScreen(post: widget.feed.posts[index]))),
+
+
                                 ),
                               ),
                           ],

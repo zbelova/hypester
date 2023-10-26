@@ -1,3 +1,4 @@
+import 'package:flutter_widget_from_html/flutter_widget_from_html.dart';
 import 'package:get_it/get_it.dart';
 import 'package:hypester/data/report_repository.dart';
 import 'package:hypester/presentation/webview.dart';
@@ -108,12 +109,20 @@ class _PostScreenState extends State<PostScreen> {
                     ),
                   ),
                 if (widget.post.imageUrl != '' && widget.post.imageUrl != null) SizedBox(height: 15),
-                if (widget.post.body != null)
+                if (widget.post.body != null && !widget.post.isHtml)
                   Text(
                     widget.post.body!,
                     style: const TextStyle(fontSize: 15),
                     //softWrap: false,
                   ),
+                if (widget.post.body != null && widget.post.isHtml)
+                HtmlWidget(
+                  widget.post.body!,
+                  textStyle: const TextStyle(fontSize: 15),
+                  //onTapUrl: (url) => Navigator.push(context, MaterialPageRoute(builder: (context) => WebViewScreen(post: widget.feed.posts[index]))),
+
+
+                ),
                 if (widget.post.isGallery) _buildGallery(widget.post.galleryUrls!),
                 SizedBox(height: 8),
                 Text(

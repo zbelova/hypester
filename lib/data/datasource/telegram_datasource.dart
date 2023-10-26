@@ -44,7 +44,7 @@ class TelegramDataSource extends DataSource {
                     //imageUrl: '',
                     date: DateTime.parse(dateElement.attr('datetime')!),
                     sourceName: 'Telegram',
-                    views: views != null ? int.parse(views) : 0,
+                    views: views != null ? parseViews(views) : 0,
                     linkToOriginal: 'https://t.me/s/$channel',
                     //relinkUrl: 'https://t.me/s/$channel',
                     channel: channel,
@@ -54,10 +54,6 @@ class TelegramDataSource extends DataSource {
                   ));
                 }
               }
-              // var results2 = parser2!.getElementsByClassName('time');
-              // if(isWithinSevenDays(results2[0].attr('datetime')!)) {
-              //
-              // }
             }
           }
         }
@@ -84,4 +80,19 @@ bool isWithinSevenDays(String dateString) {
   Duration difference = parsedDate.difference(currentDate);
 
   return difference.inDays <= 7;
+}
+
+int parseViews(String viewsString) {
+  // Удаление пробелов из строки
+  viewsString = viewsString.replaceAll(' ', '');
+
+  // Парсинг числа и суффикса
+  int views;
+  if (viewsString.contains('K')) {
+    views = (double.parse(viewsString.replaceAll('K', '')) * 1000).round();
+  } else {
+    views = int.parse(viewsString);
+  }
+
+  return views;
 }
