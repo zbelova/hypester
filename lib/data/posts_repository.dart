@@ -15,12 +15,12 @@ class PostsRepository extends ChangeNotifier {
   final VKDataSource _vkDataSource;
   final FeedFiltersLocalDataSource _feedFiltersLocalDataSource;
   final YoutubeDataSource _youtubeDataSource;
-  final TelegramDataSource _telegramDataSource = TelegramDataSource();
+  final TelegramDataSource _telegramDataSource;
   double progress = 0.0;
   double oldProgress = 0.0;
   bool isLoaded = false;
 
-  PostsRepository(this._redditDataSource, this._vkDataSource, this._feedFiltersLocalDataSource, this._youtubeDataSource);
+  PostsRepository(this._redditDataSource, this._vkDataSource, this._feedFiltersLocalDataSource, this._youtubeDataSource, this._telegramDataSource);
 
   Future<List<Feed>> getAllFeeds() async {
     progress = 0;

@@ -8,6 +8,7 @@ import 'package:flutter_login_vk/flutter_login_vk.dart';
 import 'package:get_it/get_it.dart';
 import 'package:hive/hive.dart';
 import 'package:hypester/data/datasource/report_firabase_datasource.dart';
+import 'package:hypester/data/datasource/telegram_datasource.dart';
 import 'package:hypester/data/datasource/youtube_datasource.dart';
 import 'package:hypester/data/hive/feed_filters.dart';
 import 'package:hypester/data/hive/feed_filters_local_data_source.dart';
@@ -15,6 +16,9 @@ import 'package:hypester/data/posts_repository.dart';
 import 'package:hypester/data/report_repository.dart';
 import 'package:hypester/presentation/home_page.dart';
 import 'package:path_provider/path_provider.dart';
+import 'package:teledart/teledart.dart';
+import 'package:teledart/telegram.dart';
+import 'api_keys.dart';
 import 'data/datasource/reddit_datasource.dart';
 import 'data/datasource/vk_datasource.dart';
 import 'data/hive/post_local_dto.dart';
@@ -39,12 +43,16 @@ Future<void> main() async {
     ..registerAdapter(SubredditLocalDtoAdapter())
     ..registerAdapter(FeedFiltersAdapter());
 
+  // final username = (await Telegram(telegramBotToken).getMe()).username;
+  // var teledart = TeleDart(telegramBotToken, Event(username!));
+
   GetIt.I.registerSingleton(dio);
   GetIt.I.registerSingleton(RedditDataSource());
   GetIt.I.registerSingleton(VKDataSource(dio));
   GetIt.I.registerSingleton(FeedFiltersLocalDataSource());
+  GetIt.I.registerSingleton(TelegramDataSource());
   GetIt.I.registerSingleton(YoutubeDataSource(dio));
-  GetIt.I.registerSingleton(PostsRepository(GetIt.I.get(), GetIt.I.get(), GetIt.I.get(), GetIt.I.get()));
+  GetIt.I.registerSingleton(PostsRepository(GetIt.I.get(), GetIt.I.get(), GetIt.I.get(), GetIt.I.get(), GetIt.I.get()));
   GetIt.I.registerSingleton(ReportFirebaseDatasource());
   GetIt.I.registerSingleton(ReportRepository(GetIt.I.get()));
 
