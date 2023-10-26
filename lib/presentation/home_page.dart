@@ -63,7 +63,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
       body: SliderDrawer(
         appBar: SliderAppBar(
           appBarHeight: 105,
-          appBarPadding: const EdgeInsets.only(top:45),
+          appBarPadding: const EdgeInsets.only(top: 45),
           trailing: IconButton(
             onPressed: () async {
               await Navigator.of(context).push(MaterialPageRoute(builder: (context) => const AddFeedScreen()));
@@ -130,27 +130,57 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                       )
                     : Expanded(
                         child: Center(
-                        child: Row(
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          mainAxisAlignment: MainAxisAlignment.center,
+                        child: Column(
+
                           children: [
-                            const Text(
-                              'Add some feeds',
-                              style: TextStyle(
-                                fontSize: 20,
+                            Align(
+                                alignment: Alignment.topRight,
+                                child: Padding(
+                                  padding: const EdgeInsets.only(right: 60, ),
+                                  child: Image.asset('assets/images/arrow.png', width: MediaQuery.of(context).size.width * 0.2,),
+                                )),
+                            SizedBox(height: 10,),
+                            Container(
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(10),
+                                color: Colors.grey[200],
+                              ),
+                              width: MediaQuery.of(context).size.width * 0.6,
+                              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 24),
+                              child: const Text(
+                                'You can also add a feed by tapping on the + button in the top right corner of the screen.',
+                                style: TextStyle(
+                                  fontSize: 16,
+                                ),
                               ),
                             ),
-                            const SizedBox(width: 15),
+                            Spacer(),
+                            Container(
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(10),
+                                color: Colors.orangeAccent[100],
+                              ),
+                              margin: const EdgeInsets.symmetric(horizontal: 20),
+                              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 24),
+                              child: const Text(
+                                'This is where your feeds with content are going to be displayed. Choose a keyword to add a feed.',
+                                style: TextStyle(
+                                  fontSize: 18,
+                                ),
+                              ),
+                            ),
+                            SizedBox(height: 10),
                             ElevatedButton(
                               onPressed: () async {
                                 await Navigator.of(context).push(MaterialPageRoute(builder: (context) => const AddFeedScreen()));
                                 context.read<HomePageBloc>().add(LoadHomePageEvent());
                               },
                               child: const Text(
-                                '+',
-                                style: TextStyle(fontSize: 25),
+                                'Choose keyword',
+                                style: TextStyle(fontSize: 20),
                               ),
                             ),
+                            Spacer(),
                           ],
                         ),
                       )))

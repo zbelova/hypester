@@ -37,19 +37,6 @@ class _AddFeedScreenState extends State<AddFeedScreen> {
     //_getFilters();
   }
 
-  // Future<void> _getFilters() async {
-  //   FeedFilters feedFilters = await _feedFiltersLocalDataSource.get(_keywordController.text);
-  //     _redditUpsController.text = feedFilters.redditLikesFilter.toString();
-  //     _redditSearchInSubreddits = feedFilters.searchInSubreddits;
-  //     _vkLikesController.text = feedFilters.vkLikesFilter.toString();
-  //     _vkViewsController.text = feedFilters.vkViewsFilter.toString();
-  //     _youtubeLikesController.text = feedFilters.youtubeLikesFilter.toString();
-  //     _youtubeViewsController.text = feedFilters.youtubeViewsFilter.toString();
-  //     _youtubeSearchInChannels = feedFilters.searchInChannels;
-  //     _telegramViewsController.text = feedFilters.telegramViewsFilter.toString();
-  //     _instagramLikesController.text = feedFilters.instagramLikesFilter.toString();
-  //
-  // }
 
   @override
   void dispose() {
@@ -88,7 +75,7 @@ class _AddFeedScreenState extends State<AddFeedScreen> {
                 ),
               ),
               const SizedBox(height: 5),
-              const Text('Choose a keyword that will be used to search for content for the new feed.'),
+              const Text('Choose a keyword to search for content for the new feed.'),
               const SizedBox(height: 15),
               ExpansionTile(
                 expandedCrossAxisAlignment: CrossAxisAlignment.start,
