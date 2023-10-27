@@ -16,9 +16,6 @@ import 'package:hypester/data/posts_repository.dart';
 import 'package:hypester/data/report_repository.dart';
 import 'package:hypester/presentation/home_page.dart';
 import 'package:path_provider/path_provider.dart';
-import 'package:teledart/teledart.dart';
-import 'package:teledart/telegram.dart';
-import 'api_keys.dart';
 import 'data/datasource/reddit_datasource.dart';
 import 'data/datasource/vk_datasource.dart';
 import 'data/hive/post_local_dto.dart';
@@ -43,8 +40,6 @@ Future<void> main() async {
     ..registerAdapter(SubredditLocalDtoAdapter())
     ..registerAdapter(FeedFiltersAdapter());
 
-  // final username = (await Telegram(telegramBotToken).getMe()).username;
-  // var teledart = TeleDart(telegramBotToken, Event(username!));
 
   GetIt.I.registerSingleton(dio);
   GetIt.I.registerSingleton(RedditDataSource());

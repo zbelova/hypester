@@ -1,4 +1,4 @@
-import 'package:flutter_widget_from_html/flutter_widget_from_html.dart';
+import 'package:flutter_widget_from_html_core/flutter_widget_from_html_core.dart';
 import 'package:get_it/get_it.dart';
 import 'package:hypester/data/report_repository.dart';
 import 'package:hypester/presentation/webview.dart';
@@ -91,21 +91,23 @@ class _PostScreenState extends State<PostScreen> {
                 if (widget.post.imageUrl != '' && widget.post.imageUrl != null)
                   ClipRRect(
                     borderRadius: BorderRadius.circular(10),
-                    child: Image.network(
-                      widget.post.imageUrl!,
-                      fit: BoxFit.cover,
-                      errorBuilder: (context, error, stackTrace) {
-                        return Container(
-                          height: 200,
-                          color: Colors.grey[300],
-                          child: Center(
-                            child: Icon(
-                              Icons.error_outline,
-                              color: Colors.grey[500],
+                    child: InteractiveViewer(
+                      child: Image.network(
+                        widget.post.imageUrl!,
+                        fit: BoxFit.cover,
+                        errorBuilder: (context, error, stackTrace) {
+                          return Container(
+                            height: 200,
+                            color: Colors.grey[300],
+                            child: Center(
+                              child: Icon(
+                                Icons.error_outline,
+                                color: Colors.grey[500],
+                              ),
                             ),
-                          ),
-                        );
-                      },
+                          );
+                        },
+                      ),
                     ),
                   ),
                 if (widget.post.imageUrl != '' && widget.post.imageUrl != null) SizedBox(height: 15),

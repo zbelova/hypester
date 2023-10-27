@@ -1,6 +1,8 @@
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_widget_from_html/flutter_widget_from_html.dart';
+import 'package:flutter_html/flutter_html.dart';
+import 'package:flutter_widget_from_html_core/flutter_widget_from_html_core.dart';
 import 'package:hypester/presentation/post_screen.dart';
 import 'package:hypester/presentation/webview.dart';
 import 'package:hypester/presentation/widgets/gallery_preview_widget.dart';
@@ -8,6 +10,7 @@ import 'package:hypester/presentation/widgets/source_name_widgets.dart';
 import 'package:intl/intl.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 import '../data/models/feed_model.dart';
+import 'link_webview.dart';
 
 class FeedScreen extends StatefulWidget {
   final Feed feed;
@@ -177,14 +180,33 @@ class _FeedScreenState extends State<FeedScreen> {
                               ),
                             if (widget.feed.posts[index].body != null && widget.feed.posts[index].isHtml)
                               Expanded(
-                                child: HtmlWidget(
-                                  widget.feed.posts[index].body!,
-                                  textStyle: const TextStyle(fontSize: 14),
-                                  //onTapUrl: (url) => Navigator.push(context, MaterialPageRoute(builder: (context) => WebViewScreen(post: widget.feed.posts[index]))),
-
-
+                                child: Html(
+                                  data: widget.feed.posts[index].body!,
+                                  onLinkTap: (url, _, __,) {
+                                    Navigator.push(context, MaterialPageRoute(builder: (context) => LinkWebViewScreen(url: url!)));
+                                  },
+                                  style: {
+                                    "body": Style(
+                                      fontSize: FontSize(14),
+                                    ),
+                                    "a": Style(
+                                      fontSize: FontSize(14),
+                                      color: Colors.blue,
+                                      textDecoration: TextDecoration.none,
+                                    ),
+                                  },
                                 ),
-                              ),
+                                )
+                  //               child: HtmlWidget(
+                  //                 widget.feed.posts[index].body!,
+                  //                 textStyle: const TextStyle(fontSize: 14),
+                  //                 onTapUrl: (url) async {
+                  //                   print(url);
+                  //                   Navigator.push(context, MaterialPageRoute(builder: (context) => LinkWebViewScreen(url: url,)));
+                  //                   return true;
+                  //                 }
+                  //               ),
+                             // ),
                           ],
                         ),
                         const SizedBox(height: 15),
@@ -229,23 +251,23 @@ class _FeedScreenState extends State<FeedScreen> {
                                 widget.feed.posts[index].likes.toString(),
                                 style: const TextStyle(fontSize: 12),
                               ),
-
                             ],
-                              if(widget.feed.posts[index].numComments > 0) ...[
-                                const SizedBox(width: 5),
-                                Padding(
-                                  padding: const EdgeInsets.only(top: 2),
-                                  child: const Icon(
-                                    Icons.mode_comment_outlined,
-                                    size: 13,
-                                  ),
-                                ),
-                                const SizedBox(width: 3),
-                                Text(widget.feed.posts[index].numComments.toString(),
-                                  style: const TextStyle(fontSize: 12),)
-                              ],
+                            if (widget.feed.posts[index].numComments > 0) ...[
                               const SizedBox(width: 5),
-
+                              Padding(
+                                padding: const EdgeInsets.only(top: 2),
+                                child: const Icon(
+                                  Icons.mode_comment_outlined,
+                                  size: 13,
+                                ),
+                              ),
+                              const SizedBox(width: 3),
+                              Text(
+                                widget.feed.posts[index].numComments.toString(),
+                                style: const TextStyle(fontSize: 12),
+                              )
+                            ],
+                            const SizedBox(width: 5),
                           ],
                         ),
                         const SizedBox(height: 8),

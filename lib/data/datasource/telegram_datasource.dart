@@ -12,7 +12,8 @@ class TelegramDataSource extends DataSource {
     List<String> channels = [];
     List<String> urls = [];
     try {
-      var parser = await Chaleno().load('https://www.google.com/search?q=site:t.me+${feedFilters.keyword}&tbs=qdr:w');
+      var keywordUrl = Uri.encodeComponent(feedFilters.keyword);
+      var parser = await Chaleno().load('https://www.google.com/search?q=t.me+$keywordUrl');
       //get all url from google search
       var i = 0;
       var results = parser!.getElementsByTagName('a');
@@ -24,45 +25,49 @@ class TelegramDataSource extends DataSource {
               channels.add(channel);
               var parser2 = await Chaleno().load('https://t.me/s/$channel');
               var messages = parser2!.getElementsByClassName('tgme_widget_message_bubble');
+              var n = 0;
               for (var message in messages) {
-                var textElement = message.querySelector('.tgme_widget_message_text');
-                var text = textElement?.innerHTML;
+                if (isWithinSevenDays(message.querySelector('.time')!.attr('datetime')!)) {
 
-                var viewsElement = message.querySelector('.tgme_widget_message_views');
-                var views = viewsElement?.text;
+                if (n++ < 5) {
+                  var textElement = message.querySelector('.tgme_widget_message_text');
+                  var text = textElement?.innerHTML;
 
-                var dateElement = message.querySelector('.time');
+                  var viewsElement = message.querySelector('.tgme_widget_message_views');
+                  var views = viewsElement?.text;
 
-                var imageElement = message.querySelector('.tgme_widget_message_photo_wrap');
-                var image;
-                if(imageElement != null){
-                  image = extractImage(imageElement.attr('style')!);
-                }
+                  var dateElement = message.querySelector('.time');
 
-                var videoElement = message.querySelector('video');
-                var video;
-                var isVideo = false;
-                if(videoElement != null){
-                  video = videoElement.attr('src');
-                  isVideo = true;
-                  imageElement = message.querySelector('.tgme_widget_message_video_thumb');
-                  image = extractImage(imageElement!.attr('style')!);
-                }
-                if (isWithinSevenDays(dateElement!.attr('datetime')!)) {
-                  posts.add(Post(
-                    body: text,
-                    id: channel,
-                    imageUrl: image,
-                    date: DateTime.parse(dateElement.attr('datetime')!),
-                    sourceName: 'Telegram',
-                    views: views != null ? parseViews(views) : 0,
-                    linkToOriginal: 'https://t.me/s/$channel',
-                    channel: channel,
-                    isGallery: false,
-                    videoUrl: video,
-                    isVideo: isVideo,
-                    isHtml: true,
-                  ));
+                  var imageElement = message.querySelector('.tgme_widget_message_photo_wrap');
+                  var image;
+                  if (imageElement != null) {
+                    image = extractImage(imageElement.attr('style')!);
+                  }
+
+                  var videoElement = message.querySelector('video');
+                  var video;
+                  var isVideo = false;
+                  if (videoElement != null) {
+                    video = videoElement.attr('src');
+                    isVideo = true;
+                    imageElement = message.querySelector('.tgme_widget_message_video_thumb');
+                    image = extractImage(imageElement!.attr('style')!);
+                  }
+                    posts.add(Post(
+                      body: text,
+                      id: channel,
+                      imageUrl: image,
+                      date: DateTime.parse(dateElement!.attr('datetime')!),
+                      sourceName: 'Telegram',
+                      views: views != null ? parseViews(views) : 0,
+                      linkToOriginal: 'https://t.me/s/$channel',
+                      channel: channel,
+                      isGallery: false,
+                      videoUrl: video,
+                      isVideo: isVideo,
+                      isHtml: true,
+                    ));
+                  }
                 }
               }
             }
@@ -87,9 +92,11 @@ String extractTelegramChannel(String url) {
 bool isWithinSevenDays(String dateString) {
   DateTime currentDate = DateTime.now();
   DateTime parsedDate = DateTime.parse(dateString);
-
-  Duration difference = parsedDate.difference(currentDate);
-
+  Duration difference = currentDate.difference(parsedDate);
+  // if(difference.inDays < 7) {
+  //   print(difference.inDays);
+  //
+  // }
   return difference.inDays <= 7;
 }
 

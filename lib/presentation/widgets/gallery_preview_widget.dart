@@ -54,6 +54,7 @@ class GalleryPreview extends StatelessWidget {
                       ),
                     )
                   : Container(),
+        const SizedBox(height: 8,),
       ],
     );
   }
