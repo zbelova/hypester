@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:intl/intl.dart';
 import 'package:youtube_player_flutter/youtube_player_flutter.dart';
 
 import '../../data/models/post_model.dart';
@@ -122,6 +123,12 @@ class _YoutubeVideoState extends State<YoutubeVideo> {
                         )),
                     _space,
                     Text(widget.post.channel ?? '',
+                        style: const TextStyle(
+                          fontWeight: FontWeight.w300,
+                          fontSize: 14.0,
+                        )),
+                    _space,
+                    Text(DateFormat('HH:mm dd.MM.yyyy').format(widget.post.date),
                         style: const TextStyle(
                           fontWeight: FontWeight.w300,
                           fontSize: 14.0,

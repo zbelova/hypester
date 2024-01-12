@@ -12,7 +12,7 @@ class GalleryPreview extends StatelessWidget {
         for (var i = 0; i < imageUrls.length; i++)
           (i < 3)
               ? Container(
-                  margin: const EdgeInsets.only(right: 5),
+                  margin: const EdgeInsets.only(right: 5, bottom: 6),
                   child: ClipRRect(
                     borderRadius: BorderRadius.circular(10),
                     child: Image.network(

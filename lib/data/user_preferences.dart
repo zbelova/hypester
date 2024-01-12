@@ -121,7 +121,7 @@ class UserPreferences {
   }
 
   bool getTelegramActive() {
-    return _preferences?.getBool('telegram_active') ?? false;
+    return _preferences?.getBool('telegram_active') ?? true;
   }
 
   Future<void> setNSFWActive(bool isActive) async {
